@@ -1,0 +1,8 @@
+bin/bzless
+bin/bzmore
+bin/bzip2recover
+usr/bin/bzcmp
+usr/bin/bzdiff
+usr/bin/bzgrep
+usr/bin/bzegrep
+usr/bin/bzfgrep

@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+use	strict;
+use	warnings;
+
+use	FileHandle;
+use	Time::Local;
+
+sub main
+{
+  my	$fh= new FileHandle(shift || die "Need FILENAME");
+	while (<$fh>)
+	{
+	  #my ($sec, $min, $hour, $mday, $mon, $year, $wday);
+	  my ($mday, $mon, $year);
+
+		($year, $mon, $mday)= ($1, $2, $3) if $_=~ m/([0-9]{4})-([0-9]{2})-([0-9]{2})/;
+
+		printf "%s\t%s", ((defined $year) && ($year > 0))
+				? scalar gmtime(timegm(0,0,0, $mday, $mon-1, $year-1900))
+				: '',
+				$_
+	}
+}
+
+main @ARGV

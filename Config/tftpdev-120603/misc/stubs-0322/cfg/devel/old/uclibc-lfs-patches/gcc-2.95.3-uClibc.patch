@@ -1,0 +1,40 @@
+diff -Naur gcc-2.95.3.orig/libio/config/linux.mt gcc-2.95.3/libio/config/linux.mt
+--- gcc-2.95.3.orig/libio/config/linux.mt	1998-06-24 06:26:00.000000000 +0000
++++ gcc-2.95.3/libio/config/linux.mt	2002-08-15 14:54:32.000000000 +0000
+@@ -10,16 +10,16 @@
+ _G_CONFIG_H=
+ 
+ # We must not see the libio.h file from this library.
+-LIBIO_INCLUDE=
++# LIBIO_INCLUDE=
+ 
+ # We have those in libc.a.
+-IO_OBJECTS= iogetline.o
++# IO_OBJECTS= iogetline.o
+ STDIO_WRAP_OBJECTS=
+ OSPRIM_OBJECTS=
+ STDIO_OBJECTS=
+ 
+ # We have the rest in /usr/include.
+-USER_INCLUDES=PlotFile.h SFile.h builtinbuf.h editbuf.h fstream.h \
+-	indstream.h iomanip.h iostream.h istream.h ostream.h \
+-	parsestream.h pfstream.h procbuf.h stdiostream.h stream.h \
+-	streambuf.h strfile.h strstream.h
++# USER_INCLUDES=PlotFile.h SFile.h builtinbuf.h editbuf.h fstream.h \
++#	indstream.h iomanip.h iostream.h istream.h ostream.h \
++#	parsestream.h pfstream.h procbuf.h stdiostream.h stream.h \
++#	streambuf.h strfile.h strstream.h
+diff -Naur gcc-2.95.3.orig/libio/config/mtsafe.mt gcc-2.95.3/libio/config/mtsafe.mt
+--- gcc-2.95.3.orig/libio/config/mtsafe.mt	1997-09-27 04:07:24.000000000 +0000
++++ gcc-2.95.3/libio/config/mtsafe.mt	2002-08-15 14:08:31.000000000 +0000
+@@ -1,2 +1,2 @@
+ # tell we want the mt-safe version
+-MT_CFLAGS = -D_IO_MTSAFE_IO
++# MT_CFLAGS = -D_IO_MTSAFE_IO
+diff -Naur gcc-2.95.3.orig/libstdc++/config/linux.mt gcc-2.95.3/libstdc++/config/linux.mt
+--- gcc-2.95.3.orig/libstdc++/config/linux.mt	1998-02-01 12:38:27.000000000 +0000
++++ gcc-2.95.3/libstdc++/config/linux.mt	2002-08-15 14:09:04.000000000 +0000
+@@ -1,2 +1,2 @@
+ # tell we want the mt-safe version
+-MT_CFLAGS = -D_IO_MTSAFE_IO
++# MT_CFLAGS = -D_IO_MTSAFE_IO

@@ -1,0 +1,270 @@
+2017-01-09
+==========
+
+* 'mpc' in gcc builds:
+- not needed for gcc 4.3.x and gcc 4.4.x
+- required by gcc 4.6.4
+-> TODO: build with gcc 4.6.4?
+
+
+2012-09-03
+==========
+
+* misc kernel
+-> DONE: ensure DEVTMPFS options are present
+-> TODO: CONFIG_IP_PNP_DHCP?
+-> TODO: 'all-cui' builds do NOT trigger their 'all-cti' dependencies
+
+
+2012-07-04
+==========
+
+* misc kernel
+-> DONE: kernel.mk needs to fix 'cp' of kernel binary
+-> DONE: kernel suddenly missing BLK_DEV_SD, etc.
+-> TODO: only need to handle CONFIG_SND_HDA_INTEL once, surely?!
+
+* cross compilation
+-> DONE: basic 'mips'
+-> TODO: basic 'arm' -- libgcc endianness is wrong, making libuClibc.so
+-> TODO: sane 'arm' for QEmu?
+
+
+2012-07-03
+==========
+
+* misc
+-> DONE: all rebuilds sanely
+-> TODO: rename targets sanely
+-> TODO: LEGACY=true doesn't yet build full set of old versions
+
+
+2012-07-02
+==========
+ 
+* homebrew <-> portlx
+-> TODO: xlibgcc dependencies/intermediate files
+-> TODO: cti-uclrt dependencies/intermediate files
+
+* misc
+-> TODO: use build line switch? Specifically <FOO>=mips?
+-> TODO: 'configure's don't need --bindir
+ 
+
+2012-06-22
+==========
+
+* xosview/meta-specification
+-> DONE: means of including a metapackage specification (Makefile)
+-> TODO: 'xosview' extracts, builds, works?
+
+* merge ucldev/uclinit
+-> DONE: complaint if uclinit exists
+-> TODO: merge Makefiles; adjust deps; test
+
+* misc
+-> DONE: ucldev uses the kernel compiler; uclrt shouldn't? or should?
+-> DONE: check kernel cross-compiler; shows lfslivecd has gcc 4.1.2!
+-> DONE: should have libgcc use a 'gcc' source subtree!
+-> TODO: tidy portlx.mk build-sequence/dependency lists
+-> TODO: export to STUBS; consider merge vs tidy of ucldev and uclinit
+-> TODO: select LEGACY=true package list; make work?
+
+
+2012-06-21
+==========
+
+* general
+-> DONE: recovering apps requires 'stty' in busybox
+-> DONE: introduce 'libgcc' before cti-uclrt
+-> DONE: introduce 'cti-uclinit' before 'libgcc'
+-> TODO: TMPDIR used; STUBS' equivalent is BUILDROOT
+
+
+2012-06-20
+==========
+
+* misc
+-> DONE: ucldev uses the kernel compiler; uclrt shouldn't? or should?
+-> TODO: tidy portlx.mk build-sequence/dependency lists
+-> TODO: check kernel cross-compiler; shows lfslivecd has gcc 4.1.2!
+-> TODO: export to STUBS; consider merge vs tidy of ucldev and uclinit
+-> TODO: could have libgcc use a 'gcc' source subtree
+-> TODO: select LEGACY=true package list; make work?
+
+* integration testing
+-> DONE: merge update patch; check build
+-> TODO: ensure appropriate cross compiler settings in stored files
+
+
+2012-06-19
+==========
+
+* update sanity check
+-> DONE: cti-kernel -> cti-lxheaders OK (new: mrproper now invoked)
+-> DONE: both compiler builds handle code-in-subdirectory OK
+-> DONE: xkgcc with '--enable-languages=c' OK
+
+
+2012-06-15
+==========
+
+* device nodes
+- busybox has 'mdev' by default
+-> `mount -t devpts none /dev/pts` (telnetd needs this)
+-> CONFIG_DEVTMPFS -> `mount -t devtmpfs none /dev`
+
+* initramfs?
+- used to support an early (pre-root-mount) rescue shell
+-> see http://en.gentoo-wiki.com/wiki/Initramfs
+
+
+2012-06-14
+==========
+
+* kernel deps problematic
+..."headers_install" needs the cross compiler! Should it?
+- just building 'xkgcc' fails to make objects (poss: no linker?),
+- building 'cti-binutils xkgcc' needs crtn.o
+
+* kernel configuration/compilation
+-> DONE: sound good in 2.x (LEGACY=true)?
+-> DONE: sound good in 3.x?
+-> TODO: header generation maintains intended arch?
+-> TODO: userland needs /dev/pcm (char 14:3)
+-> TODO: kernel build needs (kernel-cross-)compiler includes/deps
+-> TODO: kernel build deps OK w/ LEGACY=true (make CROSS_COMPILE=)
+-> TODO: kernel build deps OK normally (CONFIG_CROSS_COMPILE)
+
+* uClibc
+- TODO: 'dev' deps OK?
+- TODO: build deps OK?
+
+
+2012-06-13
+==========
+
+* misc: absent dependency management
+- deps-includes won't work for STUBS -> use buildcfg.mk to set something?
+- binutils: has no 'C**' dependencies (others: not studied)
+
+* other
+- DONE: standardise on 'TCTREE' over 'TCHDIR'
+
+
+2012-06-12
+==========
+
+* miscellaneous
+-> TODO: cti-kernel and sysnum.h where we want?
+
+* lack of SYS_ioprio_{get|set}:
+- feature since kernel 2.6.13.12 (bits/sysnum.h)
+- our usr/include/bits/sysnum.h hangs under '<not-i386>-linux-uclibc'!
+- 'uclrt' target does this
+
+In file included from miscutils/ionice.c:17:
+/usr2/tooling/portlx/toolchain/usr//lib/gcc/i386-homebrew-linux-uclibc/4.3.6/../../../../i386-homebrew-linux-uclibc/include/sys/syscall.h:25:25: error: bits/sysnum.h: No such file or directory
+miscutils/ionice.c: In function 'ioprio_set':
+miscutils/ionice.c:23: error: 'SYS_ioprio_set' undeclared (first use in this function)
+miscutils/ionice.c:23: error: (Each undeclared identifier is reported only once
+miscutils/ionice.c:23: error: for each function it appears in.)
+miscutils/ionice.c: In function 'ioprio_get':
+miscutils/ionice.c:28: error: 'SYS_ioprio_get' undeclared (first use in this function)
+
+
+[williamt@st0dl0000001663:5] portlx $ find toolchain/ -type f | xargs grep 'ioprio_set'
+toolchain/usr/i386-homebrew-linux-uclibc/usr/x86_64-linux-uclibc/usr/include/bits/sysnum.h:#undef __NR_ioprio_set
+toolchain/usr/i386-homebrew-linux-uclibc/usr/x86_64-linux-uclibc/usr/include/bits/sysnum.h:#define __NR_ioprio_set 251
+toolchain/usr/i386-homebrew-linux-uclibc/usr/x86_64-linux-uclibc/usr/include/bits/sysnum.h:#define SYS_ioprio_set __NR_ioprio_set
+toolchain/usr/i386-homebrew-linux-uclibc/usr/include/asm/unistd_32.h:#define __NR_ioprio_set            289
+toolchain/usr/i386-homebrew-linux-uclibc/usr/include/asm/unistd_64.h:#define __NR_ioprio_set                            251
+toolchain/usr/i386-homebrew-linux-uclibc/usr/include/asm/unistd_64.h:__SYSCALL(__NR_ioprio_set, sys_ioprio_set)
+toolchain/usr/i386-homebrew-linux-uclibc/usr/include/asm-generic/unistd.h:#define __NR_ioprio_set 30
+toolchain/usr/i386-homebrew-linux-uclibc/usr/include/asm-generic/unistd.h:__SYSCALL(__NR_ioprio_set, sys_ioprio_set)
+
+
+2012-06-11
+==========
+
+* kernel config script:
+- DONE: boolean settings
+- TODO: string settings (possibly unsupported if LEGACY=true)
+
+Mount problem with "unknown-block(0,0)" on v3.2.4
+YES - some sort of wait for root fs device needed - rootdelay=5 (v2.6.x)
+
+* some sort of 'install_headers.sh' failure; given bad paths
+
+* kernel configuration
+- TODO: CONFIG_CROSS_COMPILE was not set
+- TODO: config diffs show CONFIG_HOTPLUG_PCI_PCIE differs
+- TODO: CONFIG_IKCONFIG set in neither
+
+
+2012-06-10
+==========
+
+* tcng/tftpdev version
+- TODO: needs kernel binary
+- TODO: kernel binary needs configuration saved
+- TODO: boot test with repartitioned stick; refinement?
+- TODO: handle nui/nti/cti/cui targets and dependencies
+- TODO: 'cti' targets have prefixless names
+- TODO: all 'Makefiles' should include envconfig directly
+
+* uClibc
+- TODO: can we just 'install_runtime'; does this fix 'usr/include' mess?
+
+* kernel: for EeePC-friendly sound:
+- need ALSA for PCI devices; adding:
+- SND_HDA_INTEL
+- SND_HDA_CODEC_REALTEK
+- SND_HDA_POWER_SAVE
+- SND_HDA_POWER_SAVE_DEFAULT 10
+
+
+2012-06-05
+==========
+
+* gcc: problems to date
+- "cannot compute suffix for compiled programs" (ish) fixed by PATHing
+- --disable-decimal-float stops 'fenv.h' being a requirement
+- --disable-threads stops 'pthread.h' being a requirement
+
+* time.h
+- found with and without 'usr/include' at path end (ucl* devel vs runtime prefix problem?)
+- kernel version in path WITH 'usr/include', matching khead and ucl* settings
+- compiler --prefix lacks 'usr', and --with-sysroot likewise!
+- only the kernel install should specify the 'usr'
+
+
+2012-05-23
+==========
+
+* 'uclrt' support
+- DONE: add 'Makefile'
+- TODO: demonstrate builds OK
+- TODO: investigate potential failures regarding 'libgcc.a'
+
+* gcc
+- DONE: investigate '--disable-mudflap'?
+- TODO: does '--prefix'/'--bindir' "fix" headers problem?
+- TODO: need gmp/mpfr -- http://advogato.org/person/redi/diary/240.html
+
+* general/other
+- TODO: version-specific Makefiles? -- gcc particularly!
+- TODO: check minimal/full compilers build as intended
+- TODO: eliminate use of FOO/BAR/... in place of sane temp file names
+- TODO: eliminate use of generic 'gcc'
+- TODO: support older binutils/compiler/kernel/uClibc versions (latest first)
+
+
+2012-05-22
+==========
+
+/mnt/sda6/os-dev/portlx/exttemp/gcc-4.3.6/_homebrew_xtc_gcc/./gcc/include-fixed/limits.h:122:61: error: no include path in which to search for limits.h
+
+- one page suggested "your uClibc headers are installed in the wrong location for the design of compiler"
+
+- TODO: investigate gcc's --enable-multilib?

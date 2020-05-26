@@ -1,0 +1,22 @@
+#!/bin/sh
+
+FILE=$1
+CYL=$2
+SEC=$3
+HDS=$4
+
+if [ -z "$HDS" ] ; then
+	echo "Specify FILE, CYL, SEC, HDS"
+	exit 1
+fi
+
+MATHS="$CYL $SEC $HDS **p 512 *p 1024 1024 */p"
+set -- `echo "$MATHS" | dc`
+BLOCKS=$1
+BYTES=$2
+MEGS=$3
+echo "( $BYTES bytes is $MEGS megs )"
+
+[ -z "$DD" ] && DD=dd
+$DD if=/dev/zero of=$FILE bs=512 count=$BLOCKS
+echo "Made $FILE, $CYL/$SEC/$HDS"

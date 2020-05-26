@@ -1,0 +1,78 @@
+* DirectFB howto
+- 3.6.11 kernel, filesystems: CONFIG_{SHMEM|TMPFS}
+	...reference previous toolchain/kernel build here?
+- kernel framebuffer configured for EeePC's Intel hw:
+	scripts/config --disable DRM_I915 --enable FB --enable FB_INTEL --enable FRAMEBUFFER_CONSOLE
+- boot options video=intelfb<...> stops "Video mode must be programmed at boot time."
+	BOOT_IMAGE=/vmlinux-test-3.6 root=/dev/sdb2 ro video=intelfb:mode=640x480-16,accel=0 vga=785
+- check /proc/fb content, /dev/fb0 node added by `mdev -s`
+	0 Intel(R) 915GM
+- writable /tmp and /dev/shm (`mount -t tmpfs -o size=8M tmpfs /dev/shm`...)
+- DirectFB v1.2.5 built as per mksw:
+		LIBTOOL=${HOSTSPEC}-libtool \
+		  ./configure \
+			--prefix=${NTI_TC_ROOT}/usr \
+			--enable-multi \
+			  --disable-osx \
+			  --enable-fbdev \
+			  --disable-sdl \
+			  --disable-x11 \
+			  --disable-zlib \
+			  --disable-gif \
+			  --disable-jpeg \
+			  --disable-png \
+			  --disable-freetype \
+- script to extend LD_LIBRARY_PATH accordingly:
+	DFBDIR=`pwd`/toolchain/usr/lib/directfb-1.3-0
+	
+	LDLIBS=${USRDIR}/lib
+	
+	for LD in \
+		${DFBDIR}/systems \
+		${DFBDIR}/wm \
+		${DFBDIR}/interfaces/IDirectFBFont \
+		${DFBDIR}/interfaces/IDirectFBImageProvider \
+		${DFBDIR}/interfaces/IDirectFBVideoProvider \
+		${DFBDIR}/inputdrivers \
+		${DFBDIR}/gfxdrivers \
+		; do
+			LDLIBS=${LDLIBS}:$LD
+		done
+- dfbinfo should run, work <include output>
+
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~| DirectFB 1.2.5 |~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (c) 2001-2008  The world wide DirectFB Open Source Community
+        (c) 2000-2004  Convergence (integrated media) GmbH
+      ----------------------------------------------------------------
+
+(*) DirectFB/Core: Multi Application Core. (2013-02-03 16:50) 
+(*) Fusion/Init: Builtin Implementation is still experimental! Crash/Deadlocks might occur!
+(*) Fusion/SHM: Using MADV_REMOVE (2.6.32.0 >= 2.6.19.2)
+(*) Direct/Thread: Started 'Fusion Dispatch' (-1) [MESSAGING OTHER/OTHER 0/0] <2093056>...
+(*) Direct/Thread: Started 'VT Switcher' (-1) [CRITICAL OTHER/OTHER 0/0] <2093056>...
+(*) Direct/Thread: Started 'Keyboard Input' (-1) [INPUT OTHER/OTHER 0/0] <2093056>...
+(*) DirectFB/Input: Keyboard 0.9 (directfb.org)
+(*) DirectFB/Genefx: MMX detected and enabled
+(*) DirectFB/Graphics: Intel 830/845G/852GM/855GM/865G 0.1 (Denis Oliver Kropp)
+(*) DirectFB/Core/WM: Default 0.3 (directfb.org)
+(*) FBDev/Surface: Allocated 640x480 16 bit <invalid> buffer (index 0) at offset 0 and pitch 1280.
+
+
+Screen (00) FBDev Primary Screen            (primary screen)
+   Caps: 
+
+     Layer (00) FBDev Primary Layer             (primary layer)
+        Type:    
+        Caps:    
+
+     Layer (01) Intel 830/845/855/865 Overlay 
+        Type:    
+        Caps:    
+
+
+Input (00) Keyboard                        (primary keyboard)
+   Type: 
+   Caps: 
+   Min. Keycode: 0
+   Max. Keycode: 127
+

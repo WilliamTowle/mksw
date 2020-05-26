@@ -1,0 +1,66 @@
+Outside-world gateway
+
+/etc/dnsmasq.conf changes:
+	# -- frankii localnet:
+	# interface=eth0
+	## don't use /etc/hosts, /etc/resolv.conf
+	#no-hosts
+	#no-resolv
+	##no-poll (optional)
+	# -- for xk120 <-> dev board(s) [via USB dongle]
+	domain-needed
+	bogus-priv
+	domain=xk120local.net
+	local=/xk120local.net/
+	expand-hosts
+	interface=eth1
+	listen-address=192.168.42.253
+	bind-interfaces
+
+iptables script:
+	#!/bin/sh
+
+	if [ ${USER} != 'root' ] ; then
+		# TODO: could 'sudo'?
+		echo "$0: USER ${USER} not 'root'" 1>&2
+		exit 1
+	fi
+
+	PATH=/usr/sbin:/sbin:/bin:/usr/bin
+	IF_LOCAL=eth1
+	IF_WORLD=eth0
+
+	# TODO: to disable...
+	#	sudo iptables -P INPUT ACCEPT
+	#	sudo iptables -P OUTPUT ACCEPT
+	#	sudo iptables -P FORWARD ACCEPT
+	#	sudo iptables -F
+
+	#
+	# delete all existing rules.
+	#
+	iptables -F
+	iptables -t nat -F
+	iptables -t mangle -F
+	iptables -X
+
+	# Always accept loopback traffic
+	iptables -A INPUT -i lo -j ACCEPT || exit 1
+
+
+	# Allow established connections, and those not coming from the outside
+	iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT || exit 1
+	iptables -A INPUT -m state --state NEW ! -i ${IF_WORLD} -j ACCEPT || exit 1
+	iptables -A FORWARD -i ${IF_WORLD} -o ${IF_LOCAL} -m state --state ESTABLISHED,RELATED -j ACCEPT || exit 1
+
+	# Allow outgoing connections from the LAN side.
+	iptables -A FORWARD -i ${IF_LOCAL} -o ${IF_WORLD} -j ACCEPT || exit 1
+
+	# Masquerade.
+	iptables -t nat -A POSTROUTING -o ${IF_WORLD} -j MASQUERADE || exit 1
+
+	# Don't forward from the outside to the inside.
+	iptables -A FORWARD -i ${IF_WORLD} -o ${IF_WORLD} -j REJECT || exit 1
+
+	# Enable routing.
+	echo 1 > /proc/sys/net/ipv4/ip_forward

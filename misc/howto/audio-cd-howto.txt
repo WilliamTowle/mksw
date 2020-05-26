@@ -1,0 +1,54 @@
+* see also: Volume Normalisation in Audio Files (ffmpeg)
+- https://wordpress.com/post/dunedlin.wordpress.com/549
+
+* cdrdao: v1.2.3, from:
+- https://dunedlin.wordpress.com/2015/05/26/volume-normalisation-in-audio-files/
+
+* howto
+- NB: LFS recommends libao, libvorbis, libmad, lame
+	...TODO: check which of these hbOS needs
+- basic configure/make/make install with fix:
+		[ -r dao/ScsiIf-linux.cc.OLD ] || mv dao/ScsiIf-linux.cc dao/ScsiIf-linux.cc.OLD || exit 1 ;\
+		cat dao/ScsiIf-linux.cc.OLD \
+			| sed '/ioctl/a #include <sys/stat.h>' \
+			> dao/ScsiIf-linux.cc || exit 1 \
+- also build ffmpeg, lame (as before):
+	...to normalise volumes
+	...to create stereo 44.1KHz .wav files
+|	INCVOL=` voldetect "${INFILE}" `
+|	OUTFILE=` basename "${INFILE}" | sed 's/m[p4][4a]/wav/' `
+|	#CONVARGS='-af volume='${INCVOL}' -ab 44100'
+|	CONVARGS='-af volume='${INCVOL}' -ar 44100'
+|	echo "Create OUTFILE ${OUTFILE}, extravol ${INCVOL}"
+|	ffmpeg -i "${INFILE}" ${CONVARGS} "${OUTFILE}"
+	...something like "-ac 2" to force stereo output
+- create "toc file"
+#	...needs a 'toc-file' to describe output (alt'ly, .cue file)
+#	...possible to have track pre-gaps of any size, and containing sound
+#	* for Header section
+#		CD_DA	# because only audio
+#	* for Track Specification section: repeat from TRACK to FILE
+#		TRACK <track-mode> [<sub-channel-mode>]
+#		Desired mode: AUDIO
+#		Desired flags: COPY TWO_CHANNEL_AUDIO
+#		FILE "<filename>" <start> [<length>]
+#		...raw or WAVE format, 16bit/44.1KHz
+|	# CD_DA
+|	#
+|	# TRACK AUDIO
+|	# COPY TWO_CHANNEL_AUDIO
+|	# FILE "01--bobby-darin.wav" 0
+|	#
+|	# TRACK AUDIO
+|	# COPY TWO_CHANNEL_AUDIO
+|	# FILE "02--louis-armstrong.wav" 0
+- query devices
+|	#${BINDIR}/cdrdao scanbus
+|	#
+|	#+ BINDIR=/mnt/tmp/devel/soulmusic/fever/toolchain/usr/bin
+|	#+ /mnt/tmp/devel/soulmusic/fever/toolchain/usr/bin/cdrdao scanbus
+|	#Cdrdao version 1.2.3 - (C) Andreas Mueller <andreas@daneb.de>
+|	#/dev/sr0 : SONY    , DVD RW DRU-V200S, 1.60
+- and burn the CD:
+|	#${BINDIR}/cdrdao write --device /dev/sr0 --simulate mack.toc
+|	${BINDIR}/cdrdao write --device /dev/sr0 mack.toc

@@ -1,0 +1,62 @@
+TODO
+----
+
+- config backup script from work card /opt/codethink?
+- need to explain apt "is not going to be installed" messages
+- need "Scott's Blog" article URL? (A Brief Introduction to Linux Containers with LXC)
+- investigate 'sshd' template
+
+
+1. Setup and Installation
+-------------------------
+
+- jessie-160606 baseline config
+- fix /etc/network/interfaces, /etc/wpa_supplicant/wpa_supplicant.conf
+- simple screenrc and other config
+- add apt archives for jessie main, contrib, non-free; jessie-backports main
+- install apt-utils, dialog, man, vim
+- install 'lxc'
+
+
+2. Creation
+-----------
+
+- lxc-create:
+	...syntax `lxc-create -t <TEMPLATE> -n <CONTAINER NAME> -- <TEMPLATE_OPTIONS>`
+	...'--lxcpath=PATH' to use alternative container path (normally /var/lib/lxc)
+	...'-t TEMPLATE' one of debian, fedora, ubuntu (see /usr/share/lxc/templates)
+	...not specifying '--release' led to a complaint
+	...needs networking functional to initialise
+	...see /var/lib/lxc/container/rootfs?
+	(as root) ran `lxc-create -t debian -n debctest-01 -- --template=jessie`
+	...given a root password and recommended to change it
+		debctest-01	+pUFqfd5
+
+3. Basic Management
+-------------------
+
+lxc-ls
+lxc-start -n <CONTAINERNAME>
+	"Could not find writable mount point for cgroup hierarchy 9"
+	...install cgroupfs-mount as per bugs.debian.org bug=773421 message #52
+	...there is just a 'lo' loopback interface
+	...shut down as normal to return to shell prompt
+
+
+4. Typical Usage
+----------------
+
+- lxc-start
+	lxc-start -d -n <CONTAINERNAME>
+- connect
+	lxc-console -n <CONTAINERNAME>
+	...use ^A q to disconnect
+- run single command (by default: same user's shell)
+	lxc-attach -n <CONTAINERNAME> -- <COMMAND>
+- temporarily stop all processes in the container
+	lxc-freeze -n <CONTAINERNAME>
+	lxc-unfreeze -n <CONTAINERNAME>
+- shut down the container
+	lxc-stop -n <CONTAINERNAME>
+- destroy /var/lib/lxc resources, etc
+	lxc-destroy -n <CONTAINERNAME> [-f]

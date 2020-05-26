@@ -1,0 +1,6 @@
+make: Entering directory `/mnt/sdb4/tcdev-test/tftpdev-120603'
+http://download.savannah.gnu.org/releases-noredirect/dvdrtools/dvdrtools-0.2.1.tar.bz2
+http://www.memtest.org/download/4.10/memtest86+-4.10.tar.gz
+http://www.mirrorservice.org/sites/www.ibiblio.org/gentoo/distfiles/syslinux-3.86.tar.bz2
+http://www.nasm.us/pub/nasm/releasebuilds/2.10rc8/nasm-2.10rc8.tar.bz2
+make: Leaving directory `/mnt/sdb4/tcdev-test/tftpdev-120603'

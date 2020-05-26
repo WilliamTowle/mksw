@@ -1,0 +1,8 @@
+- BIOS versions on each EeePC is critical:
+	on frankii, unknown (microcode 0x18)
+	on ditto, unknown (microcode unknown)
+	on diitto, unknown (microcode 0x20)
+	...confirm latest microcode in diitto BIOS?
+	...from 2007: 8804, 0302, 0204, 0401, 0511
+	...from 2008: 0703, 0801, 0906, 0910, 1101
+	...from 2009: 1302

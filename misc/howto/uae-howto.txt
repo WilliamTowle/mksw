@@ -1,0 +1,85 @@
+Config/emul/e-uae/v0.8.29.mak builds OK against X11 libs
+
+e-uae command line:
+- '-f' specifies a custom .uaerc file (create ~/.uaerc otherwise)
+- c<n> emulates n*512 KB chip memory
+- b<n> emulates n*256 KB slow memory
+- m/M<args> mount filesystem (<read-{only|write}>,<amiga-volname>:<dir>)
+- W<args> hardfile (access,sectors,surfaces,reserved,blocksize,path format)
+
+Requirements
+- needs /dev/dsp access for sound
+
+In "uae-etc" ROMs:
+kick13.rom.gz
+kick20.rom.gz
+kick204.zip
+kick3.rom.gz
+kick31.rom
+kick31_35.zip
+
+In "rc": (make symlink to ./.uaerc)
+simple
+wb31
+
+From "simple" configuration (for regular UAE?)
+config_description=UAE default configuration
+sound_channels=stereo
+framerate=1
+x11.rom_path=ROMs/
+x11.floppy_path=df/
+x11.hardfile_path=dh/
+x11.low_bandwidth=false
+x11.use_mitshm=false
+x11.hide_cursor=true
+use_gui=true
+use_debugger=false
+kickstart_rom_file=ROMs/kick31.rom
+kickstart_key_file=
+floppy0=df/df0.adf
+floppy1=
+floppy2=
+floppy3=
+nr_floppies=4
+parallel_on_demand=false
+serial_on_demand=false
+sound_output=none
+sound_channels=stereo
+sound_bits=16
+sound_min_buff=8192
+sound_max_buff=8192
+sound_frequency=44100
+sound_interpol=none
+sound_pri_time=0
+sound_pri_cutoff=0
+joyport0=mouse
+joyport1=joy0
+bsdsocket_emu=false
+gfx_framerate=1
+gfx_width=800
+gfx_height=600
+gfx_lores=false
+gfx_linemode=double
+gfx_correct_aspect=true
+gfx_fullscreen_amiga=false
+gfx_fullscreen_picasso=false
+gfx_center_horizontal=yes
+gfx_center_vertical=yes
+gfx_colour_mode=8bit
+32bit_blits=false
+immediate_blits=false
+ntsc=false
+chipset=ocs
+collision_level=sprites
+fastmem_size=0
+a3000mem_size=0
+z3mem_size=0
+bogomem_size=0
+gfxcard_size=0
+chipmem_size=2
+finegrain_cpu_speed=1024
+cpu_type=68000
+cpu_compatible=true
+accuracy=2
+log_illegal_mem=false
+kbd_lang=us

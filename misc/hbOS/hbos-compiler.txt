@@ -1,0 +1,5 @@
+Using built-in specs.
+Target: i386-homebrew-linux-uclibc
+Configured with: ../configure --prefix=/usr/ --build=x86_64-provider-linux-gnu --host=i386-homebrew-linux-uclibc --target=i386-homebrew-linux-uclibc --enable-clocale=uclibc --enable-languages=c --disable-__cxa_atexit --with-sysroot=/ --disable-nls --disable-mudflap --disable-libssp --enable-threads --disable-libgomp --enable-shared --with-gnu-as --with-gnu-ld
+Thread model: posix
+gcc version 4.4.7 (GCC) 

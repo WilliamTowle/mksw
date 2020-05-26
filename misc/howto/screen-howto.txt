@@ -1,0 +1,51 @@
+For this article, I have chosen to discuss the 'screen' utility
+http://www.gnu.org/software/screen/
+which I have recently been installing in my live Debian images
+https://dunedlin.wordpress.com/2014/02/25/debian-a-live-usb-primer/
+
+screen v4.0.3 can also be buit under my homebrew distribution (if appropriately
+patched
+http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/app-misc/screen/files/
+), but the utilities for reading the battery aren't ready yet
+
+https://packages.debian.org/search?keywords=acpi
+
+---
+
+|http://ftp.gnu.org/gnu/screen/screen-4.0.3.tar.gz
+|
+|With 2x patches;
+|1) to prevent 'struct event' redefinition in sched.h
+|...at https://raw.githubusercontent.com/SIFTeam/openembedded/master/recipes/screen/screen-4.0.3/sched.patch
+|2) to avoid stropts.h inclusion by pty.c
+|...at http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/app-misc/screen/files/4.0.2-no-pty.patch?revision=1.1
+|
+|[alternatives at]
+|URLS+= https://raw.githubusercontent.com/SIFTeam/openembedded/master/recipes/screen/screen-4.0.3/sched.patch
+|URLS+= https://raw.githubusercontent.com/SIFTeam/openembedded/master/recipes/screen/screen-4.0.3/no-stropts.patch
+|
+|...
+|
+|libtool-1.5.26
+|pkg-config-0.23
+|ncurses-5.9
+|screen-4.0.3 ... or screen-4.2.1?
+|
+|Configure needs to locate the ncurses headers (** iffy)
+|		CFLAGS='-I'/var/tmp/mksw-temp/toolchain'/usr/include' \
+|		LDFLAGS='-L'/var/tmp/mksw-temp/toolchain'/usr/lib' \
+|		./configure \
+|			--prefix=/var/tmp/mksw-temp/toolchain/usr \
+|			|| exit 1 ;\
+|
+|
+|Simply build and install:
+|		make \
+|		make install \
+|
+|
+|Run:
+|	./toolchain/usr/bin/screen
+|Fails because:
+|	No more PTYs
+|:

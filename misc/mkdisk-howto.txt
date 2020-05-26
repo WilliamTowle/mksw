@@ -1,0 +1,53 @@
+HOWTO
+=====
+
+Reasons
+-------
+bootable CD
+
+
+Requirements
+------------
+
+kernels/filesystems or disk images
+memdisk (syslinux 3.86); nasm (2.10rc2)
+memtest86+ (v4.00)
+dvdrtools (v0.2.1)
+
+
+Method
+------
+
+Create staging directory
+
+'boot', with kernels, etc
+
+boot/isolinux/content.dpy - plaintext list (colour codes supported)
+
+boot/isolinux/isolinux.cfg - configuration
+
+DISPLAY boot.dpy
+F1 boot.dpy
+
+LABEL skatos
+	KERNEL /boot/utils/memdisk
+	APPEND initrd=/boot/skatos.dgz
+
+Create toolchain:
+./scripts/mkiso.sh maketc [PATH_TO_TFTPDEV]
+
+(OS gcc is not v4? you need an updated compiler...)
+	NATIVE_GCC_VERMAJ=4 ./scripts/mkiso.sh maketc [PATH_TO_TFTPDEV]
+
+Create filesystem
+
+Copy memdisk if necesssary
+
+./scripts/mkiso.sh makefs FSIMAGE FSMASTERDIR
+	cp ${SYSLDIR}/isolinux.bin ${FSROOTDIR}/${BOOTPATH}
+
+	${MKISOFS} \
+		-rational-rock -o ${FSIMAGE} \
+		-b ${BOOTPATH}/isolinux.bin -c ${BOOTPATH}/boot.cat \
+		-no-emul-boot -boot-load-size 4 -boot-info-table \
+		${FSROOTDIR}

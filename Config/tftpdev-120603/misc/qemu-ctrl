@@ -1,0 +1,86 @@
+#!/bin/sh
+
+if [ -z "${QEMU}" ] ; then
+	case $0 in
+	/*)	QEMU=`dirname $0`/toolchain/usr/bin/qemu ;;
+	*)	QEMU=`pwd`/toolchain/usr/bin/qemu ;;
+	esac
+fi
+
+# -no-kqemu obsoleted
+#[ -z "${QARGS}" ] && QARGS='-m 16 -no-kqemu'
+[ -z "${QARGS}" ] && QARGS='-m 32'
+
+if [ -z "$1" ] ; then
+	echo "$0: Need DRIVESPEC and DRIVEFILE[s]" 1>&2
+	exit 1
+else
+	DRIVESPEC=$1
+	shift
+
+	# first letter sets boot device
+	case ${DRIVESPEC} in
+	a*)	# floppy
+		QARGS="${QARGS} -boot a"
+	;;
+	c*)	# HDD
+		QARGS="${QARGS} -boot c"
+	;;
+	d*)	# CD/DVD (ISO)
+		QARGS="${QARGS} -boot d"
+	;;
+	k*) ;;	# nothing to add
+	*)
+		echo "$0: Unexpected DRIVESPEC ${DRIVESPEC}" 1>&2
+		exit 1
+	;;
+	esac
+
+	while [ "${DRIVESPEC}" ] ; do
+		case ${DRIVESPEC} in
+		a*)
+			QARGS="${QARGS} -fda $1"
+			shift
+		;;
+		b*)
+			QARGS="${QARGS} -fdb $1"
+			shift
+		;;
+		c*)
+			QARGS="${QARGS} -hda $1"
+			shift
+		;;
+		d*)
+			QARGS="${QARGS} -cdrom $1"
+			shift
+		;;
+		h*)
+			QARGS="${QARGS} -hda $1"
+			shift
+		;;
+		c*)
+			QARGS="${QARGS} -cdrom $1"
+			shift
+		;;
+		k*)	# kernel
+			QARGS="${QARGS} -kernel $1"
+			shift
+		;;
+		i*)	# initrd for kernel
+			QARGS="${QARGS} -initrd $1"
+			shift
+		;;
+		+*)	# 'append'
+			QARGS="${QARGS} -append '$1'"
+			shift
+		;;
+		*)
+			echo "$0: Unexpected DRIVESPEC ${DRIVESPEC}" 1>&2
+			exit 1
+		;;
+		esac
+		DRIVESPEC=`echo ${DRIVESPEC} | cut -c2-`
+	done
+fi
+
+${ECHO} ${QEMU} ${QARGS}

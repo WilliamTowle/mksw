@@ -1,0 +1,5 @@
+default initrd
+
+label initrd
+	kernel vmlinuz
+	initrd testrd

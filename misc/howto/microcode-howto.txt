@@ -1,0 +1,68 @@
+Intel released new CPU microcode ~2005
+
+There is a 'microcode-ctl' package
+
+Requires kernel to have "/dev/cpu/microcode - Intel IA32 CPU microcode
+support" under "Processor type and features" { CONFIG_MICROCODE=y }
+
+http://urbanmyth.org/microcode/ucode/intel-ia32microcode-29Aug2005.txt.bz2
+Decompress this and rename as /etc/microcode.dat 
+Run /etc/init.d/microcode_ctl start
+
+...also via http://downloadcenter.intel.com/SearchResult.aspx?lang=eng&keyword=microcode
+
+Will see something like "microcode: CPU0 updated from revision 0x17 to
+0x18, date = 10172004"
+
+-----
+
+Debian has 'microcode.ctl' package (transitional, contains changelog
+and copyright file), with dependencies on 'intel-microcode' and
+'iucode-tool'. In order to install these, it is necessary to have
+'contrib' and 'non-free' software repositories for the tool and the
+data respectively.
+
+Note that debian's microcode.ctl generates a new initrd.img; it will
+replace the old one, having indicated that "intel-microcode: microcode
+will be updated at next boot"
+	update-initramfs: Generating /boot/initrd.img-3.16.0-4-686-pae
+
+
+...Need to keep packages installed in order to reapply updates each time
+the system starts from cold, or resumes from suspend/hibernation.
+
+Arch linux has multi-part initrd images, requiring the following in
+grub.cfg:
+	echo	'Loading initial ramdisk ...'
+	initrd	/intel-ucode.img /initramfs-linux.img
+
+> # iucode_tool --scan-system -vv
+> iucode_tool: cpuid kernel driver unavailable, cannot scan system processor signatures
+> # modprobe cpuid
+> # iucode_tool --scan-system -vv
+[...]
+
+Verify with `dmesg | grep microcode`
+
+https://wiki.archlinux.org/index.php/Microcode#Enabling_Intel_early_microcode_loading_in_custom_kernels:
+CONFIG_MICROCODE=y
+CONFIG_MICROCODE_INTEL=y
+CONFIG_MICROCODE_INTEL_EARLY=y
+CONFIG_MICROCODE_EARLY=y
+
+-----
+
+* findings
+- frankii is a(n underclocked) GenuineIntel Celeron 900 with ucode 0x18
+- diitto is a GenuineIntel Celeron, has ucode 0x20
+- jessie codelist has only ucode 0x18 for this CPU ("signature 0x000006d6")
+
+-- https://packages.debian.org/wheezy/microcode.ctl
+-- https://packages.debian.org/wheezy/intel-microcode
+-- https://packages.debian.org/wheezy/iucode-tool
+-- http://http.debian.net/debian/pool/contrib/i/iucode-tool/iucode-tool_0.8.3.orig.tar.bz2
+
+-- http://www.amd64.org/microcode.html
+-- https://downloadcenter.intel.com/download/24290
+-- http://inertiawar.com/microcode/
+-- intel vs AMD: https://www.kernel.org/doc/Documentation/x86/early-microcode.txt

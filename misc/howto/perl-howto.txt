@@ -1,0 +1,32 @@
+* perl howto:
+ 19 +# - UCLIBC_HAS_{LOCALE|WCHAR} required by libX11
+ 20 +# - testing LINUXTHREADS_NEW, HAS_THREADS_NATIVE required by pixman?
+ 21 +# - testing UCLIBC_HAS_SSP, required by perl?
+
+* previous: "Web Pages with Perl and Template::Toolkit"
+- at http://dunedlin.wordpress.com/2011/02/28/web-pages-with-perl-and-templatetoolkit/
+
+* native build:
+		./Configure -des -Dprefix=${NTI_TC_ROOT}/usr \
+			-Dcc=`which gcc` \
+			|| exit 1 \
+
+* cross compilation:
+- buildroot uses "perlcross" -- http://download.berlios.de/perlcross
+
+* perllinux - http://freecode.com/projects/perllinux
+Curses-1.06.tar.gz.url                Term-Screen-1.02.tar.gz
+IO-Stty-.02.tar.gz                    Term-Screen-1.02.tar.gz.url
+IO-Stty-.02.tar.gz.url                ncurses-5.4.tar.gz.url
+Perl-Tidy-20031021.tar.gz             perl-5.8.3.tar.gz
+Perl-Tidy-20031021.tar.gz.url         perl-5.8.3.tar.gz.url
+Sys-Mknod-0.02.tar.gz                 psh-1.8.tar.gz
+Sys-Mknod-0.02.tar.gz.url             psh-1.8.tar.gz.url
+Term-ReadLine-Perl-1.0203.tar.gz      uClibc-0.9.26.tar.bz2
+Term-ReadLine-Perl-1.0203.tar.gz.url  uClibc-0.9.26.tar.bz2.url
+
+* Perl Power Tools
+- at: http://search.cpan.org/CPAN/authors/id/C/CW/CWEST/ppt-0.14.tar.gz
+		perl Makefile.PL PREFIX=${NTI_TC_ROOT}/usr/local || exit 1
+		make install
+- NB: likely to run the wrong perl binary?

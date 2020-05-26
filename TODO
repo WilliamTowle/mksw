@@ -1,0 +1,1696 @@
+2018-03-15
+==========
+
+* fs-uae and dependencies, cont'd:
+-> DONE: codify/trigger 'libXi' dependency
+-> DONE: codify/trigger 'zip' dependency
+-> DONE: supplementary tidying on lib{ffi|Xext}
+
+
+2018-03-14
+==========
+
+* fs-uae and dependencies: more supplementary tidying:
+-> DONE: libgl-mesa: encode X11R7.7 dependencies
+-> DONE: libxslt: bump (to 1.1.32); encode dependency on libxml2 (v2.9.8)
+-> DONE: openal-soft: encode dependency on 'cmake'
+-> DONE: SDL: codify/trigger libXext dependency
+
+* misc: libxslt v1.1.28
+-> DONE: codify/trigger build of libxml2 (new: v2.9.2)
+
+
+2018-03-13
+==========
+
+* emul: introduce fs-uae v2.8.3
+-> DONE: plus dependencies:
+	...cmake v3.10.2
+	...openal-soft v1.18.2
+	...libXext v1.3.1 [X11R7.7]
+-> DONE: supplementary tidying:
+	...SDL: tidy pkg-config setup in v{1.2.15|2.0.8}
+	...SDL: enable X11 support for v2.0.8
+
+
+2018-03-12
+==========
+
+* gui: SDL2
+-> DONE: bump to v2.0.8
+
+* gui: libgl-mesa
+-> DONE: tidy v11.x Makefiles
+-> DONE: introduce v17.0.0
+
+* gui: (lib)X11
+-> DONE: introduce minimal r7.7 tree (libX11 v1.5.0 and dependencies)
+
+
+
+2018-03-08
+==========
+
+* buildtools: libtool
+-> DONE: add LIBTOOL_HOST_TOOL to v1.5.26 (matching v2.x files)
+-> DONE: tidy v2.4.2 configuration
+
+* misc: busybox
+-> DONE: bump to v1.28.1
+
+* tools: xz-utils
+-> DONE: fix liblzma.pc install location
+
+
+2018-03-06
+==========
+
+* gui: SDL
+-> DONE: fix SDL[2] v2.0.x build rules
+
+* misc: busybox
+-> DONE: bump to v1.28.1
+
+* various - glib and dependencies
+-> DONE: new gettext - v0.19.8.1
+-> DONE: new glib - v2.55.2
+-> DONE: new libiconv - v1.15
+-> DONE: new zlib - v1.2.11
+
+
+2018-03-05
+==========
+
+* emul: uae
+-> TODO: not building under Debian 'sid' ... replace?
+- maybe with https://github.com/keirf/e-uae/archive/master.zip
+	...fails to 'autoconf' - src/sysconf.h.in missing?
+- maybe with archive via http://aminet.net/package/misc/emu/janus-uae-src
+	...fails: wants 'automake' but is missing a Makefile.in?
+- notes:
+	0.8.29-WIP4 janus kierf versions have 'src'
+	072B_source directory tree has been flattened
+	janus has additional writelog.c (in readdisk_SOURCES)
+
+
+2018-02-14
+==========
+
+* gui: xpra
+-> DONE: basic Makefile
+-> TODO: build phase needs 'cython'
+
+
+2018-02-08
+==========
+
+* gui: fbvnc
+-> DONE: introduce new 'fbvnc'
+
+* gui: directvnc/DirecFB
+-> DONE: sanitise build/dependencies (cont'd)
+
+| - tall black window on white background, odd cursor colour flicker
+| - start x11vnc remotely with `x11vnc -nopw -auth /var/lib/lightdm/root/:0 -display :0`
+| - problem with overwriting other virtual consoles?
+ 
+* misc: busybox
+-> DONE: introduce v1.28.0
+
+
+2018-02-06
+==========
+
+* gui: DirectFB
+-> DONE: sanitise DirectFB/examples configuration
+
+* gui: libjpeg-turbo
+-> DONE: introduce; build
+
+
+2018-02-05
+==========
+
+* audvid: jpegsrc
+-> DONE: fix v7/8/9 install phase
+
+* audvid: libpng
+-> DONE: fix URLs
+
+* buildtools: nasm
+-> DONE: introduce v2.13
+
+* gui: DirectFB
+-> DONE: introduce DirectFB v1.2.10 and -examples v1.2.0
+
+2018-02-02
+==========
+
+* gui: directvnc v0.7.5:
+-> TODO: "type defaults to 'int'" when building :(
+
+* gui: directvnc v0.7.6:
+-> DONE: introduce config
+-> DONE: fix CFLAGS/LDFLAGS to find jpeglib.h
+-> TODO: axiom builds; hangs with black screen?
+
+
+2018-01-19
+==========
+
+* gui: treewm v0.4.5
+-> DONE: fix build problems with newer gcc and {m|re}alloc() prototype
+
+* gui: uwm
+-> DONE: introduce v2010-{10-20-16|11-20-21}
+-> TODO: both v2010-* versions reference "undeclared" constants
+-> DONE: fix v0.30 installation failure
+
+
+2018-01-15
+==========
+
+* Xnest and dependencies:
+-> DONE: complete build/deps for X11R7.6 xorg-server
+	..."Failed to compile keymap"
+-> TODO: "undefined symbol: _XGetRequest" (via libXrender) in X11R7.5?
+
+
+2018-01-10
+==========
+
+* buildtools
+-> DONE: z80asm: fix naming/URL
+-> TODO: z80-asm: v2.3.7 - equivalent to 'z80asm'?
+-> TODO: z80dasm? -- https://www.tablix.org/~avian/z80dasm/
+
+
+2017-12-22
+==========
+
+* game: rezerwar
+-> DONE: remove Xdamage dependency from SDL
+	...missing explanation for dependencies (maybe window managers?)
+	...libvorbis version reverted (1.3.5 -> 1.3.3) due to missing sources
+
+* libpng: now v1.6.34
+-> DONE: build test
+
+* x11-wm
+-> DONE: add 'matchbox-panel'
+	...dependencies include gtk+ -> make 'nui' version?
+	...useful to have "Xnest" for testing purposes
+
+
+2017-11-20
+==========
+
+* hwtools
+-> TODO: build, test usbutils v009
+	...fix 'libusb' build trigger etc.
+	...tests for libusb-1.0 >= 1.0.9 - failing
+
+
+2017-11-10
+==========
+
+* audio: alsa-{lib|utils}
+-> DONE: bump to v1.1.4.1/1.1.4
+
+
+2017-11-01
+==========
+
+* freetype2
+-> DONE: bump - to v2.8.1
+
+* gui: wmctrl
+-> DONE: added - at v1.07
+
+
+2017-10-31
+==========
+
+* x11-wm
+-> DONE: introduce 'heliwm' and 'karmen'/'windwm'
+
+
+2017-10-30
+==========
+
+* x11-wm
+-> DONE: introduce 'piewm'
+	...fails with segmentation fault
+
+
+2017-10-26
+==========
+
+* osboot: seaBIOS
+	...build info at http://seabios.org/Developer_Documentation
+	...build as coreboot payload: http://www.coreboot.org/SeaBIOS
+-> DONE: support for v1.10.0 tarball build
+
+
+2017-10-25
+==========
+
+* gui: nterm/nanoterm
+-> DONE: basic Makefile with build->rebuild test
+
+
+2017-10-24
+==========
+
+* network
+-> DONE: bump/build dropbear - now v2017.75
+-> DONE: bump/build dnsmasq - now v2.78
+
+* tools
+-> DONE: bump/build dos2unix - now v7.4.0
+-> DONE: build/build file - now v5.32
+
+
+2017-09-22
+==========
+
+* add 'e2undel' (at v0.82)
+
+
+2017-09-15
+==========
+
+* network: rtl8192cu-fixes
+-> DONE: build test
+	...install test: 8192cu.ko appears under /lib/modules
+	...want a wheezy baseline to put modules and new initrd into
+
+
+2017-09-06
+==========
+
+* audvid: libtiff
+-> DONE: bump to v4.0.8; fix download URL
+
+* gui: xv
+-> DONE: fix build with (integrated) 'tiff' support
+
+
+2017-09-05
+==========
+
+* gui: xv (jumbo-notiff patched version)
+-> DONE: fix Makefile mangling/build problem with prototypes
+
+
+2017-08-30
+==========
+
+* buildtools:
+-> DONE: additional dependencies for dpkg v1.18.24 standalone build
+
+* x11-misc: xf86-input-wacom
+-> DONE: make debian package [dpkg-deb --build NAME_MAJ.MIN-REV]
+	...http://www.sj-vs.net/creating-a-simple-debian-deb-package-based-on-a-directory-structure/
+	...https://ubuntuforums.org/showthread.php?t=910717
+
+
+2017-08-29
+==========
+
+* x11-misc: xf86-input-wacom
+	...due to axiom-sid failure using Debian version "0.34.0-1"
+-> DONE: add 'dpkg-deb' alias; move to 'buildtools'
+
+
+2017-08-25
+==========
+
+* x11-misc: xf86-input-wacom
+-> DONE: rework Makefile to suit 'all-nui' (system-native) build
+-> DONE: notes on needing {libudev|xutils|xerver-xorg}-dev packages
+
+
+2017-08-24
+==========
+
+* network: rtl8192cu-fixes
+-> DONE: differentiate old/new by git/hub user
+
+* x11-misc: xf86-input-wacom
+-> DONE: initial Makefile
+
+
+2017-08-22
+==========
+
+* misc
+-> DONE: (re)introduce sdparm - now v1.10
+
+* tools
+-> DONE: (re)introduce patchutils - now v0.3.4
+
+
+2017-08-21
+==========
+
+* audvid: ftgl
+-> DONE: basic Makefile for earlier (stable) version - 2.1.2
+-> TODO: have ftgl.pc, but not installed
+
+* game
+-> TODO: (re)introduce 'zaz'
+	...with 'ftgl' dependency, but finds 2.0.5(?!)/wants 2.1.3+
+
+
+2017-08-09
+==========
+
+* game: (re)introduce 'linball'
+	...builds but lacks 'install' rule
+
+* gui
+-> TODO: no downloadable source for pv v0.5.4
+
+
+2017-08-04
+==========
+
+* zwm
+-> DONE: add SDL_{image|mixer} dependencies
+-> TODO: "error: 'CZSDL_WM' has not been declared"
+	...build errors due to pointer-to-int casting
+
+
+2017-08-03
+==========
+
+* audvid: smpeg 0.4.5:
+-> DONE: builds to completion after 'hufftable' code fix
+-> DONE: fix 'smpeg-config' script - has direct 'pkg-config' reference
+
+
+2017-08-01
+==========
+
+* audvid: smpeg 0.4.4:
+-> TODO: is missing "audio/libaudio.la" build target
+
+
+2017-07-25
+==========
+
+* osboot:
+-> DONE: introduce 'coreboot', 'libreboot', 'seabios' build trees
+	...see also https://sourceforge.net/p/boot-repair/home/Home/
+- coreboot:
+	...suggests 'make crossgcc' before 'make'
+	...suggests GNAT (Ada compiler) required for graphics init (!!)
+- das-uboot:
+	...CONFIG_{MMC|DM_MMC} (and CONFIG_CMD_MMC) not normally enabled
+	...creates "u-boot" as ELF binary
+- other:
+	...'redboot'?
+	...'filo' is x86-only and creates an "ELF boot image"
+	...'tianocore' (UEFI implementation)
+	...syslinux v6+ can be built to be EFI aware
+
+* syslinux
+-> TODO: v5.01 build fails to find 'reboot' (? memtest)
+-> DONE: noted dependency on 'gcc-multilib' install (in v6.x build)
+-> TODO: v6.03 bails - "error: unknown type name 'wchar_t'"
+
+
+2017-07-20
+==========
+
+* audvid:
+- smpeg2
+-> DONE: smpeg2 - build for v2.0.0 (against SDL 2.0.5)
+
+* gui:
+- mesa
+-> DONE: collate previous Makefiles
+-> DONE: full (probably naive?) v12.0.6 build
+- SDL
+-> DONE: bump SDLv2 to v2.0.5
+- zwm
+-> DONE: includes for lib{Xfixes|Xxf86vm}
+-> DONE: dependency on 'nti-libgl-mesa'
+
+
+2017-07-19
+==========
+
+* dosfstools:
+-> DONE: fix build for v4.0
+-> DONE: "new" Makefile for v4.1
+
+* tools:
+-> DONE: catdoc now v0.95
+
+
+2017-05-03
+==========
+
+* hwtools
+-> DONE: bump to bluez v5.44
+-> DONE: build starts with '--disable-obex'
+
+
+2017-04-21
+==========
+
+* buildtools: nasm
+-> DONE: bump to v2.13rc21
+
+* gui: skatoswm
+-> DONE: v1.0
+
+* gui: other WM options:
+	antiwm/ratpoison
+	matchbox?
+	...other: xhelper, Xpra
+	...build Xpra
+
+	
+2017-04-19
+==========
+
+* gui: amiwm
+-> DONE: basic Makefile for v0.21pl2
+
+* gui: jwm
+-> DONE: basic Makefile for v2.3.6
+-> TODO: builds against system-native X11
+
+* gui: perlwm
+-> DONE: basic Makefile for v0.0.7
+-> TODO: uncodified dependency on X11:Protocol
+
+
+2017-04-18
+==========
+
+* gui: xcb-util
+-> DONE: basic Makefile with build-rebuild ...for v0.3.0
+-> DONE: need xcb-util and xcb-util-wm v0.3.8+
+
+
+2017-04-12
+==========
+
+* network: openssl
+-> DONE: fix v1.1.0e 'install_engines' (pre)configuration
+
+* misc: qingy
+-> DONE: dependency on 'openssl'
+-> DONE: configure for 64-bit (add --disable-optimizations)
+-> DONE: test build against DirectFB
+-> TODO: unaddressed:
+	...wants libXss for X11 screensaver? (...or '--disable-x-support')
+	...wants old openssl datatypes (...or '--enable-crypto=none')
+
+
+2017-04-11
+==========
+
+* gui: DFBTerm/DirectGB-SDL
+-> DONE: build option "DIRECTFB_WITH_X11"
+	...can show DFBTerm works
+	...some examples work, but some input formats not supported
+-> DONE: adjust DFBTerm, SaWMan dependencies
+	...SaWMan build fails: "error: template with C linkage" [Types++.h]
+-> TODO: DirectFB 1.6.x, 1.7.x hang built against SDL, message:
+	..."UNIMPLEMENTED [fusion_get_fusionee_pid] *** [fusion.c:3517]"
+
+* various
+-> DONE: introduce 'ccrypt'
+-> TODO: introduce 'mcrypt'
+	...config.log complains "cannot open shared object file"
+	...'file' confirms libmcrypt.so.4 -> 64-bit ELF object
+	...libtool problem?? mcrypt expecting 32-bit library??
+
+
+2017-04-10
+==========
+
+* gui: microwindows/nxlib:
+-> DONE: consistent use of '-fPIC' between microwindows/nxlib
+-> TODO: linuxlogo as 'nxlib' test app (v4.20110913--nx.mak)
+	...compiler "cannot create executables"?
+-> TODO: other test app/s?
+	...fMSX? with include(s) of XtoNX.h?
+
+
+2017-04-07
+==========
+
+* systools: strace
+-> DONE: bump test version to v4.16
+-> TODO: had build issue in v4.{11|12|16} building mpers-m32.stamp (...?)
+	...NB. v4.10 OK
+
+
+2017-04-06
+==========
+
+* emul: fbzx
+-> DONE: fix gcc-5+ link errors by removing bogus 'inline' annotations
+
+* gui: SDL
+-> DONE: fix build-rebuild in SDL v2.x
+-> FUTURE: "Error: operand type mismatch for `movq'" for v1.2.14?
+-> FUTURE: is v1.2.15 'configure' failing to judge X11 capability?
+	...supports SDL_X11_HAVE_XGETREQUEST (in SDL_x11sym.[ch] only??)
+	...discusses workaround suiting X11 prior to v1.4.99.1
+	...not affected by --disable-{video-x11-xrandr|x11-shared}
+	...why /usr/lib/x86_64-linux-gnu/libXxf86vm.so.1 in particular?
+
+
+2017-04-05
+==========
+
+* tools: psftools
+-> DONE: base Makefile for v1.0.7
+
+
+2017-04-03
+==========
+
+* emul: fMSX
+-> DONE: standardise on 'v3x' and 'v4*' Makefiles (v27 handled in v3x)
+-> TODO: fMSX hbOS build test reveals unfixed dependency on X11/Xlib.h
+	...also {Xutil|keysym|extensions/XShm}.h, 'nxlib' includes instead?
+-> FUTURE: fMSX testing needs ROMs: {MSX2|MSX2EXT|DISK}.ROM
+	...available at http://fms.komkon.org/fMSX/ (10x links)
+	...see also http://www.msxarchive.nl/pub/msx/emulator/openMSX/systemroms.zip
+	...boots 'uzix.dsk' OK (via http://uzix.sourceforge.net/uzix2.0/)
+	...Fusix: https://plus.google.com/+AlanCoxLinux/posts/a2jAP7Pz1gj
+
+
+2017-03-30
+==========
+
+* tui: trn
+-> DONE: basic Makefile
+-> TODO: configure (via non-standard './Configure' script)
+	...looks like perl's
+	..."Don't know how to define the term macros!" (no HAS_TERMLIB)
+
+
+2017-03-29
+==========
+
+* buildtools: pkg-config
+-> DONE: new Makefile for v0.29.2
+	...hbOS: "No iconv() implementation found in C library or libiconv"
+
+* misc: gettext
+-> DONE: new Makefile for v0.19.8, depending on pkg-config 0.29.2
+
+* misc: glib
+-> DONE: v2.50.x+: "Could not find libmount" -> --disable-libmount
+-> DONE: v2.50.x+: --with-iconv=gnu works; use
+-> DONE: v2.50.x+: standardise 'gettext' triggering
+-> TODO: may need pcre with Unicode/UTF-8 (...try --with-pcre=internal?)
+-> FUTURE: [glib deps] "format not a string literal" in pkg-config v0.29
+
+
+2017-03-28
+==========
+
+* misc: gpm
+-> DONE: move Makefiles to Config/tui
+-> DONE: new Makefile for v1.99.6/v1.99.7
+	...v1.99.x fails due to not having ./bin/cinit.install.dir
+
+* tui: vwm
+-> DONE: libpseudo, libviper, libverm (necessary dependencies)
+-> TODO: libviper (et al?) not building on hbOS due to glib deps (et al?)
+-> FUTURE: accompanied by "Linsanity" tools:
+	...Linsanity: https://sourceforge.net/projects/linsanity/?source=recommended
+	...may need C++ to compile
+
+
+2017-03-27
+==========
+
+* network: alpine
+-> DONE: fix failure to configure for 'openssl' dependency
+-> TODO: failing: "No PAM support: library files not found"
+	...not '--{without|disable}-pam'
+* network: re-alpine
+-> TODO: failing: "security/pam_appl.h: No such file or directory"
+
+
+2017-03-21
+==========
+
+* gui: microwindows
+-> DONE: enable SERMOUSE on (w/ NOMOUSE off); fix for /dev/mouse
+-> DONE: rudimentary 'install' to /opt
+-> TODO: (ignored) failure in 'vnc' build due to missing Makefile rules
+
+* gui: nanoterm
+-> DONE: basic Makefile for v0.0.2
+-> TODO: test build runs
+	..."Can't create pty /dev/ptyp0"
+-> TODO: Makefile needs to trigger microwindows build/install
+
+
+2017-03-21
+==========
+
+* tui: cfe
+-> DONE: basic Makefile for v0.12
+-> DONE: 'hbOS' build fixes (CFLAGS, LIBS handling)
+
+
+2017-03-20
+==========
+
+* emul: zodiac { MSX emulator}
+-> TODO: doesn't understand configuring for 64-bit host:
+	configure: error: /bin/bash ./config.sub x86_64-unknown-linux-gnu failed
+	...needs to trigger auto{conf|make} for running autogen.sh
+
+* game: pipepanic
+-> DONE: basic (v0.1.3) Makefile and build/install
+
+* gui
+-> TODO: microwindows/nano-X -> dillo? or alternatives?
+	...dillo needs FLTK (deps: Nano-X, nxlib) but is C++
+	...PIXIL Desktop also needs FLTK
+- on OpenTom, which has "customizable menu launcher based on nano-X"
+	...games: Nanobrick
+	...emul: GnuBoy
+- according to 'microwindows' CONTENTS:
+	...nx-ported libraries: NanoGTK, TinyGL, tinywidgets, flnx
+	...nx-compatible: agg (AntiGrain), SDL (v1.2.4a)
+	...lib-ported: dvdview, nxdoom, nxzilla, nxrwin, pixil, smpeg
+- via http://www.open-etech.com/Tech/eGUI/
+	...'ilixi' (needs C++) for DirectFB -- http://www.ilixi.org/
+	...equinox (FLTK) -- http://equinox-project.org/
+
+
+2017-03-13
+==========
+
+* emul:
+-> TODO: openMSX "essential libraries are unavailable"
+	...libpng, libxml2, openGL, SDL/SDL_image, TCL, zlib
+
+
+2017-03-09
+==========
+
+* misc
+-> DONE: port 'tscat' 1.0 build (from original STUBS)
+
+
+2017-03-08
+==========
+
+* tools - unzip
+-> DONE: restore 'v60' and fix patch mechanism
+-> FUTURE: sourceforge has "unzip610b.zip" (**beta**)
+
+
+2017-03-03
+==========
+
+* hwtools
+-> TODO: build, test usbutils v008
+	...needs pkg-config >= v0.9.0, libusb
+
+* systools
+-> DONE: introduce 'time' - at v1.7
+
+
+2017-03-01
+==========
+
+* audvid
+-> DONE: build for alsa-{lib|utils} v1.1.2
+-> DONE: build for mpg123 v1.23.8
+
+* tui
+-> DONE: bump 'screen' to v4.5.1
+-> DONE: hbOS 'screen' build still needs patch for 'struct event' redef'n
+-> TODO: other 'screen' build problems with uClibc's headers present
+
+
+2017-02-27
+==========
+
+* osboot: GrUB v1.99/v2.0
+-> DONE: versions for 64-bit Debian (needs platform-specific LDFLAGS)
+-> TODO: util/grub-mkfont.c needs freetype/ftsynth.h (...hbOS build?)
+
+* xz-utils
+-> DONE: update to v5.2.3
+
+
+2017-01-25
+==========
+
+* portlx: 'mips' support
+- QEmu manual says:
+	...'mips' is a "generic ISA PC-like machine"
+	...'malta' is the "MIPS Malta prototype board" (LE "24Kf" CPU)
+	...'-M mips' (R4K CPU) supports '-m 256' for 256MB RAM (max)
+-> DONE: copy 'malta' defconfig in 'TARGPU=mipsel' case
+	...2.x kernels need genext2fs'd filesystem
+	| /usr/bin/genext2fs -b 2048 -d insttemp/ -D Config/fstools/genext2fs/devnodes.txt fs.ext2
+	| /usr/bin/mksquashfs insttemp fs.squashfs -noappend -all-root -nopad
+	...'mipsel-test' kernel needs TARGCPU=mipsel for 'all-cti' phase
+	| /usr/bin/qemu-system-mipsel -M mips -m 256 -kernel vmlinux-2.6.18-3-qemu -initrd ./fs.ext2 -append 'root=/dev/ram0 init=/bin/sh console=ttyS0'
+	| /usr/bin/qemu-system-mipsel -M malta -m 256 -kernel toolchain/etc/vmlinux-4.0 -initrd /var/tmp/wc170122/plx-48-mipsel.sfs -append 'root=/dev/ram0 init=/bin/sh console=ttyS0'
+
+
+2017-01-24
+==========
+
+* portlx i386 support:
+-> DONE: add BLK_DEV_RAM to enable qemu '-initrd' use (because squashfs)
+	...tcng can safely have +BLK_DEV_INITRD +DEVTMPFS -BLK_DEV_RAM
+
+
+2017-01-20
+==========
+
+* portlx mips support:
+-> DONE: adjustment to kernel/gcc/uClibc builds
+-> TODO: check sanity of kernel config/install
+	...needs to export sane image - not always zImage
+	...check lack of 'QEMU' option does mean it's obsolete!
+-> TODO: check sanity of uClibc build
+	...needs to appropriately target emulated CPU
+	...http://www.linuxfromscratch.org/clfs/view/clfs-3.0/mips/cross-tools/uclibc.html
+-> TODO: check 'file'type of userland executables
+| insttemp/bin/busybox: ELF 32-bit LSB executable, MIPS, MIPS32 version 1 (SYSV), dynamically linked, interpreter /lib/ld-uClibc.so.0, stripped
+-> TODO: re. qemu invoke:
+	'/usr/bin/qemu-system-mips -M mips' is "mips r4k platform"
+	...and to: -append "root=/dev/hda1 console=ttyS0" -nographic 
+
+
+2017-01-19
+==========
+
+* portlx/qemu tests:
+	...don't consistently run 'init' - probably compiler version?
+	...with force of CONFIG_AEABI where -uclibceabi used
+| | 	Creates device with HWaddr 52:54:00:12:34:56
+| | 	DHCP on 10.0.2.2, DNS on 10.0.2.3, SAMBA on 10.0.2.4
+| | 	Can just manually allocate static (10.0.2.x) address
+| | 	Run QEmu with '-redir tcp:5555::80' to redirect ports
+| | 	...
+| | 	squashfs is readonly; can't make /dev, /proc, /sys etc
+| | 	./toolchain/usr/bin/mksquashfs insttemp fs.squashfs -noappend -all-root -nopad
+| | 	./toolchain/usr/bin/qemu-system-arm -M versatilepb -kernel toolchain/etc/vmlinux-3.10.65 -initrd fs.squashfs -append 'root=/dev/ram0'
+| | -> TODO: CLFS static cross compiler targets:
+| |	...says 'all-gcc' and 'all-target-libgcc' can be built together
+| |	...likewise 'install-{gcc|target-libgcc}' can be combined
+
+
+2017-01-18
+==========
+
+* emul: qemu
+-> TODO: qemu v0.12.4 fails to build on xk120
+	...v2.3.0 OK; what difference v2.3.0--v2.mak?
+-> TODO: qemu build says "frame pointer required, but reserved"?
+	...which?
+| -> FUTURE: bison >= 2.4.1 needs newer m4
+
+* portlx
+-> DONE: minimal-change environments for testing gcc v4.6.x and up
+-> TODO: reinstate overlay filesystem support? (NB. kernel version!)
+-> TODO: 'legacy' build with new/old compiler etc
+
+
+2017-01-06
+==========
+
+* tools: bzip2
+-> DONE: update to v1.0.6; build test OK (xk120 jessie)
+
+* tui: frotz
+-> DONE: update to v2.44; build test OK (xk120 jessie)
+
+
+2017-01-04
+==========
+
+* base
+-> TODO: add mawk - now v1.3.4-20161120
+
+* tui
+-> DONE: lynx update to v2.8.9dev.9
+
+
+2016-12-27
+==========
+
+* Config/ENV content:
+-> DONE: updates to {audvid|emul|gui-X11R7.5|fstool|tui}.mak
+-> TODO: want X11 server and dependencies for hbOS test
+
+
+2016-12-23
+==========
+
+* UAE testing: results
+- euae-WIP:
+	...can build with/without SDL
+	...floppy emulation works, HDD emulation doesn't
+- uae v0.8.29, UAE_WITH_SDL/SDL_WITH_X11
+	...has getline() conflict, other prototype problems
+- uae v0.8.29, UAE_WITH_SDL=false
+	..."No graphics system found, don't know what target to use."
+	...testing: fails to "--disable-ui --disable-gtktest"
+
+* fstools: adflib
+-> DONE: suitably old 'automake'
+	...still "No rule to make target '/usr/include/sys/cdefs.h'" for 0.7.10
+-> TODO: needs C++ compiler, perl (via automake/autoconf)
+-> TODO: v0.7.12 build->rebuild (...check 64-bit compatibility?)
+
+
+2016-10-03
+==========
+
+* perl
+-> DONE: new Template::Toolkit import - v2.26
+
+
+2016-08-18
+==========
+
+* audvid
+-> TODO: ffmpeg now v3.1.2
+-> TODO: sox now v14.4.2 - build problems
+
+
+2016-08-17
+==========
+
+* network: Open_AVB
+-> DONE: basic extract/build
+-> DONE: needs CFLAGS/LDFLAGS/LIBS
+-> TODO: no 'install'
+
+
+2016-08-16
+=========
+
+* fstools
+-> DONE: new 'e2fsprogs' version, at 1.43.1
+-> DONE: also 'e2fsprogs-libs'
+
+* network
+-> DONE: introduce 'ethtool' at v4.6 (was for kernel 2.x under tftpdev)
+-> DONE: libpcap (v1.7.4) - because wireshark dependency
+-> DONE: wireshark (v2.1.1)
+-> TODO: see also http://www.linuxfromscratch.org/patches/blfs/svn/libpcap-1.7.4-enable_bluetooth-1.patch
+
+
+2015-04-05
+==========
+
+* network: hostapd
+-> DONE: vanilla 'v2.5' and 'v2.5-rtl' with 'unzip' for patches
+-> TODO: build to completion -> test
+	...container with build-essentials -> build -> install/test
+	...see hostapd.conf.rtl871xdrv?
+
+
+2016-06-28
+==========
+
+* busybox
+-> DONE: latest v1.25.0
+
+
+2016-06-15
+==========
+
+* network
+-> DONE: bump 'wget' to v1.18
+
+* tools
+-> DONE: introduce {c|lun}zip v1.8
+
+
+2016-06-03
+==========
+
+* libiconv
+-> DONE: patch v1.14 to build on modern systems
+
+
+2015-05-10
+==========
+
+* network: openssh
+-> DONE: bump to v7.2p2
+-> TODO: builds to completion, but pre-install test fails (since v7.2p2)
+
+* network: openssl
+-> DONE: bump to v1.0.{1t|2h}
+
+
+2015-05-09
+==========
+
+* lshw
+-> DONE: bump to vB.02.18
+-> DONE: naive cross compilation support
+
+
+2015-04-05
+==========
+
+* tools: lha/lhasa
+-> DONE: lha via Debian URL
+-> DONE: lha via gentoo URL (now v1.14i-ac20050924p1)
+-> DONE: lhasa new version (v0.3.1)
+
+
+2015-03-30
+==========
+
+* audvid/libpulse and dependencies
+-> DONE: wants intltool
+-> TODO: wants json-c
+
+
+2015-03-29
+==========
+
+* gui: xosview
+-> DONE: reintroduce at v1.9.1 (using Ubuntu port)
+-> DONE: fix xosview v1.17 broken -I... (fails to find 'MeterMaker.h')
+-> DONE: merge v1.9.1/v1.17 build rules
+
+* gui: various
+-> DONE: XDESKTOPWAVES_NEEDS_X11
+-> DONE: XSNOW_NEEDS_X11
+
+
+2015-03-19
+==========
+
+* miscellaneous build tests
+-> DONE: antiword, catdoc
+
+* hwtools: bios-cmos
+-> DONE: update URL, 'configure' phase
+-> TODO: needs asm/io.h for cmosdump.c
+
+* miscellaneous build fixes
+-> DONE: ctris configure/build
+-> DONE: ctris configure/build
+-> DONE: vttest v20140305
+
+
+2015-03-15
+==========
+
+* hwtools
+-> TODO: bios-cmos a) builds with 'cc'; b) is sensitive to host word size
+
+* syslinux
+	...missing /usr/include/asm (but have [...]asm/generic)
+-> TODO: 'nasm' dependency/ies are out of date (if 2.12 works?)
+-> TODO: syslinux v5.10 build failure (asm/socket.h for upload_tftp.o)
+-> TODO: syslinux v6.03 build failure (asm/socket.h for upload_tftp.o)
+
+* various other
+-> TODO: ...other things from older STUBS releases?
+-> TODO: lynx via [...]/lynx/tarballs/lynx2.8.8rel.2.tar.bz2
+-> TODO: lynx via [...]/lynx/tarballs/lynx2.8.9dev.7.tar.bz2
+
+
+2015-03-09
+==========
+
+* ms-sys
+-> DONE: bump to v2.5.3
+
+
+2015-03-07
+==========
+
+* buildtools: nasm
+-> DONE: bump to v2.12
+
+
+2015-03-01
+==========
+
+* network: openssl
+-> DONE: bump 1.0.1 to v1.0.1s
+-> DONE: bump 1.0.2 to v1.0.2g
+-> DONE: sanitise perl dependency lines/'make depend' rules
+
+
+2015-02-15
+==========
+
+* buildtools: flex
+-> DONE: new v2.5.{27|35} URLs
+
+* buildtools: pkg-config
+-> DONE: add '-z muldefs' to fix xk120 (gcc v5?) build
+-> DONE: lib{drm|pciaccess|pthread-stubs} pkg-config dependency
+
+
+2015-02-08
+==========
+
+* buildtools: bison
+-> DONE: add 'flex' dependency to v2.4.1
+
+
+2015-02-03
+==========
+
+* perl: problem building v5.22.0 under hbOS (5.18.2 known good)
+	...others: have 5.18.4, 5.20.3, 5.22.1
+-> DONE: bump to v5.18.4; align openssl dependency
+-> DONE: introduce intermediate version - 5.20.3
+-> TODO: hbOS test for building v5.20.3 (** keep logs **)
+
+...
+
+* gui:
+-> TODO: maybe 'shim', 'vp'
+-> TODO: 'vp' needs suitable URL
+
+* tools: arj
+-> TODO: needs suitable URL
+-> TODO: should autoreconf? Or depend on older auto{make|conf} (with 'ALIGN_POINTERS'?)
+-> TODO: basic v3.10.22 with build->rebuild
+
+
+2015-01-28
+==========
+
+* buildtools
+-> DONE: bison ... bump to 3.0.4; codify 'flex' dependency
+-> DONE: flex .. bump to 2.6.0
+
+* gui: fim
+-> DONE: bump to v0.5-rc0
+-> DONE: backstep for bison/flex dependencies
+-> TODO: ...needs g++ to build lex.yy.c :(
+
+
+2015-01-19
+==========
+
+* mkdisk
+-> DONE: fix up extraction variables/rules in "current" Makefiles
+-> TODO: fix up extraction variables/rules in "pending" Makefiles
+
+
+2015-01-18
+==========
+
+* emul: QEmu
+-> DONE: introduce v2.4.0, replacing v2.3.0
+
+* tui: dr_mario
+-> DONE: basic Makefile for 'dr_mario' (vUNKNOWN)
+-> DONE: check xk120 can download
+-> TODO: check build/rebuild -> install OK
+
+* tui: miscom
+-> DONE: basic Makefile for 'miscom' (vUNKNOWN)
+-> DONE: check xk120 can download
+-> DONE: check build/rebuild -> install OK
+
+
+2015-01-13
+==========
+
+* buildtools
+-> DONE: update libtool to v2.4.6
+-> TODO: buildroot patches applied consistently?
+
+
+2015-01-06
+==========
+
+* game: retry 'vectoroids'
+-> TODO: "WARNING" (from SDL) about not finding directfb.h
+-> TODO: "WARNING" (from SDL) about not finding "Ogg Vorbis library"
+
+
+2015-01-04
+==========
+
+* gui: SDL_bgi
+-> DONE: update to v2.0.5 (TODO: build something dependent on it)
+
+
+2015-01-01
+==========
+
+* x11r7.5/7.6/misc
+-> DONE: with 'xlock' specific to X11 version
+
+
+2015-12-15
+==========
+
+* audvid
+-> DONE: introduce cdrdao - v1.2.3
+-> DONE: 'lame' fix "inlining failed ... target specific option mismatch"
+-> DONE: creating cds ... has been blogged
+
+
+2015-12-07
+==========
+
+* audvid
+-> DONE: new ffmpeg - v2.8.3
+
+
+2015-10-21
+==========
+
+* hwtools
+-> DONE: new 'cpuid'
+
+* xclock
+-> DONE: update URLs/method in Makefile, X11R7.5 dependencies
+
+
+2015-06-29
+==========
+
+* kexec-tools
+-> DONE: new Makefile, v2.0.10
+-> DONE: successful cross compilation into 'insttemp' dir?
+
+
+2015-06-18
+==========
+
+* twin
+-> DONE: update Makefile with new URL, rules/layout
+	...hbOS build fails with "multiple target patterns"
+
+
+2015-06-10
+==========
+
+* hwtools: cpuid (v20150606)
+-> DONE: basic Makefile
+
+* hwtools: iucode-tool (v0.8.3)
+-> DONE: basic Makefile
+
+
+2015-05-19
+==========
+
+* audvid:
+-> DONE: 'ffmpeg' basic Makefile - now v2.x (2015-W21: v2.6.3)
+-> DONE: 'lame' basic Makefile - now v3.99.5
+
+
+2015-05-09
+==========
+
+* uade build
+-> DONE: dependencies - libao now v1.2.0
+
+
+2015-05-07
+==========
+
+* dropbear
+-> DONE: v2015-67.mak - build
+-> TODO: 'dbclient' vs 'dropbear' (server?) test - needs LD_LIBRARY_PATH
+
+
+2015-03-26
+==========
+
+* openssh (network)
+-> DONE: update: to v6.8p1
+
+
+2015-02-02
+==========
+
+* tools - convmv
+-> DONE: v1.15 repeatable build/install
+
+
+2014-12-10
+==========
+
+* ansifilter
+-> DONE: add - v1.11
+-> DONE: build->rebuild
+
+* mawk
+-> DONE: v1.3.3 -> v1.3.4
+-> DONE: support for v1.3.4-20141206
+
+
+2014-11-18
+==========
+
+* xk120 kernel
+-> DONE: add enable of MMC_RICOH_MMC
+-> TODO: test build with MMC_RICOH_MMC makes xk120 see rootfs
+-> TODO: update misc/hbOS kernel [and uClibc] config/s; compare
+- wireless needs iwlwifi-6000-4.ucode (not found; debian: 'firmware-iwlwifi')
+
+
+2014-11-05
+==========
+
+* emul
+-> DONE: update 'bochs' Makefile to 2.6.7
+-> TODO: full 'bochs' build needs X11 includes
+
+
+2014-10-27
+==========
+
+* fbvnc
+-> DONE: build->rebuild for 20130314
+
+* SDL_vnc, w/ test app
+-> DONE: v1.0.0 install
+-> DONE: 'test' app build
+
+
+2014-09-26
+==========
+
+* bash
+-> DONE: basic v4.3
+-> TODO: "shellshock" patch(es) [bash43-025+] do not apply directly
+
+
+2014-09-17
+==========
+
+* grep
+-> DONE: build v2.20
+
+
+2014-08-23
+==========
+
+* X11/xorg-server and xf86-video-intel/libdrm
+- xf86atomic.h produces the error (...under hbOS suddenly???)
+- needs/affected by HAVE_LIBDRM_ATOMIC_PRIMITIVES, HAS_LIB_ATOMIC_OPS?
+-> TODO: buildroot suggests '--enable-intel' w/ 'libatomic_ops' dependency
+
+* libdrm/libatomic_ops (v1.2)
+-> TODO: undefined references to  `__sync_val_compare_and_swap_4',  `__sync_fetch_and_add_4'
+- gcc 4.4.x is supposed to support the atomic intrinsics
+- may need "-lgcc_s" (stackoverflow.com)
+- [glibc] due to absent i386 support ("pass -march=i486 to the compiler...")?
+
+
+2014-08-06
+==========
+
+* blog next
+- cover /etc/fb.modes now DRM/KMS working at 800x480 (...new SDL example?)
+- cover jinamp, now we have 'ssh'; mention/resurrect firefly?
+- xclock (in order to cover libX11); then on to xorg-server
+
+
+2014-08-05
+==========
+
+* fbv
+-> DONE: hbOS jpeglib.h dependency and 'configure' tweaks
+-> TODO: add png support ... articles include jpeg viewer (...check?)
+-> DONE: add png support
+
+
+2014-07-24
+==========
+
+* other testing
+-> TODO: zgv builds ... but complains about resolution
+
+
+2014-07-17
+==========
+
+* e2fsprogs v1.42.11:
+-> DONE: rebuild-tested Makefile update
+-> TODO: e2fsprogs-libs: missing 'ext2_fs.h' header (making mkquota.o)
+
+
+2014-07-03
+==========
+
+* libX11/xorg-server under hbOS 3.4.x/0.9.33 (WCHAR, no LOCALE)
+-> DONE: libX11 build test
+-> DONE: xorg-server build test (...1.7.1-xorgfb? or other?)
+-> TODO: mrxvt build test (or other?)
+-> TODO: possible xorg-server -> libfontenc.so -> gz{close,getc,open} link failure?
+
+
+2014-06-25
+==========
+
+* new: ntp (deps: libcap; attr)
+-> TODO: move to 4.2.7p26 required for security reasons
+-> TODO: configure with --sysconfdir=/etc --with-binsubdir=sbin
+
+
+2014-06-22
+==========
+
+* mikmod/libmikmod
+-> DONE: mikmod bump to 3.2.5; libmikmod bump to 3.3.6
+-> DONE: curses.h integration and rebuilds
+-> DONE: needs to set sane CFLAGS for finding ncurses.h
+
+
+2016-06-21
+==========
+
+* gphoto2
+-> TODO: basic build w/ all deps triggered
+-> DONE: libgphoto2 (v2.5.10)
+-> TODO: gphoto2 link to dependencies
+	..."requires libgphoto2 >= 2.5.10 to build."
+	..."Cannot autodetect popt.h"
+-> TODO: libpopt (v1.16) - 'libpopt' makes 'popt.pc'
+
+2014-06-20
+==========
+
+* kernels
+- mainline: 3.16-rc1 (...)
+- stable: 3.15.1, 3.14.8 (...)
+- longterm: 3.12.22, 3.10.44, 3.4.94 (...)
+-> DONE: temp'ry 3.15.1
+-> TODO: differentiation of Makefiles by mainline/stable/longterm?
+-> TODO: odd "bash: Command not found" sometimes (...during 'mrproper'?)
+
+
+2014-06-16
+==========
+
+* cdrkit v1.1.11
+-> TODO: basic makefile (no 'configure')
+-> TODO: build->rebuild OK
+
+
+2014-06-11
+==========
+
+* diffstat
+-> DONE: bump - now v1.59
+
+* findutils
+-> DONE: bump - now v4.4.2
+
+* gui: fbi
+-> TODO: 'fbi' v1.31 chokes on fbtools.o wanting asm/page.h (TODO: v2.x?)
+
+
+2014-06-10
+==========
+
+* CUSTOM_CROSS=y support: findutils/sed/other...?
+-> DONE: identifies "no targets" OK
+-> TODO: 'sed' ... odd link errors
+
+
+2014-06-09
+==========
+
+* audio CD tools/HOWTO
+- typically the ISO-9660 CD standard
+- can use DAO or TAO; DAO avoids introducing gaps between tracks
+- cdrecord/mkisofs/cdparanoia; cdrdao/xcdrdao
+-> cdrdao: needs C++ compiler
+- ffmpeg -i foo.m4a foo.m4a.wav
+
+
+2014-06-03
+==========
+
+* openSSH
+-> DONE: reinstate 'configure' zlib/ssl args?
+-> DONE: bump to v6.6p1; basic build test
+-> DONE: claims of openssl header mismatch
+
+
+2014-04-30
+==========
+
+* Config/base
+-> DONE: legacy findutils, patch, sed, tar build->rebuild OK
+-> DONE: modern coreutils, diffutils, patch, sed
+-> TODO: mawk needs sane 'MATHLIB' configuration option
+-> TODO: sane 'configure' args for all Config/base packages?
+-> TODO: 'grep' and "reconfiguring" ${NTI_TC_ROOT}/share dir
+-> TODO: coreutils build->rebuild OK: futimens issue with v5.97
+-> TODO: diffutils "stack overflow detection" fails with v2.8.7
+
+
+2014-04-12
+==========
+
+* X11
+-> FUTURE: x11proto-xcb has hard Python dependency (>= 2.5) in both cases
+-> TODO: xorg-server -> libfontenc.so -> gz{close,getc,open} link failure?!
+
+
+2014-04-05
+==========
+
+* misc future
+- squashfs/tools would permit initramfs extract under hbOS, if working
+
+
+2014-03-27
+==========
+
+* FUTURE
+...console browser/s (...links2? w3m?) in graphical mode
+...maybe retawq (web browser)
+...maybe jpig (console image viewer) -- freecode URL dead though
+...maybe sudo, wireshark
+...maybe qingy -- http://freecode.com/projects/qingy
+...e2undel -- http://freecode.com/projects/e2undel
+...KVM kernel and suitably-modified QEmu?
+
+
+2014-03-19
+==========
+
+* nsnake
+-> DONE: new version: v1.7 and/or v2.0.0 (needs g++) basic Makefile
+-> DONE: build-rebuild OK
+
+* tui:
+-> DONE: basic 'frotz' Makefile
+-> DONE: 'frotz' build->rebuild test (needs source)
+
+* VNC viewers:
+- DirectVNC: done basic Makefile (...but needs g++?)
+- http://www.tightvnc.com/download.html
+- http://www.realvnc.com/products/free/4.1/download.html
+- http://sourceforge.net/projects/cotvnc/
+- http://www.ultravnc.com/
+- http://www.karlrunge.com/x11vnc/ssvnc.html
+- maybe sdlvnc -- http://git.webos-internals.org/applications/sdlvnc/
+
+
+2014-03-15
+==========
+
+* x11vnc (in tandem with xvfb?):
+-> DONE: Makefile
+-> TODO: build->rebuild OK
+
+
+2014-03-12
+==========
+
+* intltool
+-> DONE: build->rebuild OK with 'XML::Parser' dependency added?
+-> TODO: 'expat' (and other dependencies) using 'libtool' sanely?
+
+* SDL at 800x600?
+-> TODO: 'SDLSasteroids'
+-> TODO: 'drtux' wants SDL_gui.h (...which package??)
+
+
+2014-02-20
+==========
+
+* "hwtools"
+-> DONE: 'hwtools' metafile
+-> DONE: basic bios-cmos, cmospwd, dmidecode Makefiles
+-> DONE: build-rebuild testing for cmospwd, dmidecode
+
+* tcc
+-> DONE: build-rebuild OK
+-> TODO: v0.9.26 test runs
+
+* misc other
+- hexglass -- https://code.google.com/p/hexglass/downloads/list?q=label:Type-Source
+- linuxlogo (gui) -- http://freshmeat.net/projects/ll4/releases/336352
+
+
+2014-02-19
+==========
+
+* svgalib
+-> DONE: fix static vs math.h round() declaration
+-> TODO(?): C library and other (32bit?) compiler issues
+
+
+2014-02-15
+==========
+
+* terminals
+-> TODO: rxvt wants I_PUSH via <sys/stropts.h> (bad - not in uClibc)
+-> TODO: evilvte -> vte has glib/zlib/gettext... deps
+-> TODO: xterm wants curses
+
+
+2014-01-26
+==========
+
+* xorg-server v1.5.1-xdirectfb
+-> TODO: why using v1.7.1 source? (...patches not applicable otherwise?)
+-> TODO: install failure? seems to be no binary
+
+* xorg-server v1.7.1-kdrive
+- installs toolchain/usr/X11R7/bin/Xfbdev
+- consistently fails "FBIOPUT_VSCREENINFO: Invalid argument"
+
+* xorg-server v1.7.1-sdl
+- installs toolchain/usr/X11R7/bin/Xsdl
+- works (but no input) with ':0 -ac -screen 640x480x16x70 -retro'
+
+
+2013-08-20
+==========
+
+* QEmu userland deps:
+- clock_nanosleep() via time.h, UCLIBC_HAS_REALTIME
+- mq_timedreceive() via mqueue.h, UCLIBC_HAS_ADVANCED_REALTIME
+
+
+2013-06-08
+==========
+
+* other libtool sanity
+-> TODO: dubious in libdvdcss?
+
+
+2013-05-31
+==========
+
+* libdvdcss
+-> DONE: basic Makefile
+-> DONE: 'nui' Makefile
+-> TODO: investigate run-time failure
+
+
+2013-05-01
+==========
+
+* debootstrap
+-> TODO: simply `make install` (...needs root permissions) (fakeroot?)
+
+
+2013-02-22
+==========
+
+* jpegsrc
+-> TODO: v7/8d/9 lack 'install-headers' (and/or 'install-lib'?)
+
+
+2013-02-14
+==========
+
+* misc
+-> TODO: setfont -- http://www.kbd-project.org/
+
+
+2013-01-21
+==========
+
+* game: sdlblock
+-> TODO: wants gl/glaux.h ... which is specific to Windows :(
+
+
+2013-01-18
+==========
+
+* libffi 3.0.10 (glib prerequisite)
+-> DONE: simple Makefile
+-> DONE: pkg-config settings
+-> TODO: check LIBTOOL settings?
+
+
+2013-01-17
+==========
+
+* misc: latex2html v2012
+-> DONE: simple Makefile
+-> FUTURE: latex binary location is unclear
+-> TODO: dvips?
+
+* gui (various)
+-> TODO: svgalib problem with 'IF_MASK' in v1.9.25 (...try patched 1.4.x?)
+-> Drill2x -- http://archive.gp2x.de/cgi-bin/cfiles.cgi?0,0,0,0,27,2005
+-> Tux Racer -- http://download.sourceforge.net/tuxracer/tuxracer-0.61.tar.gz
+-> Tux Racer data -- http://download.sourceforge.net/tuxracer/tuxracer-data-0.61.tar.gz
+
+
+2013-01-14
+==========
+
+* tui: vim
+-> DONE: vim build/rebuild OK
+-> TODO: link error (prob. ncurses?) under hbOS
+-> TODO: newer version? options: without gui; tab completion?
+
+
+2013-01-04
+==========
+
+* libxcb devel
+-> TODO: investigate "install xcb-proto, libxcb, xcb-utils [needs gperf]"
+-> TODO: libxcb "needs libXSLT, libXau, libpthread-stubs"
+
+
+2012-11-13
+==========
+
+* pci-utils
+-> DONE: build with "DNS=no" to unrequire "-lresolv"
+
+
+HIGH SCORES
+-----------
+
+rezerwar	55272	2011-04-28
+rezerwar	54052	2013-04-22
+rezerwar	46564	2011-02-23
+rezerwar	30524	2013-01-12

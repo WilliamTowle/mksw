@@ -1,0 +1,123 @@
+## dvdrtools 0.3.1		[ since v0.3.1, 2009-01-26 ]
+## last mod WmT, 2010-09-04	[ (c) and GPLv2 1999-2010 ]
+#
+## ,-----
+## |	Settings
+## +-----
+#
+#ifneq (${HAVE_DVDRTOOLS_CONFIG},y)
+#HAVE_DVDRTOOLS_CONFIG:=y
+#
+#DESCRLIST+= "'nti-dvdrtools' -- dvdrtools"
+#
+#include ${CFG_ROOT}/ENV/ifbuild.env
+#include ${CFG_ROOT}/ENV/native.mak
+#
+#
+#DVDRTOOLS_PKG:=dvdrtools
+#DVDRTOOLS_VER:=0.3.1
+#
+#DVDRTOOLS_SRC:=
+#DVDRTOOLS_SRC+=${SOURCES}/d/dvdrtools_${DVDRTOOLS_VER}.orig.tar.gz
+#
+#DVDRTOOLS_PATH:=dvdrtools-${DVDRTOOLS_VER}
+#
+#URLS+= http://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/pool/multiverse/d/dvdrtools/dvdrtools_0.3.1.orig.tar.gz
+#
+#
+##DEPS:=
+#
+#
+## ,-----
+## |	Extract
+## +-----
+#
+#
+#NTI_DVDRTOOLS_TEMP=nti-dvdrtools-${DVDRTOOLS_VER}
+#
+#NTI_DVDRTOOLS_EXTRACTED=${EXTTEMP}/${NTI_DVDRTOOLS_TEMP}/configure
+#
+#.PHONY: nti-dvdrtools-extracted
+#nti-dvdrtools-extracted: ${NTI_DVDRTOOLS_EXTRACTED}
+#
+#${NTI_DVDRTOOLS_EXTRACTED}:
+#	echo "*** $@ (EXTRACT) ***"
+#	[ ! -d ${EXTTEMP}/${NTI_DVDRTOOLS_TEMP} ] || rm -rf ${EXTTEMP}/${NTI_DVDRTOOLS_TEMP}
+#	make -C ${TOPLEV} extract ARCHIVES=${DVDRTOOLS_SRC}
+#	mv ${EXTTEMP}/dvdrtools-${DVDRTOOLS_VER} ${EXTTEMP}/${NTI_DVDRTOOLS_TEMP}
+#
+#
+## ,-----
+## |	Configure
+## +-----
+#
+#
+#NTI_DVDRTOOLS_CONFIGURED=${EXTTEMP}/${NTI_DVDRTOOLS_TEMP}/config.status
+#
+#${NTI_DVDRTOOLS_CONFIGURED}:
+#	echo "*** $@ (CONFIGURE) ***"
+#	[ ! -d ${EXTTEMP}/${DVDRTOOLS_PATH} ] || rm -rf ${EXTTEMP}/${DVDRTOOLS_PATH}
+#	${MAKE} extract ARCHIVES="$(strip ${DVDRTOOLS_SRC})"
+##	echo "*** PATCHING ***"
+##	( cd ${EXTTEMP} || exit 1 ;\
+##		for PF in ${DVDRTOOLS_PKG}*patch ; do \
+##			cat $${PF} | ( cd ${DVDRTOOLS_PATH} && patch -Np1 - ) || exit 1 ;\
+##			rm -f $${PF} ;\
+##		done \
+##	) || exit 1
+#	[ ! -d ${EXTTEMP}/${NTI_DVDRTOOLS_TEMP} ] || rm -rf ${EXTTEMP}/${NTI_DVDRTOOLS_TEMP}
+#	mv ${EXTTEMP}/${DVDRTOOLS_PATH} ${EXTTEMP}/${NTI_DVDRTOOLS_TEMP}
+#	( cd ${EXTTEMP}/${NTI_DVDRTOOLS_TEMP} || exit 1 ;\
+#	  	CC=${NATIVE_GCC} \
+#	    	  CFLAGS=-O2 \
+#			./configure \
+#			  --prefix=${NTI_TC_ROOT} \
+#			  || exit 1 ;\
+#		[ -r readcd/readcd.c.OLD ] || mv readcd/readcd.c readcd/readcd.c.OLD || exit 1 ;\
+#		cat readcd/readcd.c.OLD \
+#			| sed 's/clone/opt_clone/' \
+#			> readcd/readcd.c \
+#	) || exit 1
+#
+#
+## ,-----
+## |	Build
+## +-----
+#
+#NTI_DVDRTOOLS_BUILT=${EXTTEMP}/${NTI_DVDRTOOLS_TEMP}/mkisofs/mkisofs
+#
+#.PHONY: nti-dvdrtools-built
+#nti-dvdrtools-built: nti-dvdrtools-configured ${NTI_DVDRTOOLS_BUILT}
+#
+#${NTI_DVDRTOOLS_BUILT}: 
+#	echo "*** $@ (BUILD) ***"
+#	( cd ${EXTTEMP}/${NTI_DVDRTOOLS_TEMP} || exit 1 ;\
+#		make || exit 1 \
+#	) || exit 1
+#
+#
+## ,-----
+## |	Install
+## +-----
+#
+#NTI_DVDRTOOLS_INSTALLED=${NTI_TC_ROOT}/usr/bin/mkisofs
+#
+#.PHONY: nti-dvdrtools-installed
+#nti-dvdrtools-installed: nti-dvdrtools-built ${NTI_DVDRTOOLS_INSTALLED}
+#
+#${NTI_DVDRTOOLS_INSTALLED}: 
+#	( cd ${EXTTEMP}/${NTI_DVDRTOOLS_TEMP} || exit 1 ;\
+#		make install || exit 1 \
+#	) || exit 1
+#
+#
+## ,-----
+## |	Entry points
+## +-----
+#
+#.PHONY: nti-dvdrtools
+#nti-dvdrtools: nti-dvdrtools-installed
+#
+#NTARGETS+= nti-dvdrtools
+#
+#endif	# HAVE_DVDRTOOLS_CONFIG

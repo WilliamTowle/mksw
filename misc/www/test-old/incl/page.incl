@@ -1,0 +1,23 @@
+[% PROCESS incl/doctype.incl %]
+<HTML>
+<HEAD>
+[% IF title %]
+<Title>[% title %] [Wills' Projects]</Title>
+[% ELSE %]
+<Title>Wills' Projects</Title>
+[% END %]
+</HEAD>
+
+<BODY>
+
+[% IF title %]
+<h1>Wills' Projects: [% title %]</h1>
+[% ELSE %]
+<h1>Wills' Projects</h1>
+[% END %]
+<hr>
+
+[% content %]
+
+</BODY>
+</HTML>

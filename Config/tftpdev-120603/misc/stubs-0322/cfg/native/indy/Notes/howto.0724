@@ -1,0 +1,152 @@
+PREPARATION:
+	Kernel needs CONFIG_PACKET and CONFIG_FILTER compiled in (or
+	DHCP daemon won't start)
+
+Server: /etc/networks
+	if0	192.168.1.3
+	if1	172.16.1.254
+
+Server: /etc/rc.config
+	IFCONFIG_1="172.16.1.254 broadcast 172.31.255.255 netmask 255.240.0.0"
+
+Server: /etc/hosts
+	172.16.1.254   	fileserv.indynet.localnet	fileserv
+	192.168.1.3    	susebox.basement.localnet 	susebox
+	192.168.1.254	gateway.basement.localnet	gateway
+
+Server: /etc/hosts.allow
+	ALL: 172.16.0.0/20
+
+Server: /etc/resolv.conf
+	nameserver 192.168.1.254
+	search basement.localnet indynet.localnet
+
+Server: /etc/route.conf
+	#
+	# `man 5 route.conf`
+	#
+	# destn		dummy/gateway	netmask		device
+
+	default		192.168.1.254
+
+	127.0.0.0	0.0.0.0		255.255.255.0	lo
+	192.168.1.0	0.0.0.0		255.255.255.0	eth0
+	172.16.0.0	0.0.0.0		255.240.0.0	eth1
+
+	# barred:
+
+	10.0.0.0	0.0.0.0		255.0.0.0	reject
+
+	` /etc/rc.d/route start `
+
+Server: /etc/dhcpd.conf
+
+	## start dhcpd.conf common wills 28/04/2002-02 ##
+
+	default-lease-time 600;
+	max-lease-time 7200;
+	#?! ddns-update-style none;
+	#option subnet-mask 255.255.255.0;
+
+	## end dhcpd.conf common ##
+
+	## start dhcpd.conf eth0/basement wills 28/04/2002-02 ##
+
+	subnet 192.168.1.0 netmask 255.255.255.0 {
+		#server-name "gateway.basement.localnet";
+		server-name "192.168.1.254";
+		option domain-name "basement.localnet";
+
+		option domain-name-servers gateway.basement.localnet;
+		option broadcast-address 192.168.1.255;
+		option routers 192.168.1.254;
+
+		host susebox {
+			fixed-address 192.168.1.3;
+		}
+
+		host gateway {
+			fixed-address 192.168.1.254;
+		}
+	}
+
+	## end dhcpd.conf eth0/basement ##
+
+	## start dhcpd.conf eth1/indynet wills 28/04/2002-02 ##
+
+	subnet 172.16.0.0 netmask 255.240.0.0 {
+		##range omittable for BOOTP provision only
+		#range 172.16.1.1 172.16.1.16;
+		server-name "172.16.1.254";
+
+		option domain-name "indynet.localnet";
+		option domain-name-servers 172.16.1.254;
+
+		host indy {
+			hardware ethernet 08:00:69:08:10:1f;
+			fixed-address 172.16.1.1;
+			#filename "/netbsd";
+			option root-path "/mnt/hdd6";
+
+			option host-name "indy";
+			option domain-name-servers 172.16.1.254;
+			option routers 172.16.1.254;
+		}
+
+		host fileserv {	# susebox.basement.localnet eth1
+			fixed-address 172.16.1.254;
+		}
+	}
+
+	## end dhcpd.conf eth1/indynet ##
+
+server# echo 1 > /proc/sys/net/ipv4/ip_no_pmtu_disc
+server# echo "2048 32767" > /proc/sys/net/ipv4/ip_local_port_range
+server# /etc/rc.d/dhcpd start
+
+
+Server: /etc/inetd.conf
+	tftp dgram udp wait nobody /usr/sbin/tcpd /usr/sbin/in.tftpd /mnt/hdd6
+server# /etc/rc.d/inetd restart
+
+CHECKS:
+	`netstat -a` for lines:
+		udp        0      0 *:bootps                *:*
+		udp        0      0 *:tftp                  *:*
+
+indy
+	PROM> unsetenv netaddr
+	PROM> unsetenv dlserver
+	PROM> unsetenv osloadpartition
+	PROM> unsetenv osloadfilename
+	PROM> setenv systempartition bootp()/mnt/hdd6
+	PROM> setenv osloader tftpboot.img
+	PROM> setenv diskless 1
+	PROM> boot
+
+server: /etc/exports: add line
+		/mnt/hdd6	172.16.1.1(rw,no_root_squash)
+server# /etc/rc.d/nfsserver stop
+		(make sure no nfsd and mount daemons)
+server# /etc/rc.d/nfsserver start
+	`exportfs`
+
+indy
+	PROM> setenv osloader linux
+	PROM> setenv osloadpartition /dev/sda1
+	PROM> setenv systempartition scsi(0)disk(1)rdisk(0)partition(8)
+	PROM> unsetenv systemloadpartition
+	PROM> unsetenv osloadfilename
+	PROM> boot
+
+TROUBLESHOOTING
+===============
+	TFTP error: Access violation (code 2)
+	- Check /etc/inetd.conf (tftp line)
+	- Restart inetd
+	- `boot` indy
+
+BIBLIOGRAPHY
+============
+	http://linux-debian.de/howto/debian-mips-woody-install.html
+	http://ftp.fi.debian.org/debian/dists/Debian3.0r0/main/disks-mips/current/r4k-ip22/

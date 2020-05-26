@@ -1,0 +1,26 @@
+*** http://linux-debian.de/howto/debian-mips-woody-install.html ***
+
+dhcpd.conf
+	subnet 192.168.0.0 netmask 255.255.255.0 {}
+	host indy {
+	hardware ethernet 08:00:69:XX:YY:ZZ;
+	fixed-address 192.168.0.2;
+	option host-name "indy";
+	option domain-name-servers 213.178.66.2;
+	option routers 192.168.0.1;
+	}
+
+	(debian) run_dhcpd -> 1
+	(suse /etc/rc.config)
+		IPADDR_1="172.16.1.254"
+		IFCONFIG_1="172.16.1.254 broadcast 172.31.255.255 netmask 255.240.0.0"
+	/etc/init.d/dhcp start
+
+	echo 1 > /proc/sys/net/ipv4/ip_no_pmtu_disc
+	/etc/inetd.conf:
+		tftp dgram udp wait nobody /usr/sbin/tcpd /usr/sbin/in.tftpd /tftpboot
+	/etc/init.d/inetd restart
+
+	indy> setenv netaddr SOME_IP
+	indy> bootp()/tftpboot/tftpboot.img
+	

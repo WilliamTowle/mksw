@@ -1,0 +1,21 @@
+Debian EeePC-live
+
+http://people.debian.org/~synrg/debian-eeepc/eeepc-live/eeepc-live-1.0~b2.img
+
+Image is a partitioned disk with filesystem starting after the boot sector.
+
+Mount with:
+	mount -t vfat -o loop,offset=512 eeepc-live-1.0~b2.img  tmp/
+
+Copy important files:
+	cp tmp/live/vmlinuz1 /media/D\:/boot/deblive.lx
+	cp tmp/live/initrd1.img /media/D\:/boot/deblive.rd
+	cp tmp/live/filesystem.squashfs /media/D\:/live/
+
+Partition the stick
+	msdos/vfat - type 0x0b
+
+EeePC:
+For shell, `sudo grub` and:
+grub> install (hd1,0)/boot/grub/stage1 (hd1) (hd1,0)/boot/grub/stage2 
+Reboot to card; no menu? do `root (hd0,0)` then `setup (hd0)`

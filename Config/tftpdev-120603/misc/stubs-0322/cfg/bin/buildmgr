@@ -1,0 +1,291 @@
+#!/bin/sh
+##	'buildmgr'
+
+##
+##	subroutines
+##
+
+. `dirname $0`/lib-main.sh
+. `dirname $0`/lib-pkg.sh
+
+extract_sub()
+{
+	DELTA=$1
+
+	if [ -z "$PKGFILE" ] ; then
+		echo "$0: EXTRACT: No PKGFILE in config -- confused"
+		exit 1
+	fi
+
+##	## processing
+##
+##	if [ -z "$BLDDIR" ] ; then
+##		echo "$0: No BLDDIR in config -- confused"
+##		exit 1
+##	elif [ ! -d $BLDDIR ] ; then
+##		mkdir -p $BLDDIR
+##	else
+##		/bin/rm -rf $BLDDIR/* || exit 1
+##	fi
+
+##	[ -d $PKGTMP ] || mkdir $PKGTMP
+
+	SOURCE=${SRCPATH}/${PKGFILE}
+	if [ -r "$SOURCE.tar.bz2" ] ; then
+		ARCHIVE="$SOURCE.tar.bz2"
+	elif [ -r "$SOURCE.tar.gz" ] ; then
+		ARCHIVE="$SOURCE.tar.gz"
+	elif [ -r "$SOURCE.tgz" ] ; then
+		ARCHIVE="$SOURCE.tgz"
+	else
+		echo "$0: Cannot determine ARCHIVE (PKGFILE $PKGFILE) type/location"
+		exit 1
+	fi
+	do_extract $ARCHIVE $SRCTMP || exit 1
+
+	if [ "$PATCH" ] ; then
+		echo "$0: PATCH config is obsolete"
+		exit 1
+	fi
+	for PATCH in $PATCHES ; do
+		if [ -r "$SRCPATH/$PATCH.bz2" ] ; then
+			cat $SRCPATH/$PATCH.bz2 | bzip2 -d | ( cd $SRCTMP/${SRCXPATH} && patch -p1 -i - ) || exit 1
+		elif [ -r "$SRCPATH/$PATCH.gz" ] ; then
+			cat $SRCPATH/$PATCH.gz | gzip -d | ( cd $SRCTMP/${SRCXPATH} && patch -p1 -i - ) || exit 1
+		else
+			echo "$0: PATCH $PATCH: Type/location not determined (using SRCPATH $SRCPATH)"
+			exit 1
+		fi
+	done
+
+	if [ "$DELTA" ] ; then
+		( cd $SRCTMP/${SRCXPATH} && cat $DELTA | gzip -d | tar xvf - | while read DELTAFILE ; do echo $DELTAFILE ; touch $DELTAFILE ; done ) || exit 1
+	fi
+}
+
+extract_main()
+{
+	if [ -z "$1" ] ; then
+		echo "$0: EXTRACT: Expected arguments"
+		exit 1
+	fi
+
+	PACKAGE=$1
+	CONF=`find_file $PACKAGE env.cfg` || {
+		echo "$0: EXTRACT: No env.cfg for $PACKAGE"
+		exit 1
+	}
+	UNIT=`find_file $PACKAGE package.cfg` || {
+		echo "$0: EXTRACT: Unit $PACKAGE lacking package.cfg?"
+		exit 1
+	}
+
+	. $CONF || exit 1
+	. $UNIT || exit 1
+
+	if [ -z "$SRCDIR" ] ; then
+		echo "$0: EXTRACT: No SRCDIR in config"
+		exit 1
+	fi
+
+	if [ -z "$SRCTMP" ] ; then
+		echo "$0: EXTRACT: No 'SRCTMP' in env.cfg"
+		exit 1
+	elif [ -d $SRCTMP ] ; then
+		/bin/rm -rf $SRCTMP/*
+	else
+		mkdir -p $SRCTMP || exit 1
+	fi
+
+##	if [ -z "$BLDDIR" ] ; then
+##		echo "$0: EXTRACT: No BLDDIR"
+##		exit 1
+##	elif [ ! -d "$BLDDIR" ] ; then
+##		mkdir $BLDDIR
+##	fi
+	if [ -z "$PREFIXES" ] ; then
+		extract_sub `find_file $1 srcdelta.tgz` || exit 1
+	else
+		TEMPUNIT=${SRCTMP}/$$.cfg
+		for PREFIX in $PREFIXES ; do
+			sed "s/^${PREFIX}_//" $UNIT > $TEMPUNIT
+			. ${TEMPUNIT} || exit 1
+			rm ${TEMPUNIT}
+
+			extract_sub `find_file $1 srcdelta.tgz` || exit 1
+		done
+	fi
+}
+
+make_main()
+{
+	if [ -z "$1" ] ; then
+		echo "$0: MAKE: Expected arguments"
+		exit 1
+	fi
+
+	CONF=`find_file $1 env.cfg` || {
+		echo "$0: MAKE: No env.cfg for $1"
+		exit 1
+	}
+	UNIT=`find_file $1 package.cfg` || {
+		echo "$0: MAKE: Unit $1 lacking package.cfg?"
+		exit 1
+	}
+	MAKEFILE=`find_file $1 build.mak` || {
+		echo "$0: MAKE: Unit $1 lacking build.mak?"
+		exit 1
+	}
+
+	. $CONF
+	. $UNIT
+
+	if [ -z "$INSTTMP" ] ; then
+		echo "$0: No INSTTMP in config"
+		exit 1
+	elif [ "$HAS_PACKAGES" = 'y' ] ; then
+		## don't care if it's unset, but if is 'y'
+		## then we're going to 'make install' here:
+		if [ -d $INSTTMP ] ; then
+			/bin/rm -rf $INSTTMP/* || exit 1
+		else
+			mkdir $INSTTMP
+		fi
+	fi
+	if [ -z "$SRCTMP" ] ; then
+		echo "$0: MAKE: No SRCTMP -- confused!"
+		exit 1
+	fi
+	( cd $SRCTMP && (
+		REQPATH=${PATH}
+		if [ "$PATHDIRS" ] ; then
+			REQPATH=''
+			for DIR in $PATHDIRS ; do
+				for SUBDIR in bin usr/bin ; do
+					if [ -d $DIR/$SUBDIR ] ; then
+						[ "$REQPATH" ] && REQPATH=${REQPATH}:
+						REQPATH=${REQPATH}${DIR}/${SUBDIR}
+					elif [ -d $DIR$SUBDIR ] ; then
+						# Cygwin: //bin != /bin
+						[ "$REQPATH" ] && REQPATH=${REQPATH}:
+						REQPATH=${REQPATH}${DIR}${SUBDIR}
+					fi
+				done
+			done
+		fi
+		[ "$MAKERULE" = '' ] && MAKERULE=build
+		PATH=$REQPATH make -f $MAKEFILE MAKERULE=${MAKERULE} CTRLROOT=${CTRLROOT} CONF=${CONF} UNIT=${UNIT} MAKEFILE=${MAKEFILE}
+	) || exit 1 ) || exit 1
+	DELTA=`find_file $1 pkgdelta.tgz`
+	if [ "$DELTA" ] ; then
+		( cd ${INSTTMP}/${PKGNAME}-${PKGVER} && cat $DELTA | gzip -d | tar xvf - ) || exit 1
+	fi
+}
+
+package_main()
+{
+	if [ -z "$1" ] ; then
+		echo "$0: PACKAGE: Expected arguments"
+		exit 1
+	fi
+	CONF=`find_file $1 env.cfg` || {
+		echo "$0: EXTRACT: No env.cfg for $1"
+		exit 1
+	}
+	UNIT=`find_file $1 package.cfg` || {
+		echo "$0: EXTRACT: Unit $1 lacking package.cfg?"
+		exit 1
+	}
+
+	. $CONF
+	. $UNIT
+
+	if [ -z "$HAS_PACKAGES" ] ; then
+		echo "$0: HAS_PACKAGES unset in cfg"
+		exit 1
+	fi
+	if [ "$HAS_PACKAGES" = 'y' ] ; then
+		if [ -z "$PKGTMP" ] ; then
+			echo "$0: PKGTMP unset in cfg"
+			exit 1
+		fi
+
+		EXCL=`find_file $1 pkgfiles.exc`
+		if [ "$EXCL" ] ; then
+			cp $EXCL $INSTTMP/${PKGNAME}-${PKGVER}.exc
+		fi
+
+		if [ -z "$PACKAGES" ] ; then
+			echo "$0: No 'PACKAGES' -- confused"
+			exit 1
+		elif [ "$PACKAGES" != 'NONE' ] ; then
+			echo "$0: Calling 'pkgmgr'"
+			for PACKAGE in $PACKAGES ; do
+				`dirname $0`/pkgmgr package $PKGTMP/$PACKAGE.tgp $INSTTMP/$PACKAGE || exit 1
+			done
+		fi
+	fi
+}
+
+emp_main()
+{
+	if [ -z "$1" ] ; then
+		echo "$0: EMP: Expected arguments"
+		exit 1
+	fi
+
+	while [ -n "$1" ] ; do
+		EMP_UNIT=$1
+		shift
+		case $EMP_UNIT in
+		*.lst)
+			UNITDIR=`dirname $EMP_UNIT`
+			cat $EMP_UNIT | while read UNIT ; do
+				$0 emp $UNITDIR/$UNIT
+			done
+			;;
+		*)
+			$0 extract $EMP_UNIT || exit 1
+			$0 make $EMP_UNIT || exit 1
+			$0 package $EMP_UNIT || exit 1
+			;;
+		esac
+	done
+}
+
+##
+## execution - main
+##
+
+COMMAND=$1
+[ "$COMMAND" ] && shift
+
+case $COMMAND in
+extract)	# extract given PACKAGE to temp source path
+	if [ -n "$2" ] ; then
+		echo "$0: Cannot extract multiple packages"
+		exit 1
+	fi
+	extract_main $1 || exit 1
+	echo "$0: EXTRACT phase OK"
+	;;
+make)		# step through build.mak for current PACKAGE
+	make_main $1 || exit 1
+	echo "$0: MAKE phase OK"
+	;;
+package)	# make the relevant tgp files for current PACKAGE
+	package_main $1 || exit 1
+	echo "$0: PACKAGE phase OK"
+	;;
+emp)		# do extract-make-package for given PACKAGE
+	emp_main $* || exit 1
+	;;
+*)
+	if [ -n "$COMMAND" -a "$COMMAND" != 'help' ] ; then
+		echo "$0: Unrecognised command '$COMMAND'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z]*)" $0 | sed "s/^/	/"
+	exit 1
+	;;
+esac

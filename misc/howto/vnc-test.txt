@@ -1,0 +1,32 @@
+TODO: cover 'screen' first? Work with making it build under hbOS?
+
+From: http://gpio.kaltpost.de/?page_id=84
+
+Requires the packages xvfb, x11vnc, ratpoison, xterm
+Recommends reinstallation of xfonts-base
+
+Server start - :1 if X11 already running; by
+default "only screen 0 exists and has the dimensions 1280x1024x8":
+	Xvfb :0 -screen 0 800x600 -ac
+Without reinstall of xfonts-base, there are "Could not init font path
+element" messages (TODO: reinstall and revisit this? seems to work
+without...)
+
+WM start:
+	DISPLAY=:1 ratpoison &
+
+Article continues with remote connection over ssh which runs x11vnc.
+From the same machine, we can observe our second window manager
+with:
+	x11vnc -localhost -display :1
+	vncviewer localhost:5900
+From a remote machine with ssh port forwarding, run x11vnc as the
+appropriate user with:
+	ssh -l kaltpost -L 5900:localhost:5900 kaltpost.de 'x11vnc -localhost -display :0'
+
+Useful controls:
+	ctrl-T c	create new session (ie. xterm window)
+	ctrl-T ?	help
+
+Note that killing the vncview window will cause the x11vnc server to exit
+(TODO: ...because the default behaviour is one-shot mode?)

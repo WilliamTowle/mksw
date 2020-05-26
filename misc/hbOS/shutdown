@@ -1,0 +1,68 @@
+#!/bin/sh
+
+do_shutdown()
+{
+	echo "[$0]: 'Sync'ing disks..."
+	sync || exit 1
+	echo "[$0]: Unmounting filesystems..."
+	
+	if [ -r /proc/mounts ] ; then
+		cat /proc/mounts | while read LINE ; do
+			set -- $LINE
+			DIR=$2
+			case $DIR in
+			/|/proc*) ;;
+			*)
+				$DONT umount $DIR
+				;;
+			esac
+		done
+	else
+		mount | sed 's/ on / /' | while read LINE ; do
+			set -- $LINE
+			DIR=$2
+			case $DIR in
+			/|/proc*) ;;
+			*)
+				$DONT umount $DIR
+				;;
+			esac
+		done
+	fi
+	
+	WS=" 	"
+	ROOTSPEC=`cat /etc/mtab | grep "[$WS]/[$WS]"`
+	ROOT=`echo $ROOTSPEC | sed "s/[$WS].*//"`
+	if [ "$ROOT" ] ; then
+		UMSROOT=`echo $ROOTSPEC | grep umsdos`
+		[ "$UMSROOT" ] || $DONT umount -n -r $ROOT
+	else
+		$DONT umount -n -r /
+	fi
+
+	echo "[$0]: Executing $*"
+	$DONT $* || exit 1
+}
+
+ARG1=$1
+if [ -z "$ARG1" ] ; then
+	echo "$0: Expected argument '-r' or '-h'"
+	exit 1
+fi
+case $ARG1 in
+-h)
+	do_shutdown /sbin/halt
+	;;
+-H)
+	DONT=echo do_shutdown /sbin/halt
+	;;
+-r)
+	do_shutdown /sbin/reboot
+	;;
+-R)
+	DONT=echo do_shutdown /sbin/reboot
+	;;
+*)
+	echo "$0: Unexpected argument $ARG1"
+	exit 1
+esac

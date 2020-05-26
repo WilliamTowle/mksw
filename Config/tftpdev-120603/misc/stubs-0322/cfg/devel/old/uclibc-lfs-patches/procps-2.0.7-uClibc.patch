@@ -1,0 +1,21 @@
+diff -ru procps-2.0.7.orig/top.c procps-2.0.7/top.c
+--- procps-2.0.7.orig/top.c	Thu Jul 13 16:19:21 2000
++++ procps-2.0.7/top.c	Tue Jul 16 19:16:54 2002
+@@ -88,7 +88,7 @@
+ #include <unistd.h>
+ #include <string.h>
+ #include <fcntl.h>
+-#include <libintl.h>
++/* #include <libintl.h> */
+ #include <time.h>
+ #include <sys/ioctl.h>
+ #include <pwd.h>
+@@ -343,7 +343,7 @@
+ 
+     struct sigaction sact;
+ 
+-    setlocale(LC_ALL, "");
++/*    setlocale(LC_ALL, ""); */
+     get_options();
+     
+     /* set to PCPU sorting */

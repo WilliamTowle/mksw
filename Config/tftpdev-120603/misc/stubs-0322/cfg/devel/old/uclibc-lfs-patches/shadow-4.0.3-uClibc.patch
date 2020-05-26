@@ -1,0 +1,163 @@
+diff -Nru shadow-4.0.3.orig/lib/Makefile.in shadow-4.0.3/lib/Makefile.in
+--- shadow-4.0.3.orig/lib/Makefile.in	2002-03-13 19:03:59.000000000 +0000
++++ shadow-4.0.3/lib/Makefile.in	2002-07-13 07:26:18.000000000 +0000
+@@ -150,6 +150,7 @@
+ 	rcsid.h \
+ 	sgetgrent.c \
+ 	sgetpwent.c \
++	putgrent.c \
+ 	sgroupio.c \
+ 	sgroupio.h\
+ 	shadow.c \
+@@ -162,7 +163,7 @@
+ 
+ 
+ EXTRA_libshadow_la_SOURCESS = grent.c pwent.c mkdir.c rename.c rmdir.c \
+-	strdup.c strcasecmp.c strerror.c strstr.c putgrent.c \
++	strdup.c strcasecmp.c strerror.c strstr.c \
+ 	putpwent.c putspent.c sgetgrent.c sgetpwent.c sgetspent.c \
+ 	snprintf.c md5.c md5crypt.c
+ 
+@@ -190,7 +191,7 @@
+ libshadow_la_DEPENDENCIES = $(top_builddir)/libmisc/libmisc.la
+ am_libshadow_la_OBJECTS = commonio.lo dialchk.lo dialup.lo encrypt.lo \
+ 	fputsx.lo getdef.lo getpass.lo groupio.lo gshadow.lo lockpw.lo \
+-	port.lo pwauth.lo pwio.lo rad64.lo sgetgrent.lo sgetpwent.lo \
++	port.lo pwauth.lo pwio.lo rad64.lo sgetgrent.lo sgetpwent.lo putgrent.lo \
+ 	sgroupio.lo shadow.lo shadowio.lo tcfsio.lo utent.lo
+ libshadow_la_OBJECTS = $(am_libshadow_la_OBJECTS)
+ DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
+@@ -205,7 +206,7 @@
+ @AMDEP_TRUE@	$(DEPDIR)/gshadow.Plo $(DEPDIR)/lockpw.Plo \
+ @AMDEP_TRUE@	$(DEPDIR)/port.Plo $(DEPDIR)/pwauth.Plo \
+ @AMDEP_TRUE@	$(DEPDIR)/pwio.Plo $(DEPDIR)/rad64.Plo \
+-@AMDEP_TRUE@	$(DEPDIR)/sgetgrent.Plo $(DEPDIR)/sgetpwent.Plo \
++@AMDEP_TRUE@	$(DEPDIR)/sgetgrent.Plo $(DEPDIR)/sgetpwent.Plo $(DEPDIR)/putgrent.Plo \
+ @AMDEP_TRUE@	$(DEPDIR)/sgroupio.Plo $(DEPDIR)/shadow.Plo \
+ @AMDEP_TRUE@	$(DEPDIR)/shadowio.Plo $(DEPDIR)/tcfsio.Plo \
+ @AMDEP_TRUE@	$(DEPDIR)/utent.Plo
+diff -Nru shadow-4.0.3.orig/lib/putgrent.c shadow-4.0.3/lib/putgrent.c
+--- shadow-4.0.3.orig/lib/putgrent.c	1970-01-01 00:00:00.000000000 +0000
++++ shadow-4.0.3/lib/putgrent.c	2002-07-13 07:24:52.000000000 +0000
+@@ -0,0 +1,75 @@
++/*
++ * Copyright 1990 - 1994, Julianne Frances Haugh
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. Neither the name of Julianne F. Haugh nor the names of its contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY JULIE HAUGH AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL JULIE HAUGH OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ */
++
++#include <config.h>
++
++#include <stdio.h>
++#include <grp.h>
++#include "prototypes.h"
++#include "defines.h"
++
++int
++putgrent(const struct group *g, FILE *f)
++{
++	char *buf, *cp;
++	int i;
++	size_t size;
++
++	if (!g || !f)
++		return -1;
++
++	/* calculate the required buffer size (40 is added for the
++	   numeric GID, colons, newline, and terminating NUL).  */
++	size = strlen(g->gr_name) + strlen(g->gr_passwd) + 40;
++	for (i = 0; g->gr_mem && g->gr_mem[i]; i++)
++		size += strlen(g->gr_mem[i]) + 1;
++
++	buf = malloc(size);
++	if (!buf)
++		return -1;
++
++	sprintf(buf, "%s:%s:%ld:", g->gr_name, g->gr_passwd, (long) g->gr_gid);
++	cp = buf + strlen(buf);
++	for (i = 0; g->gr_mem && g->gr_mem[i]; i++) {
++		if (i > 0)
++			*cp++ = ',';
++		strcpy(cp, g->gr_mem[i]);
++		cp += strlen(cp);
++	}
++	*cp++ = '\n';
++	*cp = '\0';
++
++	if (fputsx(buf, f) == EOF || ferror(f)) {
++		free(buf);
++		return -1;
++	}
++
++	free(buf);
++	return 0;
++}
+diff -Nru shadow-4.0.3.orig/libmisc/login_access.c shadow-4.0.3/libmisc/login_access.c
+--- shadow-4.0.3.orig/libmisc/login_access.c	1998-01-29 23:22:34.000000000 +0000
++++ shadow-4.0.3/libmisc/login_access.c	2002-07-13 07:35:25.000000000 +0000
+@@ -53,7 +53,11 @@
+ #include <arpa/inet.h>  /* for inet_ntoa() */
+ 
+ extern struct group *getgrnam();
++
++#if 0 /* don't seem to work with uClibc yet */
+ extern int innetgr();
++#endif
++
+ #if 0  /* should be defined by <errno.h> */
+ extern int errno;
+ #endif
+@@ -193,29 +197,9 @@
+ static int
+ netgroup_match(const char *group, const char *machine, const char *user)
+ {
+-#if 0  /* original code */
+-#ifdef NIS
+-    static char *mydomain = 0;
+-
+-    if (mydomain == 0)
+-	yp_get_default_domain(&mydomain);
+-    return (innetgr(group, machine, user, mydomain));
+-#else
++    /* innetgr don't seem to work with uClibc so we disable this */
+     syslog(LOG_ERR, "NIS netgroup support not configured");
+     return (NO);
+-#endif
+-#else  /* works better with glibc? */
+-	static char *mydomain = 0;
+-
+-	if (mydomain == 0) {
+-		static char domain[MAXHOSTNAMELEN+1];
+-
+-		getdomainname(domain, MAXHOSTNAMELEN);
+-		mydomain = domain;
+-	}
+-
+-	return innetgr(group, machine, user, mydomain);
+-#endif
+ }
+ 
+ /* user_match - match a username against one token */

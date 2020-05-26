@@ -1,0 +1,79 @@
+1. Check support
+	Run `/sbin/iw list` first
+Want to see see "* AP" under "Supported interface modes:"
+
+Another way: `lspci -k | grep -A 3 -i 'network'` tells me "Kernel driver
+in use: ath9k", for which `/sbin/modinfo ath9k | grep 'depend'` lists
+"ath9k_hw,mac80211,ath9k_common,cfg80211,ath" ...and having seen
+'mac80211', be happy.
+
+2. Initial system configuration and minimal config
+
+...this is sufficient to fire up the daemon and troubleshoot any
+issues with related system configuration.
+
+* /etc/network/interfaces needed the following, to ensure that
+wpa_supplicant wasn't running:
+	auto wlan0
+	iface wlan0 inet static
+	address		192.168.42.253
+	network		192.168.42.0
+	netmask		255.255.255.0
+	broadcast	192.168.42.255
+
+hostapd-test.conf contained
+	interface=wlan0
+	driver=nl80211
+	ssid=test
+	channel=1
+
+	$ sudo ./misc/alsalibs.sh ./toolchain/usr/bin/hostapd hostapd-test.conf 
+
+wills@pixie:/mnt/sda9/devel/mksw-160216$ sudo ./misc/alsalibs.sh ./toolchain/usr/bin/hostapd hostapd-test.conf 
+Configuration file: hostapd-test.conf
+Using interface wlan0 with hwaddr 1c:4b:d6:f2:59:1b and ssid "test"
+wlan0: interface state UNINITIALIZED->ENABLED
+wlan0: AP-ENABLED 
+
+
+3. Serving addresses
+
+For this step, you will need dnsmasq running. I've got a similar
+configuration to my initial experiment with it
+https://dunedlin.wordpress.com/2014/04/23/dnsmasq-on-a-debian-server/
+but with "interface=wlan0"
+
+##	=====
+interface=wlan0
+driver=nl80211
+ssid=APNAME
+channel=1
+
+# auth_algs:
+# bit 0 = Open System Authentication
+# bit 1 = Shared Key Authentication (requires WEP)
+auth_algs=1
+channel=1
+#wpa: which WPA implementation to use
+#1 - wpa only
+#2 - wpa2 only
+#3 - both
+wpa=3
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+wpa_passphrase=APKEY
+macaddr_acl=0
+ignore_broadcast_ssid=0
+
+* Other steps
+
+Your client will need wpa_supplicant.conf to have an appropriate
+entry as created by `wpa_passphrase APNAME APKEY`
+
+...you should then see the remote machine acquire an address, and be
+able to ping the server from it (and vice versa)
+
+- /etc/default/dnsmasq has "ENABLED=1"
+- /etc/default/hostapd to set DAEMON_CONF to /etc/hostapd/hostapd.conf to run hostapd permanently
+- also iptables - see https://dunedlin.wordpress.com/2015/11/30/dnsmasq-and-iptables-to-lan-and-beyond/

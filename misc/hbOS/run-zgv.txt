@@ -1,0 +1,10 @@
+* 2014-06-30:
+- "zgv: a 640x480, 800x600, 1024x768, or 1280x1024 mode is required."
+- tries 'G640x480x256', 'G800x600x256', <and larger> gfx resol'ns
+- FBZX: SDL_SetVideoMode for "640x480 or 480x640 resolution in 8 bits"
+
+* may need:
+- "a description of your native resolution *at the start of* /etc/fb.modes"
+- "uvesafb mode=800x480-32"
+- see also http://linux.about.com/library/cmd/blcmdl5_fb.modes.htm
+- modeline calculator: http://bisqwit.iki.fi/source/fbmodes.html

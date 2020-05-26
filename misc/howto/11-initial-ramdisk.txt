@@ -1,0 +1,22 @@
+REQUIREMENTS
+	busybox
+	uClibc (or other C library)
+	genext2fs
+
+PREPARATION
+
+1. Filesystem content
+	build busybox and C library runtime, plus anything else
+	make ...
+
+2. Toolchain
+	build genext2fs (configure; make; make install)
+	./misc/mkinitrd.sh maketc
+
+3.
+	./misc/mkinitrd.sh makerd FSSIZE FSNAME
+
+	<< TODO: requires device node table >>
+
+	dd if=/dev/zero of=${FSNAME} count=${FSSIZE} bs=1k
+	`dirname ${TCMF}`/toolchain/usr/bin/genext2fs -d ${FSROOT} -D ${FSNAME}-devs.txt -b ${FSSIZE} -q -m 5 ${FSNAME}

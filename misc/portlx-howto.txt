@@ -1,0 +1,78 @@
+Building
+--------
+
+  This 'mksw' implementation of the Makefiles for portlx includes
+the metafile Config/ENV/portlx.mak. Control variables include:
+	LEGACY	true -> force kernel v2.6.34 [via portlx.mak]
+	TARGCPU	target CPU; i386 if unset [via buildtype.mak]
+
+  To build kernel headers and cross compiler:
+	make all-cti META=Config/ENV/portlx.mak TARGCPU=arm
+
+  To build kernel, cross compiler, and minimal userland (in 'insttemp')
+	make all-cui META=Config/ENV/portlx.mak TARGCPU=arm
+
+
+About QEmu
+----------
+
+  QEmu will boot and run "zImage" type kernels, which can be paired with
+an "initrd image" (see misc/mkinitrd.sh) also supplied on the command
+line. Console I/O normally goes to an emulated screen, but can be
+redirected; eg:
+
+	qemu-system-arm -M versatilepb -kernel toolchain/etc/vmlinux-3.9.11 -initrd initrd.gz -append ''
+	[qemu-system-i386 ...] -serial stdio -append '... console=ttyS0'
+	[qemu-system-arm ...] -serial stdio -append '... console=ttyAMA0'
+
+  Networking support comes via a "non privileged user mode network
+stack" (supporting TCP and UDP only) by default, with:
+	Virtual DHCP server	at 10.0.2.2	serving 10.0.2.15+
+	Virtual DNS server	at 10.0.2.3
+	Virtual SAMBA server	at 10.0.2.4 (if requested)
+
+  The network can be configured with options such as "-netdev
+user,id=network0 -device e1000,netdev=network0" (where e1000 is
+applicable to PC emulation; the network device for qemu-system-arm is
+an smc91x).
+
+  The kernel command line for *normal* network boot (** NB: may need
+network bridge with QEmu **) looks like:
+	console=ttyAMA0 ip=dhcp root=/dev/nfs nfsroot=10.24.1.159:/tftpboot/portlx-arm,v3,tcp
+
+  Network connections to a real network should involve tap mode and a
+network bridge.
+	-- see http://www.aurel32.net/info/debian_mips_qemu.php
+
+-----
+
+[ https://wiki.ubuntu.com/ARM/RootfsFromScratch/QemuDebootstrap ]
+
+Create a file, preferably a sparse one, which will hold the rootfs, for instance for a rootfs of 300 000 000 bytes:
+
+    dd if=/dev/zero of=rootfs.img bs=1 count=0 seek=300M
+
+Then format the filesystem, e.g. for ext4 with 4096 bytes blocks:
+
+    mkfs.ext4 -b 4096 -F rootfs.img
+
+Mount the filesystem and move the files over:
+
+    mount -o loop rootfs.img /mnt
+    sudo cp -a rootfs/. /mnt/
+    umount /mnt
+
+Copy the kernel to outside the image:
+
+    cp rootfs/boot/vmlinuz* .
+    ln -s vmlinuz-* vmlinuz
+
+Starting QEMU
+
+Now you can start QEMU on the disk image:
+
+    qemu-system-arm \
+        -M versatilepb -cpu cortex-a8 \
+        -m 256 \
+        -drive file=rootfs.img,media=disk \
+        -kernel vmlinuz -append 'root=/dev/sda rootwait'

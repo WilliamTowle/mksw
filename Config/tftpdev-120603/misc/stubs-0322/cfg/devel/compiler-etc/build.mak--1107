@@ -1,0 +1,90 @@
+#!/bin/make
+## based on LFS v3.2
+
+include ${CONF}
+include ${UNIT}
+
+.PHONY: check-be default
+
+default:
+	[ "${MAKERULE}" ]
+	[ "${MAKEFILE}" ]
+#	[ -d "${SRCXPATH}" ]
+#	cd ${SRCXPATH} && ${MAKE} -f ${MAKEFILE} ${MAKERULE}
+	cd ${SRCTMP} && ${MAKE} -f ${MAKEFILE} ${MAKERULE}
+
+.PHONY: build-native
+
+build-native:
+	mkdir binutils
+	( cd binutils && ${MAKE} -f ${MAKEFILE} build-binutils-native )
+	mkdir gcc
+	( cd gcc && ${MAKE} -f ${MAKEFILE} build-gcc-native )
+#	( cd ${LX_SRCXPATH} && ${MAKE} -f ${MAKEFILE} build-linux-native )
+
+.PHONY: build-binutils-native
+
+build-binutils-native:
+#	../${BU_SRCXPATH}/configure --prefix=${TOOLROOT}/usr \
+#		--host=`uname -m`-`uname -s | tr A-Z a-z` \
+#		--target=${TARGET_ARCH} \
+#		--disable-nls
+	../${BU_SRCXPATH}/configure --prefix=${TOOLROOT}/usr \
+		--disable-nls
+#	make LDFLAGS=-all-static
+	make
+	make install
+
+.PHONY: build-gcc-native
+
+build-gcc-native:
+##	../${GCC_SRCXPATH}/configure --prefix=${TOOLROOT}/usr \
+##		--with-gnu-ld --with-gnu-as \
+##		--host=`uname -m`-`uname -s | tr A-Z a-z` \
+##		--target=${TARGET_ARCH} \
+##		--enable-languages=c --enable-threads=posix \
+##		--enable-shared --disable-nls
+	../${GCC_SRCXPATH}/configure --prefix=${TOOLROOT}/usr \
+		--with-gnu-ld --with-gnu-as \
+		--enable-languages=c --enable-threads=posix \
+		--enable-shared --disable-nls
+#	( cd ${TOOLROOT}/lib && ln -sf ../usr/bin/cpp )
+#	( cd ${TOOLROOT}/usr/lib && ln -sf ../bin/cpp )
+#	( cd ${TOOLROOT}/usr/bin && ln -sf gcc cc )
+
+#.PHONY: build-linux-native
+#
+#build-linux-native:
+##	ln -s /static/bin/pwd /bin/pwd
+##	make mrproper
+##	make include/linux/version.h
+##	make symlinks
+#	mkdir -p ${TOOLROOT}/usr/include/asm || rm -rf ${TOOLROOT}/usr/include/asm/*
+#	cp include/asm/* ${TOOLROOT}/usr/include/asm
+#	cp -R include/asm-generic ${TOOLROOT}/usr/include
+#	cp -R include/linux ${TOOLROOT}/usr/include
+#	touch ${TOOLROOT}/usr/include/linux/autoconf.h
+##	rm /bin/pwd
+##
+#	cat .config \
+#		| sed 's%#* *CONFIG_PARIDE_PCD[= ].*%##CONFIG_PARIDE_PCD: %' \
+#		| sed 's%#* *CONFIG_PARIDE_PT[= ].*%##CONFIG_PARIDE_PT: %' \
+#		| sed 's%#* *CONFIG_AFFS_FS[= ].*%##CONFIG_AFFS_FS: %' \
+#		> .config.NEW
+#	cp .config.NEW .config
+#	echo "CONFIG_PARIDE_PCD=y" >> .config
+#	echo "CONFIG_PARIDE_PT=y" >> .config
+#	echo "CONFIG_AFFS_FS=y" >> .config
+##
+#	[ -d ${TOOLROOT}/usr/src/${PKGNAME}-${PKGVER} ] || mkdir -p ${TOOLROOT}/usr/src/${PKGNAME}-${PKGVER}
+#	tar cvf - .config * | ( cd ${TOOLROOT}/usr/src && \
+#		( cd ${PKGNAME}-${PKGVER} && tar xvf - ) ;\
+#		ln -sf ${PKGNAME}-${PKGVER} linux \
+#		)
+##
+#	mkdir -p ${INSTTMP}/${PKGNAME}${PKGVER}-headers/usr/src/
+#	tar cvf - .config * | ( cd ${INSTTMP}/${PKGNAME}${PKGVER}-headers/usr/src/ && \
+#		( mkdir ${PKGNAME}-${PKGVER} ; cd ${PKGNAME}-${PKGVER} && tar xvf - ) && \
+#		ln -sf ${PKGNAME}-${PKGVER} linux \
+#		)
+##

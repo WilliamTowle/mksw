@@ -1,0 +1,12 @@
+diff -aur file-3.39.orig/apprentice.c file-3.39/apprentice.c
+--- file-3.39.orig/apprentice.c	Wed Jul  3 15:00:41 2002
++++ file-3.39/apprentice.c	Wed Aug 14 00:37:34 2002
+@@ -582,7 +582,7 @@
+ 			eatsize(&l);
+ 		} else {
+ 			m->mask = 0L;
+-			while (!isspace(*++l)) {
++			while (*++l && !isspace(*l)) {
+ 				switch (*l) {
+ 				case CHAR_IGNORE_LOWERCASE:
+ 					m->mask |= STRING_IGNORE_LOWERCASE;

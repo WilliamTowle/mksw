@@ -1,0 +1,53 @@
+do_acpibatt()
+{
+	ACPI=/usr/bin/acpi
+
+	if [ ! -r ${ACPI} ] ; then
+		# Missing executable
+		echo "!!!!"
+	else 
+		set -- ` ${ACPI} --battery 2>/dev/null | sed 's/,//g' | awk '{ print $3 " " $4 }' `
+		case ${1} in
+		'')	echo "????"
+			;;
+		Full*)
+			echo "*$2"
+			;;
+		Discharging*)
+			echo "-$2"
+			;;
+		Charging*)
+			echo "+$2"
+			;;
+		*)
+			echo "?$2"
+			;;
+		esac
+	fi
+}
+
+do_fsclock()
+{
+	# provide an HH:MM version of the time with flashing colon
+	date +'%H:%M:%S' | sed '/[13579]$/ s/:/ / ; s/:..$//'
+}
+
+backtick	1 1 1	${HOME}/root/etc/sbin/scbanner fsclock
+backtick	2 30 30	${HOME}/root/etc/sbin/scbanner acpibatt
+caption always "%{.b}%{c}%1`, %D %d %M \ %{y}%-Lw%{w}%{+b}[%n %t]%{-b}%{y}%+Lw %=%{g}/ batt: %2`"
+
+* .screenrc tweaks
+- `escape <THING>` will change the control key (^A)
+- bindkey: `... {prev|next}` will move to adjacent windows (^A-n, ^A-p)
+- bindkey: `bindkey "^[0d" ...` configures CTRL-LEFT
+- bindkey: `bindkey "^[0c" ...` configures CTRL-RIGHT
+- "detach on disconnect" ... `autodetach on` (windows? or sessions?)
+- worth using `backtick <n> <n> <n> ...` to run commands in status
+- MemFree and SwapFree fields in /proc/meminfo interesting?
+- nested sessions: `screen -E^oo` (outer); `screen -m` (inner)
+- bind ... can make '!' through to ')' do `select 11` to `select 20` 
+- can `mousetrack on`, for switching region focus
+- use 'acpi' command to query battery level
+- also: http://www.debian-administration.org/article/560/An_introduction_to_the_visual_features_of_GNU_Screen
+- also: http://aperiodic.net/screen/quick_reference
+- also: https://wiki.archlinux.org/index.php/GNU_Screen

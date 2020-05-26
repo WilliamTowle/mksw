@@ -1,0 +1,147 @@
+[ http://www.netbsd.org/Ports/sgimips/faq.html ]
+
+Get indy MAC address with `printenv eaddr`
+Change /etc/dhcpd.conf
+	[details?]
+Check 'netaddr' *set* appropriately
+`boot -f bootp():/kernelname
+
+| setenv SystemPartition bootp()/mnt/hdd6
+| setenv OSLoader tftpboot.img
+| setenv OSLoadOptions ip=any
+| setenv diskless 1
+| (unsetenv OSLoadPartition)
+| (unsetenv OSLoadFilename)
+| (unsetenv netaddr)
+| boot bootp():	( or just `boot`, or `tftpboot.img` seems to work):
+| 	No server for /mnt/hdd6/tftpboot.img
+| 	Your netaddr environment variable may be set incorrectly, or
+| 	the net may be too busy for a connection to be made.
+| 	Unable to load bootp()/mnt/hdd6/tftpboot.img: could not connect to remote server.
+ 
+| | [ http://www.ping.uio.no/~toffer/indy-sid.txt ]
+| | 
+| | Root tarball in /export/indyroot
+| | Set up DHCP:
+| | 	host indy {
+| | 		hardware ethernet 08:00:69:xx:yy:zz;
+| | 		fixed-address indy.dom.ain;
+| | 		option root-path "/export/indyroot/"
+| | 	}
+| | (init.d/dhcp restart)
+| | 
+| | tftp: tftp dgram udp wait nobody /usr/sbin/tcpd /usr/sbin/in.tftpd /export/tftpboot
+| | (inetd restart)
+| | (see /etc/xinetd.d/tftp if running xinetd:
+| | 	service tftp
+| | 	{
+| | 		disable = no
+| | 		socket_type	= dgram
+| | 		protocol	= udp
+| | 		wait		= yes
+| | 		user		= root
+| | 		server		= /usr/sbin/in.tftpd
+| | 		server_args	= -s /export/tftpboot
+| | 	}
+| | 
+| | (nfsd: /etc/exports "/export/indyroot indy.dom.ain(rw,no_root_squash)")
+| | 
+| | indy:
+| | 	unsetenv netaddr
+| | 	boot bootp()/export/tftpboot/vmlinux
+| | 
+| | 	? unsetenv OSLoadPartition
+| | 	? setenv SystemPartition bootp()/mnt/hdd6
+| | 	? setenv OSLoader tftpboot.img
+| | 	? setenv diskless 1
+| | 	?? setenv OSLoadOptions ip=any
+| | 	?? unsetenv dlserver
+| | 
+| | 	(later)
+| | 	setenv OSLoader vmlinux
+| | 	setenv OSLoadPartition /dev/sda1
+| | 	setenv SystemPartition scsi(0)disk(2)rdisk(0)partition(8)
+| | 	(Replace disk(x) with the scsi disk you are booting from.)
+| | 	unsetenv SystemLoadPartition
+| | 	unsetenv OSLoadFilename
+| | 	boot
+| | 
+| | | [ http://www.linux-debian.de/howto/debian-mips-woody-install.html ]
+| | | 
+| | | Download boot file
+| | | 	http://ftp.fi.debian.org/debian/dists/woody/main/disks-mips/current/r4k-ip22/tftpboot.img
+| | | 
+| | | Host-native RPMs (SuSE 7.1):
+| | | 	dhcp.rpm
+| | | 	tftp.rpm
+| | | 
+| | | Config: You will need
+| | | 	MAC address of indy (cf. `printenv` of PROM)
+| | | 	IP address for indy to assume
+| | | 	Network DNS server address
+| | | 	Network's router address
+| | | 
+| | | /etc/dhcpd.conf:
+| | | 	## start dhcpd.conf eth1 wills 28/04/2002 ##
+| | | 	
+| | | 	subnet 172.16.1.0 netmask 255.255.255.0 {
+| | | 		#range omittable for BOOTP (non-DHCP) provision only
+| | | 		#range 172.16.1.1 172.16.1.16;
+| | | 	}
+| | | 	
+| | | 	host indy {
+| | | 		#BOOTP clients must be declared explicitly
+| | | 		hardware ethernet 08:00:69:08:10:1f;
+| | | 		fixed-address 172.16.1.1;
+| | | 		option host-name "indy";
+| | | 		option domain-name-servers 172.16.1.254;
+| | | 		option routers 172.16.1.254;
+| | | 		filename "tftpboot.img";
+| | | 	}
+| | | 	
+| | | 	## end dhcpd.conf eth1 wills 28/04/2002 ##
+| | | 
+| | | dhcp restart:
+| | | 	/etc/init.d/dhcp restart (or "start"; see /var/log/messages on failure)
+| | | 
+| | | indy replies to BOOTP packets but doesn't fetch kernel?
+| | | 	(linux 2.4.x, indy prom bug) echo 1 > /proc/sys/net/ipv4/ip_no_pmtu_disc
+| | | 
+| | | tftp enabling - in /etc/inetd.conf:
+| | | 	(suggested) tftp dgram udp wait nobody /usr/sbin/tcpd /usr/sbin/in.tftpd /mnt/hdd6
+| | | 	(lookalike) tftp dgram udp wait nobody /usr/sbin/tcpd /usr/sbin/in.tftpd -s /mnt/hdd6 -l
+| | | 
+| | | Kernel doesnload stops and/or times out?
+| | | 	(linux 2.4.x defaults, indy prom bug) echo "2048 32767" > /proc/sys/net/ipv4/ip_local_port_range
+| | | 	/etc/init.d/inetd restart
+| | | 
+| | | indy prom:
+| | | 	setenv netaddr <TARGET-IP>
+| | | 	bootp()/PATH/TO/IMAGE	(boot bootp()/PATH/TO/IMAGE)
+| | | 
+| | | 
+| | | 
+| | | -----
+| | | >> boot -f bootp()/mnt/hdd6/tftpboot.img
+| | | No server for /mnt/hdd6/tftpboot.img
+| | | Your netaddr environment variable may be set incorrectly, or
+| | | the net may be too busy for a connection to be made.
+| | | Unable to load bootp()/mnt/hdd6/tftpboot.img: could not connect to remote server.
+| | | 
+| | | >> boot -f bootp():/mnt/hdd6/tftpboot.img
+| | | No server for :/mnt/hdd6/tftpboot.img
+| | | (continues as above)
+| | | 
+| | | 
+| | | >> boot bootp():/mnt/hdd6/tftpboot.img
+| | | 115360+19584+3136+334528+42744d+4248+6368 entry: 0x89fa8850
+| | | No server for /mnt/hdd6/tftpboot.img.
+| | | Your netaddr[...]
+| | | Autoboot failed[...]Hit Enter to continue
+| | | 
+| | | 
+| | | [ http://stafwag.pws.the-ecorp.com/indy/ ]
+| | | 2.1	- suggests "option root-path ...;" and unpathed "filename ...;"
+| | 
+| | troubleshooting: tcpdump [-i eth1]
+| | (`unsetenv netaddr` in indy PROM if [buggy] DHCPv2)

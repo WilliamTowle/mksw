@@ -1,0 +1,32 @@
+About container_of:
+
+/* linux/kernel.h:
+828  * @ptr:        the pointer to the member.
+829  * @type:       the type of the container struct this is embedded in.
+830  * @member:     the name of the member within the struct.
+833 #define container_of(ptr, type, member) ({                      \
+834         const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
+835         (type *)( (char *)__mptr - offsetof(type,member) );})
+*/
+
+ie.
+- start with *pointer to* member
+- subtract offsetof() result to create pointer to baseline struct
+
+beware "assignment from incompatible pointer type"
+
+static int rcar_vin_remove(struct platform_device *pdev)
+{
+/* skeleton: parameter of 'struct pci_dev *[pdev]':
+	struct v4l2_device *v4l2_dev = pci_get_drvdata(pdev);
+	struct skeleton *skel = container_of(v4l2_dev, struct skeleton, v4l2_dev);
+*/
+	/* struct skeleton -> struct platform_device * pdev */
+	struct skeleton *skel = container_of(&pdev, struct skeleton, pdev);
+
+- offsetof http://en.wikipedia.org/wiki/Offsetof
+- gregkh -- http://www.kroah.com/log/linux/container_of.html
+- http://psomas.wordpress.com/2009/07/01/weird-kernel-macros-container_of/
+- simple warning: http://stackoverflow.com/questions/6083734/rationale-behind-the-container-of-macro-in-linux-list-h
+- kernel source: http://lxr.free-electrons.com/source/scripts/kconfig/list.h#L18
+- verbose warning: https://lists.01.org/pipermail/kbuild-all/2014-January/002599.html

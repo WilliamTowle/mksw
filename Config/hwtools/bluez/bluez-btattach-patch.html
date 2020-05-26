@@ -1,0 +1,263 @@
+<!-- MHonArc v2.6.19 -->
+<!--X-Subject: [PATCH BlueZ v3] tools/btattach: add marvell support -->
+<!--X-From-R13: Ozvgxhzne Ynejne &#60;nxnejneNzneiryy.pbz> -->
+<!--X-Date: Tue, 1 Mar 2016 09:13:06 &#45;0800 -->
+<!--X-Message-Id: 1456852109&#45;14298&#45;2&#45;git&#45;send&#45;email&#45;akarwar@marvell.com -->
+<!--X-Content-Type: text/plain -->
+<!--X-Reference: 1456852109&#45;14298&#45;1&#45;git&#45;send&#45;email&#45;akarwar@marvell.com -->
+<!--X-Head-End-->
+<!doctype html public "-//W3C//DTD HTML//EN">
+<html>
+<head>
+<meta name="description" content="Linux Bluetooth: [PATCH BlueZ v3] tools/btattach: add marvell support">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content="Bluetooth, linux, driver, device, [PATCH BlueZ v3] tools/btattach: add marvell support">
+<title>[PATCH BlueZ v3] tools/btattach: add marvell support &mdash; Linux Bluetooth</title>
+<link rel="alternate" type="application/rss+xml" title="Linux Bluetooth" href="http://feeds.feedburner.com/LinuxBluetooth">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-760190-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<script type="text/javascript">
+var addthis_config = addthis_config||{};
+addthis_config.data_track_addressbar = false;
+</script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-760190-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+<body itemscope itemtype="http://schema.org/Article" bgcolor=white vlink=green link=blue>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<table width="100%" bgcolor="#008800">
+<tr width="100%" valign="middle">
+<td align=left>&nbsp;</td>
+<td align="center" width="728"><script type="text/javascript"><!--
+google_ad_client = "pub-3422782820843221";
+/* new green bar 728x90, created 5/12/11 */
+google_ad_slot = "9066942750";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script><br>
+<script type="text/javascript"><!--
+google_ad_client = "pub-3422782820843221";
+/* green bar link 728x15, created 11/11/09 */
+google_ad_slot = "2187712991";
+google_ad_width = 728;
+google_ad_height = 15;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<td>&nbsp;</td>
+</tr>
+</table>
+<table width="100%">
+<tr valign=top>
+<td align=left><h1 itemprop="name">[PATCH BlueZ v3] tools/btattach: add marvell support</h1></td>
+<td align=right><form action="http://www.google.com/cse" id="cse-search-box" target="_blank">
+  <div>
+    <input type="hidden" name="cx" value="partner-pub-3422782820843221:isdiegq275o" />
+    <input type="hidden" name="ie" value="ISO-8859-1" />
+    <input type="text" name="q" size="37" />
+    <input type="submit" name="sa" value="Search" />
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&amp;lang=en"></script>
+</script></td>
+</tr>
+</table>
+[<a href="msg66423.html">Date Prev</a>][<a href="msg66425.html">Date Next</a>][<a href="msg66423.html">Thread Prev</a>][<a href="msg66427.html">Thread Next</a>][<a href="maillist.html#66424">Date Index</a>][<a href="index.html#66424">Thread Index</a>]
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+<g:plusone size="small"></g:plusone>
+</td>
+
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<hr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<ul>
+<li><em>Subject</em>: [PATCH BlueZ v3] tools/btattach: add marvell support</li>
+<li><em>From</em>: Amitkumar Karwar &lt;akarwar@xxxxxxxxxxx&gt;</li>
+<li><em>Date</em>: Tue, 1 Mar 2016 09:08:29 -0800</li>
+<li><em>Cc</em>: Cathy Luo &lt;cluo@xxxxxxxxxxx&gt;, &lt;linux-kernel@xxxxxxxxxxxxxxx&gt;,        Nishant Sarmukadam &lt;nishants@xxxxxxxxxxx&gt;,        Ganapathi Bhat &lt;gbhat@xxxxxxxxxxx&gt;</li>
+<li><em>In-reply-to</em>: &lt;<a href="msg66423.html">1456852109-14298-1-git-send-email-akarwar@marvell.com</a>&gt;</li>
+</ul>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<!-- AddThis Button BEGIN -->
+<div class="addthis_toolbox addthis_default_style ">
+<a class="addthis_button_preferred_1"></a>
+<a class="addthis_button_preferred_2"></a>
+<a class="addthis_button_preferred_3"></a>
+<a class="addthis_button_preferred_4"></a>
+<a class="addthis_button_compact"></a>
+<a class="addthis_counter addthis_bubble_style"></a>
+</div>
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5196c2ae1be43d18"></script>
+<!-- AddThis Button END -->
+<hr>
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-3422782820843221";
+/* lists link unit 728x15, created 7/7/08 */
+google_ad_slot = "9367657018";
+google_ad_width = 728;
+google_ad_height = 15;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<p>
+<div class="content" itemprop="articleBody">
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<pre>From: Ganapathi Bhat &lt;gbhat@xxxxxxxxxxx&gt;
+
+User needs to issue below command for Marvell devices
+btattach -P marvell -B /dev/ttyUSB#
+
+---
+ tools/btattach.c  | 1 +
+ tools/hciattach.h | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/tools/btattach.c b/tools/btattach.c
+index a025bb0..7807e9f 100644
+--- a/tools/btattach.c
++++ b/tools/btattach.c
+@@ -214,6 +214,7 @@ static const struct {
+ 	{ &quot;intel&quot;, HCI_UART_INTEL },
+ 	{ &quot;bcm&quot;,   HCI_UART_BCM   },
+ 	{ &quot;qca&quot;,   HCI_UART_QCA   },
++	{ &quot;marvell&quot;, HCI_UART_MRVL   },
+ 	{ }
+ };
+ 
+diff --git a/tools/hciattach.h b/tools/hciattach.h
+index 4279a33..e109c3e 100644
+--- a/tools/hciattach.h
++++ b/tools/hciattach.h
+@@ -42,6 +42,7 @@
+ #define HCI_UART_INTEL	6
+ #define HCI_UART_BCM	7
+ #define HCI_UART_QCA	8
++#define HCI_UART_MRVL	10
+ 
+ #define HCI_UART_RAW_DEVICE	0
+ #define HCI_UART_RESET_ON_INIT	1
+-- 
+1.9.1
+
+--
+To unsubscribe from this list: send the line &quot;unsubscribe linux-bluetooth&quot; in
+the body of a message to majordomo@xxxxxxxxxxxxxxx
+More majordomo info at  <a  rel="nofollow" href="http://vger.kernel.org/majordomo-info.html">http://vger.kernel.org/majordomo-info.html</a>
+
+
+</pre>
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+</div>
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<ul><li><strong>References</strong>:
+<ul>
+<li><strong><a name="66423" href="msg66423.html">[PATCH v3] Bluetooth: hci_uart: Support firmware download for Marvell</a></strong>
+<ul><li><em>From:</em> Amitkumar Karwar</li></ul></li>
+</ul></li></ul>
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg66423.html">[PATCH v3] Bluetooth: hci_uart: Support firmware download for Marvell</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg66425.html">[PATCH BlueZ v3] tools/btattach: add marvell support</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg66423.html">[PATCH v3] Bluetooth: hci_uart: Support firmware download for Marvell</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg66427.html">Re: [PATCH v3] Bluetooth: hci_uart: Support firmware download for Marvell</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="maillist.html#66424"><strong>Date</strong></a></li>
+<li><a href="index.html#66424"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<center>
+<font size=-1>
+<a href=http://www.spinics.net/lists/>[Index&nbsp;of&nbsp;Archives]</a>
+&nbsp;
+&nbsp;
+<a href=http://www.spinics.net/lists/bluez-devel/>[Bluez&nbsp;Devel]</a>
+&nbsp;
+&nbsp;
+<a href=http://www.spinics.net/lists/linux-wireless/>[Linux&nbsp;Wireless&nbsp;Networking]</a>
+&nbsp;
+&nbsp;
+<a href=/lists/ath6kl/>[Linux&nbsp;ATH6KL]</a>
+&nbsp;
+&nbsp;
+<a href=http://www.spinics.net/lists/linux-usb/>[Linux&nbsp;USB&nbsp;Devel]</a>
+&nbsp;
+&nbsp;
+<a href=http://www.spinics.net/lists/linux-media/>[Linux&nbsp;Media&nbsp;Drivers]</a>
+&nbsp;
+&nbsp;
+<a href=http://www.spinics.net/lists/linux-audio-users/>[Linux&nbsp;Audio&nbsp;Users]</a>
+&nbsp;
+&nbsp;
+<a href=/lists/kernel/>[Linux&nbsp;Kernel]</a>
+&nbsp;
+&nbsp;
+<a href=http://www.spinics.net/lists/linux-scsi/>[Linux&nbsp;SCSI]</a>
+&nbsp;
+&nbsp;
+<a href=http://www.spinics.net/lists/xfree86/>[XFree86]</a>
+&nbsp;
+&nbsp;
+<a href=http://www.ske-art.com/z//biglist.php>[Big&nbsp;List&nbsp;of&nbsp;Linux&nbsp;Books]</a>
+</font>
+</center>
+<p>
+<table width=100%>
+<tr>
+<td align=left valign=bottom><a href="http://fusion.google.com/add?source=atgs&feedurl=http://feeds.feedburner.com/LinuxBluetooth"><img src="http://gmodules.com/ig/images/plus_google.gif" border="0" alt="Add to Google"></a></td>
+<td align=right><a href=/linux><img src=/button_01.gif border=0 alt="Powered by Linux"></a></td>
+</tr>
+</table>
+<p>
+<!--X-User-Footer-End-->
+</body>
+</html>

@@ -1,0 +1,234 @@
+#!/bin/sh
+##	mkbanner/lxbanner	STUBS (c)1999-2010 William Towle
+##	Last modified		WmT 2010-12-23
+##	Purpose			Boot/login banner
+#
+#   Open Source software - copyright and GPLv2 apply. Briefly:
+#	- No warranty/guarantee of fitness, use is at own risk
+#	- No restrictions on strictly-private use/copying/modification
+#	- This license must apply also to all modified/derived works
+#	- Redistributing? Include/offer to deliver original source
+#   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html
+
+# Installation as 'lxbanner' runs `$0 cons`
+
+# Usage for Franki/Earlgrey:
+# ./mkbanner syslinux 'Franki/Earlgrey Linux ver.X.Y.Z-SSSn' 'Concept by Wills - william_towle@yahoo.co.uk' 'http://www.angelfire.com/linux/wills' 'Image build date: '"`date`"
+
+init_colours()
+{
+	case ${TERM} in
+	syslinux)
+		CCHG=`echo -e "\017"`
+		DCYA="${CCHG}03"
+		LCYA="${CCHG}0b"
+		DRED="${CCHG}04"
+		LRED="${CCHG}0c"
+		DMAG="${CCHG}05"
+		LMAG="${CCHG}0d"
+		DYEL="${CCHG}06"
+		LYEL="${CCHG}0e"
+		DBLU="${CCHG}01"
+		LBLU="${CCHG}09"
+		LGRN="${CCHG}0a"
+		DWHT="${CCHG}07"
+		LWHT="${CCHG}0f"
+	;;
+	*)
+		DCYA=`echo -e "\033[36m"`
+		LCYA=`echo -e "\033[36m"`
+		DRED=`echo -e "\033[31m"`
+		LRED=`echo -e "\033[31m"`
+		DMAG=`echo -e "\033[35m"`
+		LMAG=`echo -e "\033[35m"`
+		DYEL=`echo -e "\033[33m"`
+		LYEL=`echo -e "\033[33m"`
+		DBLU=`echo -e "\033[34m"`
+		LBLU=`echo -e "\033[34m"`
+		LGRN=`echo -e "\033[32m"`
+		DWHT=`echo -e "\033[37m"`
+		LWHT=`echo -e "\033[37m"`
+	;;
+	esac
+}
+
+init_chars()
+{
+	case ${TERM} in
+	syslinux)
+		SCON=''
+		SCOFF=''
+		BTL=','
+		BHL='-'
+		BTR='.'
+		BVL='|'
+		BBL='`'
+		BBR="'"
+		FQ="'"
+		BQ='`'
+		F0=`echo -e "\xb0"`
+		F1=`echo -e "\xb1"`
+		F2=`echo -e "\xb2"`
+		RESET=${SCOFF}
+	;;
+	screen)
+		SCON=`echo -e "\033(0"`
+		SCOFF=`echo -e "\033(B"`
+		BTL='l'
+		BHL='q'
+		BTR='k'
+		BVL='x'
+		BBL='m'
+		BBR='j'
+		FQ="'"
+		BQ='`'
+		F0='-'
+		F1='+'
+		F2='|'
+		RESET=${SCOFF}
+	;;
+	*)
+		SCON=''
+		SCOFF=''
+		BTL=','
+		BHL='-'
+		BTR='.'
+		BVL='|'
+		BBL='`'
+		BBR="'"
+		FQ="'"
+		BQ='`'
+		F0='-'
+		F1='+'
+		F2='|'
+		RESET=`echo -e "\033[0m"`
+	;;
+	esac
+}
+
+make_banner()
+{
+	WIDSTR=$1
+	shift
+	TXTSTR="$*"
+	RESULT=''
+	
+	while [ "${WIDSTR}" ] ; do
+		case "${TXTSTR}" in
+		?*)	# take character from ${TXTSTR}
+			RESULT="${RESULT}`echo "${TXTSTR}" | cut -c1`"
+			TXTSTR=`echo "${TXTSTR}" | cut -c2-`
+			WIDSTR=`echo "${WIDSTR}" | cut -c2-`
+			;;
+		*)	# pad (to ${WIDSTR} length)
+			case ${WIDSTR} in
+			L*)	# left justify
+				RESULT="${RESULT}`echo ${WIDSTR} | sed 's/L/ /g'`"
+				WIDSTR=''
+				;;
+			R*)	# right justify
+				RESULT="`echo ${WIDSTR} | sed 's/R/ /g'`${RESULT}"
+				WIDSTR=''
+				;;
+			??*)	# centre justify
+				RESULT=" ${RESULT} "
+				WIDSTR=`echo "${WIDSTR}" | cut -c3-`
+				;;
+			*)	RESULT=" ${RESULT}"
+				WIDSTR=`echo "${WIDSTR}" | cut -c2-`
+				;;
+			esac
+		esac
+	done
+}
+
+mkflopdpy()
+{
+	cat <<EODPY
+ ${SCON}${LMAG}${BTL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${SCOFF}${LBLU}.--.${SCON}${LMAG}${BHL}${BHL}${BHL}${BHL}${DMAG}${BTR}
+ ${LMAG}${BVL} ${SCOFF}${DRED}${F0}${F1}${F2}${DCYA}It${FQ}s ${DRED}${F2}${F1}${F0}${SCON}    ${DBLU}${BTL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BTR}      ${SCOFF}${LWHT}o o ${LBLU};   ${SCON}${DMAG}${BVL}
+ ${LMAG}${BVL} ${SCOFF}${DRED}${F0}${F1}${F2}${LCYA}ALIVE${DRED}${F2}${F1}${F0}    ${SCON}${DBLU}${BVL} ${SCOFF}${LGRN}VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV ${SCON}${DBLU}${BVL}     ${SCOFF}${LYEL}d&&P ${LBLU}|   ${SCON}${DMAG}${BVL}
+ ${LMAG}${BVL} ${SCOFF}${DRED}${F0}${F1}${F2}${DCYA}!!!!!${DRED}${F2}${F1}${F0}    ${SCON}${DBLU}${BBL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BBR}    ${SCOFF}${LBLU},${DWHT}a&oo. ${LBLU}${BQ}. ${SCON}${DMAG}${BVL}
+ ${LMAG}${BVL}        ${SCOFF}${LYEL}LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL         ${LBLU},${FQ}${DWHT}d@@@@@. ${LBLU}| ${SCON}${DMAG}${BVL}
+ ${LMAG}${BVL}        ${SCOFF}${LRED}SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS         ${LBLU}| ${DWHT}q@@@@P  ${LBLU}; ${SCON}${DMAG}${BVL}
+ ${LMAG}${BVL}        ${SCOFF}${DYEL}DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD        ${DYEL}u_u${DWHT})@@@@b${DYEL}u_u ${SCON}${DMAG}${BVL}
+ ${DMAG}${BBL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${BHL}${SCOFF}${DYEL}q@)${LBLU}""""${DYEL}(@P${SCON}${DMAG}${BHL}${BHL}${BBR}${DWHT}${RESET}
+EODPY
+}
+
+do_display()
+{
+	# Version, login details, machine specs, date
+	VMSG="$1"
+	LMSG="$2"
+	SMSG="$3"
+	DMSG="$4"
+
+	if [ -z "${VMSG}${LMSG}${SMSG}${DMSG}" ] ; then
+		# Fill in details if there are none
+
+		SPECS=`grep "cpu MHz" /proc/cpuinfo 2>/dev/null | sed 's/.*: //'`
+		[ "${SPECS}" ] && MHZ="${SPECS} MHz"
+		SPECS=`grep bogomips /proc/cpuinfo 2>/dev/null | sed 's/.*: //'`
+		[ "${SPECS}" ] && BOGOMIPS="(${SPECS} bogomips)"
+
+		VMSG="`uname -s` `uname -r` on `uname -m`"
+		LMSG='Logged in as: '${USER}'@'`hostname`
+		SMSG='Speed: '${MHZ}' '${BOGOMIPS}
+		DMSG="Today's date: "`date`
+	fi
+
+	VBANNER='CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC'
+	make_banner ${VBANNER} ${VMSG}
+	VBANNER=${RESULT}
+	LBANNER='CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC'
+	make_banner ${LBANNER} ${LMSG}
+	LBANNER=${RESULT}
+	SBANNER='CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC'
+	make_banner ${SBANNER} ${SMSG}
+	SBANNER=${RESULT}
+	DBANNER='CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC'
+	make_banner ${DBANNER} ${DMSG}
+	DBANNER=${RESULT}
+
+	# sed hackery here handles s/FOO/BAR/ with '/'es in BAR:
+
+	mkflopdpy \
+		| sed 's/DD*D/'"` echo "${DBANNER}" | sed 's%/%\\\\/%g' `"'/' \
+		| sed 's/LL*L/'"` echo "${LBANNER}" | sed 's%/%\\\\/%g' `"'/' \
+		| sed 's/SS*S/'"` echo "${SBANNER}" | sed 's%/%\\\\/%g' `"'/' \
+		| sed 's/VV*V/'"` echo "${VBANNER}" | sed 's%/%\\\\/%g' `"'/'
+}
+
+##
+##	MAIN PROGRAM
+##
+
+# lxbanner's default behaviour is to print, not assist
+
+if [ -z "$1" -a `basename $0` = 'lxbanner' ] ; then
+	ACTION=cons
+else
+	ACTION=$1
+	[ "${ACTION}" ] && shift
+fi
+
+case ${ACTION} in
+cons)		# console-suitable banner
+	init_colours || exit 1
+	init_chars || exit 1
+	do_display ${1+"$@"} || exit 1
+;;
+syslinux)	# floppy boot banner (with syslinux colour codes)
+	TERM=syslinux init_colours || exit 1
+	TERM=syslinux init_chars || exit 1
+	do_display ${1+"$@"} || exit 1
+;;
+*)	if [ "${ACTION}" -a "${ACTION}" != 'help' ] ; then
+		echo "$0: Unrecognised ACTION '${ACTION}'" 1>&2
+	fi
+	echo "$0: Usage:" 1>&2
+	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/" 1>&2
+	exit 1
+;;
+esac

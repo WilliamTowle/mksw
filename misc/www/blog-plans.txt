@@ -1,0 +1,20 @@
+* covered
+- EeePC and network booting
+- cross compilation of kernel and userland; initial ramdisks
+- audio (ALSA)
+- graphics (DirectFB, shim, FBZX)
+- Perl, and Perl Power Tools
+- Dropbear, udhcpc/udhcpd, remote CLI by openSSH
+- ncurses: in Python, lynx (pkg-config), n2048 (ncurses5-config)
+
+* ST - misc
+- explanation of container_of()
+- see misc/hbOS/about-links.html (with backref to 'lynx')
+- 'DirectFB': interesting if we assume replacement kernels less buggy?
+- directVNC, if we can get sane 800x480 resolution to work
+
+* LT
+- X11: do we *need* wchar and locales (stock Ubuntu vs custom Debian)
+- directvnc: did we point it at sane libraries? use suitable DirectFB?
+- portlx builds for ARM; can we export local NFS root into QEmu?
+- QEmu: -net nic... and ...connect, ...listen (? no outside world)

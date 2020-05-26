@@ -1,0 +1,50 @@
+* outline - build package from source
+	...problem in stretch (now 'stable') and buster ('testing')
+	...at: https://cgit.freedesktop.org/xorg/xserver/commit/?id=2fbf62b2fb3dcb29551251d09aa695715bb754f4
+- preparation:
+	...add source repository line to /etc/apt/sources.list:
+	   | deb-src http://httpredir.debian.org/debian unstable main
+	...update; prepare
+	   | apt-get update
+	   | apt-get install build-essential devscripts fakeroot
+- get source/deps:
+	   | cd /usr/src
+	   | apt-get source xorg-server
+	   | apt-get build-dep xorg-server
+	...NB: git repo at https://anonscm.debian.org/git/pkg-xorg/xserver/xorg-server.git
+- adjust source and build
+	   | cd xorg-server-1.19.3/
+	...fix ./hw/xfree86/os-support/shared/posix_tty.c as per cgit patch
+	...build:
+	   | debuild -b -uc -us
+	   | ...sid fails due to https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=876690
+
+
+* outline - build package from git repository
+	...for problem in sid ('unstable')
+	...at: https://cgit.freedesktop.org/xorg/xserver/commit/?id=2fbf62b2fb3dcb29551251d09aa695715bb754f4
+	...package page: https://packages.debian.org/source/sid/xorg-server
+- preparation:
+	...install dependencies (including 'git')
+	   | apt-get install build-essential devscripts fakeroot git
+	...clone (from git URL on package page)
+	   | cd /usr/src
+	   | git clone https://anonscm.debian.org/git/pkg-xorg/xserver/xorg-server.git
+- managing dependencies:
+	...apply dependencies
+	   + NB: `apt-get build-dep ...` doesn't apply specifically to repo (and needs sources.list modification)
+	   + NB: 'mk-build-deps' use suggested at https://www.guyrutenberg.com/2017/09/23/use-mk-build-deps-instead-of-apt-get-build-dep/ (but using name of source package, which needs source URI in /etc/apt/sources.list)
+	   | cd xorg-server/
+ 	   | mk-build-deps debian/control --install --root-cmd sudo --remove
+- adjust source and build:
+	...fix ./hw/xfree86/os-support/shared/posix_tty.c as per cgit patch
+	...build (from git URL on package page)
+ 	   | debuild -b -uc -us
+ 
+
+* related
+	- crash on pen use -- https://www.linuxquestions.org/questions/linux-hardware-18/touching-wacom-tablet-crashes-linux-4175571470/
+	- git-buildpackage -- https://wikitech.wikimedia.org/wiki/Git-buildpackage
+	- git-buildpackage -- http://honk.sigxcpu.org/projects/git-buildpackage/manual-html/gbp.html
+	- Debian New Maintainers' Guide -- https://www.debian.org/doc/manuals/maint-guide/
+	- Guide for Debian Maintainers -- https://www.debian.org/doc/devel-manuals#debmake-doc

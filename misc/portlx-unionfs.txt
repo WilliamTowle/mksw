@@ -1,0 +1,26 @@
+* preliminary
+- needs "relatively modern" kernel (~3.18+)
+- ensure /dev, /proc, /sys exist in rootfs (with setup in init script)
+- ensure mountpoint /mnt/tmp exists
+
+* kernel needs:
+	CONFIG_SQUASHFS
+	CONFIG_TMPFS
+
+* mount tmpfs/ramfs:
+	mount -t tmpfs -o size=20m tmpfs /mnt/tmp
+	mount -t ramfs -o size=20m ramfs /mnt/tmp
+
+* ...aiming to do:
+	mount -t aufs -o br:/tmp/rammnt:/tmp/imgmnt=ro none /tmp/combined
+	mount -t unionfs -o dirs=/mnt/root.rw=rw:/mnt/root.ro=ro unionfs /mnt/root
+	mount -t overlay overlap -olowerdir=/lower,upperdir=/upper,workdir=/work /merged
+	...or something with CONFIG_OVERLAY_FS?
+- where aufs support requires downloads from kernel.org based on kernel ver
+- Debian has patched AUFS into their kernel sources since ~linux 3.0
+- 'unionctl' provides tools [for unionfs] that may be useful
+
+* resources
+- ramfs vs tmpfs -- http://www.thegeekstuff.com/2008/11/overview-of-ramfs-and-tmpfs-on-linux/
+- unionfs http://unionfs.filesystems.org/
+- http://www.thegeekstuff.com/2013/05/linux-aufs/

@@ -1,0 +1,40 @@
+'acpi' - Reading Laptop Battery Status
+
+To date, my homebrew linux OS has had a
+http://www.angelfire.com/linux/wills/download.html#stubs-de
+** link also needed in https://dunedlin.wordpress.com/2014/03/29/cursetheweather-a-python-program/ **
+kernel configured without power management,
+in keeping with the resulting build being tested under emulation more
+often than not.
+
+Lately I have had cause to read the battery status on a real machine.
+With a suitably-compiled kernel (acpi support via CONFIG_ACPI
+http://cateee.net/lkddb/web-lkddb/ACPI.html
+), it is possible to examine the /sys/class subdirectory 'power_supply'
+and query the kernel directly.
+
+For a slightly more user-friendly approach, enter the 'acpi' utility,
+http://sourceforge.net/projects/acpi/
+which does this on one's behalf.
+
+Preparation
+The 'acpi' suite requires your kernel to be configured with (at least)
+the options:
+CONFIG_ACPI=y
+CONFIG_ACPI_AC=y
+CONFIG_ACPI_BATTERY=y
+
+Building
+For this step use the usual configure/make/make install sequence, with
+./configure --prefix=... if necessary.
+
+Checking Statistics:
+'acpi' can query a variety of statistics including thermal and
+cooling information, and can get the relevant numbers from /proc if
+this is more relevant to your kernel. By default, it echoes battery
+status as reported under /sys, thus:
+
+${TOOLCHAIN}/usr/bin/acpi
+Battery 0: Full, 100%
+
+...today I'm connected to the mains and my battery is fully charged :)

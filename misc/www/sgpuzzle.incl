@@ -1,0 +1,18 @@
+<div style="width: 100%; height: 100%; margin: 2; padding: 2; background: lightyellow">
+<div style="width: 100%; height: 100%">
+
+	<span style="width: 33%; height: 33%; float: left"> [% INCLUDE sghouse.incl %] </span>
+	<span style="width: 33%; height: 33%; float: left"> [% INCLUDE sghouse.incl %] </span>
+	<span style="width: 33%; height: 33%; float: left"> [% INCLUDE sghouse.incl %] </span>
+	<div style="width: 0; height: 0; clear: both"></div>
+	<span style="width: 33%; height: 33%; float: left"> [% INCLUDE sghouse.incl %] </span>
+	<span style="width: 33%; height: 33%; float: left"> [% INCLUDE sghouse.incl %] </span>
+	<span style="width: 33%; height: 33%; float: left"> [% INCLUDE sghouse.incl %] </span>
+	<div style="width: 0; height: 0; clear: both"></div>
+	<span style="width: 33%; height: 33%; float: left"> [% INCLUDE sghouse.incl %] </span>
+	<span style="width: 33%; height: 33%; float: left"> [% INCLUDE sghouse.incl %] </span>
+	<span style="width: 33%; height: 33%; float: left"> [% INCLUDE sghouse.incl %] </span>
+	<div style="width: 0; height: 0; clear: both"></div>
+
+</div>
+</div>

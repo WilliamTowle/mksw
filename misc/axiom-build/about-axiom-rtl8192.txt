@@ -1,0 +1,62 @@
+| * kernel build
+| - preparation: stable ('stretch') build (lx4.9.0-3), with:
+| - preparation: 'stretch' build (lx4.12.0-1), with:
+| 	...apt sources for unstable:
+| 	   + #deb-src http://httpredir.debian.org/debian wheezy main
+| 	   + deb-src http://httpredir.debian.org/debian testing main
+| 	   + #deb-src http://httpredir.debian.org/debian unstable main
+| 	...do `apt-get update`
+| - get source:
+| 	...ensure dpkg-source/debuild (ie. dependencies for 'dpkg-source') are available:
+| 	   + `apt-get install build-essential devscripts fakeroot`
+| 	...check "linux-support" package version
+| 	   + via https://packages.debian.org/search?searchon=names&keywords=linux-support
+| 	   + is 4.12.0-2 for 'testing'
+| 	   + ...`apt-get source linux-image-4.12.0-2-686-pae` works
+| - get dependencies for build
+| 	...do `apt-get build-dep linux-image-4.12.0-2-686-pae`
+| - perform the build
+| 	| root@xk120:/usr/src/temp# cd linux-4.12.12/
+| 	| build: `time debuild -b -uc -us`
+| 	...creates linux-{doc|headers|image|libc-dev|manual|source|support} and 128x modules packages
+
+* dkms-aware rtl8192 driver:
+- NB:
+	...wheezy: module (r8187se) isn't the one blocked
+- overview
+	https://adamscheller.com/systems-administration/rtl8192cu-fix-wifi/
+	...source: https://github.com/pvaret/rtl8192cu-fixes.git
+	...howto: https://wiki.debian.org/KernelDKMS
+	...maybe https://adamscheller.com/systems-administration/rtl8192cu-fix-wifi/
+	...provides (partial?) dkms.conf
+	...config appears to be missing MAKE[0], CLEAN rules
+	...related: https://wiki.debian.org/KernelDKMS
+- install dependencies:
+ 	...mksw extract depends on 'git'; build on 'dkms'
+	...therefore do `apt-get install git dkms`
+| - driver: build
+| 	...deps: `dpkg --install /usr/src/temp/linux-headers-3.2.0-4-686-pae_3.2.78-1_i386.deb`
+| 	...git clone into named directory
+| 	...add:
+| 		[ -d /var/lib/dkms/8192cu/1.10 ] || dkms add ./rtl8192cu-fixes || exit 1 ;\
+| 	...install:
+| 		dkms install 8192cu/1.10 -k 3.2.0-4-686-pae || exit 1 ;\
+| 	...and `depmod -a KERNELVER`
+| 	...DONE: 8192cu.ko appears under /lib/modules
+| 	...TODO: want a wheezy baseline to put modules and new initrd into
+| 	...TODO: also provides directives to blacklist native module
+| - see also: other methods?
+| 	...can `make`, `make install` with KVER set to target kernel num
+| 	...will augment /lib/modules/$(KVER)/kernel/drivers/net/wireless
+| - see also: http://www.xkyle.com/building-linux-packages-for-kernel-drivers/
+| 	...has `dkms build -m ixgbe -v 3.12.6`
+| 	...then creates a kernel-agnostic package that needs the compiler
+| - see also: https://wiki.kubuntu.org/Kernel/Dev/DKMSPackaging
+| 	...suggests `dkms mkdeb` triggers a "mktarball"
+| 	...and that automatic rebuilds need dkms.conf with "AUTOINSTALL=yes"
+| - build against current kernel:
+| - for dkms to trigger, install:
+|    97  dpkg --install linux-headers-4.12.0-2-686-pae_4.12.12-2_i386.deb linux-headers-4.12.0-2-common_4.12.12-2_all.deb linux-kbuild-4.12_4.12.12-2_i386.deb linux-image-4.12.0-2-686-pae_4.12.12-2_i386.deb 2>&1 | less
+- ls -lart ` find /lib/ -name '8192cu.ko' ` 
+-rw-r--r-- 1 root root 576524 Sep 25 09:25 /lib/modules/4.9.0-3-686-pae/updates/dkms/8192cu.ko
+-rw-r--r-- 1 root root 566408 Sep 25 09:51 /lib/modules/4.12.0-2-686-pae/updates/dkms/8192cu.ko

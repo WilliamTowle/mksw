@@ -1,0 +1,30 @@
+#!/usr/bin/perl -w
+use	strict;
+
+use	File::Basename;
+use	File::Copy;
+use	File::Path;
+
+sub main
+{
+	@_ || die "Missing SOURCE/TARGET arguments\n";
+  my	$todir= pop @_;
+	[ -d $todir ] || die "Expected TARGET to be directory\n";
+	@_ || die "Expected SOURCE *and* TARGET arguments\n";
+
+	foreach my $filespec (@_)
+	{
+	    foreach my $file ( ($filespec=~ m/[\*\?\[]/)? glob $filespec : ($filespec) )
+	    {
+	      my $target;
+	      	$file=~ tr/:*?"<>|/-/;
+	      	$target= "$todir/$file";
+	    	print "$file -> ${target}: ";
+		mkpath dirname($target) || die "mkpath()\n";
+		printf "%s", copy($file, $target)? "OK" : "FAILED";
+		printf "\n"
+	    }
+	}
+}
+
+main @ARGV

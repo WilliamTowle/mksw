@@ -1,0 +1,113 @@
+https://fs-uae.net/using-hard-drives
+------------------------------------
+
+* two HDF variants:
+- full image of a hard drive, Rigid Disk Block format
+- image of a single partition - UAE will emulate a full HDF image
+
+UAE will look for the "RDSK" header to identify a RDB image; for a
+completely empty image a single-partition image will be assumed. In
+the latter case, the hard_drive_x_type option can be used to override
+this assumption.
+
+FS-UAE in particular only supports the default geometry (sectors=32,
+surfaces=1, reserved=2, block_size=512), which is compatible "with
+most HDF partition files < 512MB".
+
+
+http://www.amiga.org/forums/showthread.php?t=63001 #8
+-----------------------------------------------------
+
+|  LowCyl = 0 /* "Auto search ON" */
+| 
+| BlockSize = 512 /* fat95 does not need this here, */
+| HighCyl = 1 /* but the Mount command likes to see them ;^) */
+| BlocksPerTrack = 1
+| Surfaces = 1
+| 
+| DosType = 0x46415400 /* floppies only. Or else... */
+| DosType = 0x46415401 /* first usable partition. Works almost always. */
+| DosType = 0x46415402 /* second "primary" Partition. Seldomly. */
+| DosType = 0x46415405 /* first "logical drive". */
+| DosType = 0x46415406 /* second "logical drive", etc. */
+
+My mountlist file which I've named ZIP0MOUNTLIST and put in the DEVS: directory.
+
+| ZIP0:
+| FileSystem = l:fat95
+| Device = scsi.device
+| Unit = 5
+| Flags = 0
+| LowCyl = 0
+| HighCyl = 0
+| Surfaces = 1
+| BlocksPerTrack = 1
+| BlockSize = 512
+| Buffers = 100
+| BufMemType = 1
+| BootPri = 0
+| Stacksize = 4096
+| Priority = 5
+| GlobVec = -1
+| DosType = 0x46415401
+ 
+I mount the zip drive with "mount zip0: from devs:zip0mountlist"
+
+
+http://www.amiga.org/forums/showthread.php?t=63001 #9
+-----------------------------------------------------
+
+You have CrossDOSfilesystem in your L: directory?
+
+Is DosType the same?
+
+If you format the Zip disks on a PC, they aren't recognized? Zip 100MB or 250MB? Brand new factory formatted disk?
+
+I run OS3.9 and this is my mountlist (or rather DosDriver file) for a 100MB zip disk called ZPC:
+
+| Filesystwem = L:CrossDOSfilesystem
+| Flags = 0
+| Surfaces = 2
+| BlocksPerTrack = 64
+| SectorSize = 512
+| Mask = 0x7ffffffe
+| MaxTransfer = 0x0ffffffe
+| Reserved = 1
+| Interleave = 0
+| LowCyl = 0
+| HighCyl = 1535
+| Buffers = 50
+| BufMemType = 0
+| StasckSize = 2000
+| Priority = 10
+| GlobVec = -1
+| DosType = 0x4d534800
+ 
+The SCSI device driver, unit #, etc are specified in the icon's Tool Types.
+
+I use factory PC formatted zip disks interchangeably between Amiga, PCs, and Macs. Very convenient.
+
+
+http://www.amibay.com/showthread.php?60794-How-to-use-ZIP-drives-with-the-Amiga
+-------------------------------------------------------------------------------
+
+Enable FastFileSystem on a 100M Zip cartridge
+
+| FileSystem = L:FastFileSystem
+| Flags = 0
+| Surfaces = 1
+| BlocksPerTrack = 68
+| SectorsPerBlock = 1
+| SectorSize = 512
+| Mask = 0x7ffffffff
+| MaxTransfer = 0x1fe00
+| Reserved = 2
+| Interleave = 0
+| LowCyl = 2
+| HighCyl = 2890
+| Buffers = 30
+| BufMemType = 0
+| StackSize = 600
+| Priority = 10
+| GlobVec = -1
+| DosType = 0x444F5301

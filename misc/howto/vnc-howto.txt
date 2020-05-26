@@ -1,0 +1,108 @@
+1. Boot machines; disable automatic address acquisition if necessary
+2. Ensure address assignment works:
+	- by static allocation, to headlesspc [192.168.42.253]
+	- by dynamic allocation, to vncpc [192.168.42.130]
+3. Log in to 'headlesspc'; create X server with virtual framebuffer
+	Xvfb :1 -screen 0 800x600x24 -ac &
+4. Run x11vnc on headlesspc, with port forwarding of VNC server
+	ssh -l guest -L 5900:localhost:5900 192.168.42.253 'x11vnc -localhost -display :1'
+5. Open vnc viewer on 'vncpc':
+	vncviewer localhost
+
+6. Other: window manager and shell/s
+	DISPLAY=:1 ratpoison &
+	DISPLAY=:1 x-terminal-emulator &
+	DISPLAY=:1 x-terminal-emulator &
+
+	Switching windows:
+		CTRL-T n	(next by numeric ID)
+		CTRL-T p	(previous by numeric ID))
+		CTRL-T <n>	(to specific number)
+		CTRL-T CTRL-T	(to previous [by LRU])
+	Misc other
+		CTRL-T k	(kill process in window)
+		CTRL-T w	(list open windows by ID)
+		CTRL-T i	(current window's information - ID, title)
+
+TODO:
+	Ensure 'projadmin' user exists on remote PC
+	Ensure .firefox directory is symlinked; run firefox
+
+|See also:
+|- howto: http://gpio.kaltpost.de/?page_id=84
+|- possibly "-depth <n>" when directvnc is client
+|- start server remotely with `x11vnc -nopw -auth /var/lib/lightdm/root/:0 -display :0`
+|
+|-----
+|Boot wheezy and "homebrew initrd test"
+|Ensure software installed:
+|    x11vnc, xauth, xvfb-run
+|    ...
+|Configure IP addresses
+|    192.168.42.1 for client, 192.168.42.2 for server
+|    Add to /etc/hosts on client
+|Run server:
+|    xvfb-run -s '-screen 0 800x480x16' x11vnc -nopw
+|    Note output "desktop is: ditto:0 PORT=5900"
+|Run client:
+|    ?(only 16bpp)... ./toolchain/usr/bin/directvnc --bpp 16 ditto:0
+|    ./exttemp/.../fbvnc 192.168.42.2
+|Run apps:
+|    ...
+
+|* tightvncserver (Wheezy)
+|- will "just run"
+|- can prompt for passwords (...on first run?)
+||- hangs on connecting directvnc to tightvncviewer
+|- triggers execution of $HOME/.vnc/startup
+|- background task is `Xtightvnc :1 ...`, on port 5901
+|- normal X desktop appears at 1024x768 (see Xtightvncserver command line)
+|	-> TODO: install xeyes and run from here?
+|
+|* xvfb/x11vnc (ministick)
+||- server: ensure sane /etc/network/interfaces, IP addr set
+||- server: ensure sane /etc/dnsmasq.conf, dnsmasq running
+||- client: ensure suitable /usr/share/udhcpc, run `udhcpc -i eth0`
+|- launch server with `xvfb-run x11vnc`
+|- launch client with `fbvnc 192.168.42.253 5900`
+|- default xvfb-run window is 640x480x8 ... see xvfb-run options?
+|- no password required by default ... therefore run x11vnc with options?
+|
+|* xvfb/x11vnc and directVNC
+||- client: connect with `<SETLDLIBS> directvnc SERVERADDR`
+||-> white background with tall black rectangular (remote X11) copy area
+||-> moving cursor shows odd colour effect
+|
+||#* Grunt box configuration:
+||#- sudo apt-get install x11vnc
+||#- requires 5,926kB
+||#
+||#* Ministick configuration:
+||#- sudo apt-get install directvnc
+||#- requires 4,833kB
+||#
+||#[1] Naive daemon initialisation
+||#- '-auth guess' cannot "guess" for {Ubuntu, Debian} due to use of lightdm
+||#- sudo x11vnc -nopw -auth /var/run/lightdm/root/:0 -display :0
+||#- Problem: DirectFB "please supply 'video-phys=' and 'video-length='
+||#	options" and "Could not initalize 'system-core' core!"
+||#-> can build with '--enable-debug-support --enable-trace'
+||#-> may need to set library path on execution?
+||#-> could try also building SSL, if absent
+||#-> can populate '.directfbrc'
+||#-> can check 'fbset -i'
+||#
+||#-----
+||#
+||#
+||#* http://askubuntu.com/questions/229989 suggests:
+||#- Run `x11vnc -storepasswd` then `x11vnc -usepw`?
+||#- ssh to host and run `x11vnc -safer -forever -display :0 2>&1 &`?
+||#
+||#* http://ubuntuforums.org/showthread.php?t=2039022 suggests:
+||#- /usr/bin/x11vnc -forever -rfbport 5900 [...]
+||#- Likely options '-rfbauth /etc/local.pass -localhost'
+||#- Possible options '-xkb -noxrecord -noxfixes -noxdamage`?
+||#
+||#* http://ubuntuforums.org/showthread.php?t=45565 notes:
+||#- Ubuntu has a 'vncpasswd' package

@@ -1,0 +1,18 @@
+Ensure 'hostapd' configuration file exists
+Ensure directories created
+	mkdir -p /var/run/hostapd
+
+Test run:
+	hostapd <CONFFILE>
+
+...fails without 'driver=hostap':
+nl80211: 'nl80211' generic netlink not found
+Failed to initialize driver 'nl80211'
+rmdir[ctrl_interface]: No such file or directory
+Segmentation fault
+
+...fails with 'driver=hostap'
+ioctl(SIOCGIFINDEX): No such device
+hostap driver initialization failed.
+ELOOP: remaining socket: sock=5 eloop_data=0x8c01bb8 user_data=(nil) handler=0x80824f0
+

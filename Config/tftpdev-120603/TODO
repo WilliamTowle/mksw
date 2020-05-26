@@ -1,0 +1,897 @@
+2012-03-26
+==========
+
+* busybox v1.19.4 chroot test with binutils 2.17, gcc 4.2.4, uClibc 0.9.30.3
+- DONE; fails: binutils doesn't build
+
+* binutils 2.22, gcc 4.3.6, uClibc 0.9.32.1
+- cross-binutils v2.22 complains that "lto" is an unbuilt language
+
+
+2012-02-11
+==========
+
+* nasm
+- TODO: problem with strlcpy.c; tried 2.08.02, 2.09.10, v2.10rc8
+- ...works with ENV=lching (binutils 2.17, gcc 4.1.2)
+- ..."fixed" by reverting to /usr/bin/gcc
+
+* for mkdisk
+- problem with memdisk using native compiler
+
+
+2012-02-04
+==========
+
+* Kernel now v3.2.4
+- DONE: download
+- DONE: configuration (incl uC 0.9.30.3)
+- TODO: build, test
+
+
+2012-01-08
+==========
+
+* binutils - v2.21.1, 2.22 (and gcc 4.3.6)
+- uClibc 0.9.30.3 evaluate-to-const problem with init(), fini()
+- uClibc 0.9.31.1 likewise (binutils 2.21.1)
+- uClibc 0.9.32.1 - fails to direct ** minimal ** compiler to libgcc.a
+
+
+2012-01-07
+==========
+
+* fakeroot-ng
+- DONE relocate
+- DONE: build v0.17
+
+* fakechroot
+- DONE: relocate
+- DONE: build v2.16
+
+* fakeroot
+- DONE: relocate
+- TODO: build v2.18.2
+
+* pretendroot
+- DONE: relocate
+
+* mksquashfs
+- DONE: v4.2
+
+* [c]debootstrap
+- debootstrap: v1.0.36 and v1.0.20
+- DONE: cdebootstrap now v.0.5.8
+- TODO: debootstrap now v1.0.37
+- cdebootstrap: fails -- 'debian-installer.h' missing (see dpkg-dev?)
+- NB: debootstrap build stage wants to 'chown' things to root
+
+
+2012-01-03
+==========
+
+* new uClibc -- 0.9.32.1
+- DONE: 'ENV' configuration for
+- barfs on libgcc.a with gcc 4.3.6
+- '__libc_epoll_pwait' issue with gcc 4.2.4
+
+* v3.0 kernel and filesystems
+- OK with binutils 2.17, uClibc 0.9.30.3 (potential ldconfig issue?)
+- TODO: verify sane configuration in kernel (...with KVM)
+- DONE: verify sane configuration in busybox (with halt/reboot)
+- TODO: sound? FBZX emulator?
+
+** KVM details **
+- kernel component available since 2.6.20
+- CONFIG_KVM enables kvm-intel.ko/kvm-amd.ko
+- VMs are modified QEmu instances
+- networking howto: https://help.ubuntu.com/community/KVM/Networking
+
+* FBZX
+- DONE: extract
+- DONE: deps - sdl.h dependency
+- DONE: deps - pkg-config
+- DONE: pkg-config seeks {libpulse-simple|alsa}.pc (OSS might work alone?)
+- DONE: full build/install
+- TODO: configure kernel (CONFIG_FB_***? =_VESA); test
+
+* Framebuffer
+- setup/hwinfo: http://thewayeye.net/2008/september/1/setting-framebuffer-ubuntu-eee-pc-901
+- uvesafb (2.6.24+): https://wiki.archlinux.org/index.php/Uvesafb
+
+
+2012-01-02
+==========
+
+
+* binutils versions
+- cross-binutils 2.22 builds early (!), demands gcc with GMP, MPFR (!)
+- ditto v2.19.1 (!!)
+- uClibc barfed on libgcc (oops)
+
+
+2011-12-10
+==========
+
+* pixman
+- DONE: v0.16.6 builds OK
+- !! TODO !! later versions necessary: >= 0.21.8 for XOrg X server
+- TODO: link error due to ___tls_get_addr in new uClibc (0.9.30.1)
+- TODO: kernel header conflict with uClibc 0.9.28.3
+
+* pixman v0.21.8 (minimum for chosen xorg-xserver)
+- DONE: basic Makefile (for v0.16.6)
+- TODO: kernel_types.h problem with ng26/ng30 and uClibc 0.9.28.3
+- TODO: ___tls_get_addr link error with ng26/ng30 and uClibc 0.9.30.3
+- pixman: CTARGETS is 'cti-pixman'; 'cui-pixman' needed
+- uClibc 0.9.30.*/0.9.31.*/0.9.32 don't find libgcc.a at 'ld' stage
+- TODO: with binutils 2.21.1 v1.4 patches?
+
+* binutils >= v2.21.1:
+- v2.21.1 demands "GCC... gmp/mpfr"
+- TODO: v2.22 exists, with v1.0 patches -- test this?
+
+
+2011-11-09
+==========
+
+* binutils
+- TODO: version 2.19.1, native config
+- TODO: version 2.19.1, cross config
+- TODO: native compiler builds OK
+- TODO: cross compiler miniroot test (see below)
+
+* miniroot w/ gcc 4.3.6, binutils 2.21.1:
+- TODO: uC 0.9.30.3/0.9.31.1 obsolete with gcc 4.3.6?
+- TODO: uC 0.9.32 shows compiler lacks libgcc.a
+
+* miniroot w/ gcc 4.3.6, binutils 2.17:
+- TODO: uClibc 0.9.32: binutils fails (while building 'gas')
+- TODO: uClibc 0.9.30.3/0.9.31.1: ditto
+
+* miniroot w/ gcc 4.3.6, binutils 2.19.1:
+- TODO: uClibc 0.9.30.3: problem with libgcc.a
+
+* toolchain update
+- TODO: uClibc 0.9.31.1 ldconfig: still segfaults (binutils 2.17)
+
+
+2011-10-19
+==========
+
+* for running in VM
+- DONE: configure (lching) { TODO: sure? }
+- TODO: build sound apps, etc
+- TODO: burn CD for testing (third one? with which TinyCores/etc?)
+- FUTURE: 2.6.34+uC0.9.28.3 has mismatched typedefs issue
+
+* misc
+- TODO: mpg123 complaint about "tools not prefixed with host triplet" 
+- TODO: mtd-utils v1.2.0 (native) { !! dependency on lxzo1x.h }
+
+* GUI: xkdrive w/ 2.6.20.1 kernel
+- recommendation for Xfbdev on top of uvesafb "or another kernel driver"
+- X servers need /tmp and /dev/tty6 (type=c m:m=4,6) present
+- /dev/mem should be c/1,1 mode 640
+- Xvesa built; Xfbdev needs /dev/fb0 present and working
+- run with `Xvesa :0 -ac -screen 640x480x16x70`
+- TODO: investigate "Could not init font path element built-ins"
+- TODO: some use of '-I/usr/X11R6/include', sadly
+
+* GUI: X11-tiny
+- TODO: worth considering given xkdrive builds?
+- FUTURE: distrotools-ng version fails in fontcache section
+- FUTURE: distrotools-legacy version also fails in fontcache section
+
+
+2011-10-18
+==========
+
+* latex/dvips, etc:
+- FUTURE: latex binary location is unclear
+- DONE: build of latex2html v2002-2-1-20050114.mak
+
+
+2011-10-17
+==========
+
+* incoming
+- DONE: dnsmasq -> v2.59
+- DONE: wget -> v1.13.4
+
+* glib
+- DONE: Makefile for v2.30.1
+- TODO: v2.30.[01] requests "libffi >= 3.0.0"
+- v2.28.8: problem with structs referenced by gzlibcompressor.c
+- v2.26.1: gzlibcompressor.c likewise
+- TODO: wrong to locate zlib.h (on host, presumably)
+- TODO: make 'pkg-config'(s) with --with-pc_path?
+
+
+
+2011-10-16
+==========
+
+* network boot/sound testing
+- DONE: 'Permission denied' due to unfsd and root squash?
+- TODO: can use LD_LIBRARY_PATH with uade123. Is uClibc config wrong?
+- TODO: uade123 wants libao ao_plugin_test() (see uClibc config problem?)
+- TODO: mpg123 "general protection" warning (see uClibc config problem?)
+- FUTURE: can't use LD_LIBRARY_PATH=/usr/lib with sox (!!!)
+
+* toolchain build
+- TODO: even newer gcc (v4.???) for native
+- TODO: even newer gcc (v4.???) for cross/cross-k
+- FUTURE: possible uClibc 0.9.31/binutils 2.21.1 incompatibility
+
+
+2011-10-15
+==========
+
+* mpg123
+- DONE: cross-compilation [Makefile] support
+- DONE: cross-compiles sanely?
+- DONE: unnecessary pkg-config dependency?
+- TODO: may have lost 'native' build rule completely?
+- FUTURE: native build has lfslivecd kernel issue? Other required?
+
+* uade/libao
+- works: ./toolchain/usr/bin/uade123 -e wav -f test.wav test/TubBells.mmd 
+- DONE: libao lacks necessary 'cui' install
+- TODO: build explicitly without ESD plugin support
+- FUTURE: can't load libao despite 'ldconfig'! (uClibc 0.9.30.3)
+- FUTURE: ng26/uC0.9.30.3 fails with pthreads issue
+- FUTURE: ng30 fails due to missing utime.h (...uClibc-dev install bug?)
+
+* sox (v14.3.2)
+- DONE: Makefile can cross compile
+- DONE: rewind_pipe() needs '_IO_read_{ptr|base}' in struct FILE
+- FUTURE: can't load libsox despite 'ldconfig'! (uClibc 0.9.30.3)
+
+* uClibc ldconfig
+- v0.9.30: is OK
+- v0.9.31: gives segmentation fault on execution
+- FUTURE: is v0.9.32 better suited to 3.0.x kernel?
+
+
+2011-10-14
+==========
+
+* misc
+- TODO: mtd-utils v1.2.0 (native) { !! dependency on lxzo1x.h }
+- DONE: libao lacks 'cui' install
+
+2011-10-12
+==========
+
+* aumix (v2.9.1)
+- DONE: Makefile
+- TODO: native OK
+- TODO: cross OK (link fail with glibc symbols)
+
+* EeePC-friendly sound
+- TODO: remote boot sanity-check on ng26 kernel
+- TODO: remote boot sanity-check on ng30 kernel (needs apps)
+
+
+2011-10-10
+==========
+
+* uade/libao
+- works: ./toolchain/usr/bin/uade123 -e wav -f test.wav test/TubBells.mmd 
+- FUTURE: ng26/uC0.9.30.3 fails with pthreads issue
+- FUTURE: ng30 fails due to missing utime.h (...uClibc-dev install bug?)
+
+
+2011-10-09
+==========
+
+* uClibc-dev 0.9.31.1
+- DONE: adapt 'install_headers' invocation (trigger: install_dev)
+- TODO: demonstrate 'busybox' still builds, works
+
+
+2011-10-06
+==========
+
+* make
+- DONE: import and test v3.81 build changes
+
+* glib
+- TODO: v2.30.0 requests "libffi >= 3.0.0"
+- v2.28.8: problem with structs referenced by gzlibcompressor.c
+- v2.26.1: ditto!
+- TODO: wrong to locate zlib.h (on host, presumably)
+- TODO: make 'pkg-config'(s) with --with-pc_path?
+
+
+2011-10-01
+==========
+
+* build system anachronisms
+- DONE: bogus UCLIBC_RT INSTTEMPs (only old SDL)
+- DONE: badly named 'cui-cross-pkg-config' references (ao, in uade)
+- FUTURE: some ${PKG_EXTTEMP} variables are not ${EXTTEMP}/insttemp
+- FUTURE: some 'CONFIGDEPS' still (lists are explicit latterly)
+
+
+2011-09-30
+==========
+
+* SDL apps - addt
+- DONE: sanitise addt Makefile
+- DONE: addt link errors w/libdl.so.2, libstc++.so.6
+- TODO: won't load SDL library (...and we're missing 'ldconfig')
+
+
+2011-09-29
+==========
+
+* libtool v2.x
+- DONE: working v2.2.10 Makefile
+- FUTURE: other (later) versions - is v2.4.x in beta?
+
+* DirectFB/DirectFB_SDL
+- DONE: DirectFB against uClibc 0.9.31.1
+- DONE: DirectFB_SDL against uClibc 0.9.31.1
+- TODO: test DirectFB (needs kernel support)
+- TODO: test DirectFB_SDL (possible kernel support requirements??)
+- FUTURE: overriding libtool prompts build/install failure!
+
+* SDL cross-compile
+- DONE: add cross-compilation make rules
+- FUTURE: overriding libtool prompts install failure!
+
+
+2011-09-28
+==========
+
+* kernels lack CONFIG_AFFS_FS
+- DONE: add to 'ng26' kernel (2.6.34)
+- DONE: add to 'ng30' kernel (see kingpin deltas)
+
+* ADFlib
+- TODO: failing to 'cat myconf.sh >myconf'
+- TODO: not adapting CC/AR/RANLIB yet (see also 'myconf' content)
+- TODO: won't cross compile - 'myconf' runs a built executable
+
+
+2011-09-27
+==========
+
+* EeePC-friendly video
+- Framebuffer needs uvesafb with 915resolution to get 800x480
+
+* uClibc 0.9.31.1
+- DONE: configuration
+- DONE: no need to pattern-match 0.9.32-* [i.e. release candidates]
+- DONE: UCLIBC_SUSV3_LEGACY fixes usleep() link fail
+- DONE: busybox chroot test
+- DONE: add UCLIBC_HAS_WCHAR for building X libs/apps
+- TODO: pixman retains __tls_get_addr link failure (compiler?)
+- FUTURE: busybox 1.19.2 include/platform.h tests strverscmp() badly
+
+* uClibc 0.9.32
+- DONE: configuration (double-check pattern matching??)
+- TODO: epoll.c compilation problem (pending fixes in git tree)
+- TODO: possibly need UCLIBC_SUSV3_LEGACY (busybox 1.19.2)
+- TODO: busybox chroot test
+- FUTURE: UCLIBC_HAS_WCHAR in uClibc 0.9.32 (or relevant latest)
+
+* uClibc
+- TODO: ensure 0.9.31[.x] is being used
+- TODO: UCLIBC_SV4_DEPRECATED needed in later versions [for usleep()]
+
+
+2011-09-26
+==========
+
+* arm CPU/platform support
+- neptune STB is "ARMv7 Processor rev 1"
+- QEmu 'versatilepb' is ARM926 (ARM926t) { buildroot setup }
+- DONE: target.mak arm processor tuning params
+- TODO: gcc 4.1.2 says "Unknown CPU used in --with-tune=cortex-a9"
+- TODO: test arm kernel
+
+* mips CPU/platform support
+- FUTURE: target.mak mips processor tuning params
+- FUTURE: test mips kernel
+- FUTURE: beware mips settings in the arm configuration!
+
+
+2011-09-23
+==========
+
+* xorg-xserver (v1.11.0)
+- DONE: basic Makefile
+- TODO: needs pixman >= 0.21.8
+- TODO: ...other suitable 'include's, etc
+- TODO: complete build OK?
+- TODO: various testing (Xvesa and XDirectFB?)
+
+
+2011-09-22
+==========
+
+* X11 other
+- DONE: new version - v3.5.9: Makefile
+- DONE: is triggering build of libX11 1.2.2; update (now v1.3.6)
+- FUTURE: un/safe to reinstate --disable-xlocale[dir] in 1.3.x?
+- FUTURE: un/safe to reinstate --disable-loadable-i18n in 1.3.x?
+- FUTURE: 'X11R7' in subdirectories probably outdated
+- FUTURE: Makefile for 'xv' in outdated style
+
+* jwm
+- DONE: confirm no shape, Xinerama, fs2build.h, Xft, Xrender deps
+- DONE: undefined references - _XlcVaToArgList; others
+
+
+2011-09-21
+==========
+
+* distrotools-ng and uClibc
+- FUTURE: 'install_dev' and/or 'install_runtime'?
+
+* GUI: xkdrive (XFree86 4.3.0)
+- tested and working (under emulation) on "legacy" builds (lching?)
+- TODO: needs 'IF_MASK' under ng26 (possibly not fixable)?
+- needs /dev/tty6 (type=c m:m=4,6) for opening the screen
+- needs /dev/psaux (type=c m:m:10,1) for mouse control
+
+* baseline GUI handling - misc
+- TODO: svgalib requires make/coreutils ...under SW3.9
+- TODO: svgalib for distrotools-ng lacks 'IF_MASK' symbol
+- TODO: X11-tiny for distrotools-ng lacks 'IF_MASK' symbol
+
+
+2011-09-20
+==========
+
+* libX11
+- DONE: geex configure: --disable-loadable-i18n --disable-xlocaledir
+- FUTURE: geex configure: --enable-malloc0returnsnull
+- FUTURE: more at http://xorg.freedesktop.org/releases/individual ?
+
+
+2011-09-14
+==========
+
+* pv picture viewer
+- DONE: preliminary Makefile w/ dependencies
+- TODO: run-time testing
+- TODO: failing link to [X11] X{Open|Close}Display (get_wm_property())
+- DONE: check *all* dependencies 'configure' with sane CC=
+- FUTURE: check *all* dependencies run with sane 'libtool'/'pkg-config'
+
+* SDL_image
+- DONE: IMG_png.c "dereferencing pointer to incomplete type"
+
+* pv deps -- libpng
+- TODO: right libtool for native build version?
+- TODO: right pkg-config for native build version?
+- TODO: sane CC/CFLAGS for cross build version
+
+
+2011-09-13
+==========
+
+* toolchain/compiler(s)
+- FUTURE: older toolchains to use NTI_CPU value (being x86_64-safe)
+- FUTURE: 64-bit ubuntu lacks gnu/stubs-32.h during toolchain build
+- FUTURE: 'gcc-core' source not sufficient for 'languages=c,c++'
+
+* openssl -> v1.0.0.e
+- DONE: cross-compilation
+- DONE: native compilation (inconsistent assumption configure exists)
+- TODO: standardise INSTALLTOP vs OPENSSLDIR between NTI/CUI installs
+
+
+2011-09-10
+==========
+
+* remote boot: "ng26" kernel, busybox 1.19.2, latest dnsmasq
+- DONE: Some 2.6 kernel files had "v2.0/" in URLs
+- DONE: build v2.6 kernel; preserve config file
+- DONE: document need for /dev/tty<n> owned by root.root
+- worked OK (albeit with complaint about /etc/init.d/rcS absence)
+- fixed for "ng30" kernel also :)
+
+* ng26 vs ng30 kernel:
+- CONFIG_MISC_DEVICES=y: becomes unset
+- CONFIG_ATH5K: becomes unset (poss. not important?)
+- may want CONFIG_ASUS_LAPTOP?
+
+
+2011-09-09
+==========
+
+* buildtools
+- DONE: pkg-config has misleading mentions of 'cross'
+- DONE: v0.23 doesn't have a native build
+- DONE: revert pkg-config deps to v0.23
+- TODO: advance pkg-config deps to intermediate (>0.23) sane version?
+- TODO: handle (cross-)pkg-config libtool dependency (v0.26)
+
+
+2011-09-06
+==========
+
+* busybox
+- TODO: busybox v1.18.5 fails in 'networking' code
+- DONE (by deconfigure): busybox v1.19.2 fails in 'ubitools' code
+
+
+2011-09-02
+==========
+
+* e2fsprogs build
+- DONE: new version -- 1.41.14
+- TODO: possibly also libraries (...why?? e.g. xfsprogs?)
+
+
+2011-08-29
+==========
+
+* SDL apps
+- views (http://freshmeat.net/projects/views): fails handling JPEGs
+
+* shim (SDL show image)
+- at: http://www.xs4all.nl/~amorel/aseq/pegasosppc/shim.html
+- TODO: has bad extraction handling (WTF that means)
+
+* zgv
+- fails in readpng.c, "dereferencing pointer to incomplete type"
+- TODO: sanitise build-rebuild pass
+
+
+2011-08-19
+==========
+
+* passwords in userland
+- DONE: configure busybox utils for distrotools-legacy
+- TODO: configure busybox utils for distrotools-ng
+- TODO: legacy rootfs testing
+- TODO: ng rootfs testing
+
+
+2011-08-18
+==========
+
+* password generation (mcrypt, ccrypt)
+- TODO: mcrypt: requires 'libmcrypt'
+- TODO: ccrypt?
+
+* emulator HOWTO - QEmu networking
+- to enable redirection for ssh, run with "-redir tcp:1234::22"
+- needs /etc/passwd (ID:PASS:UID:GID:NAME:HOME:SHELL)
+- needs /etc/group (ID::NUM:NAMES)
+- to connect, issue `ssh -p 1234 root@localhost`
+
+* miniroot HOWTO - dropbear
+- needs /etc/dropbear created, dropbear_{rsa|dss}_host_key
+- key generation needs /dev/urandom (type=c, m:m=1:9)
+- run dropbear with '-E' to log on stderr
+- NB: dislikes accounts having blank passwords
+
+* miniroot HOWTO - udhcp
+- needs /proc mounted
+- needs /etc/udhcpc created
+
+* experiment
+- with udhcp for networking
+- inbound ssh OK? - needs password generation (mcrypt, ccrypt?)
+- with xclock over ssh (outbound)
+
+* dropbear v0.53.1
+- DONE: distrotools-legacy build
+- TODO: distrotools-ng build - fails link due to missing crypt()
+- wants to `chown ...`; need fakeroot (non-fatal to build)
+- TODO: configuration?
+
+
+2011-07-06
+==========
+
+* usbutils/libusb
+- DONE: libusb references (cross-)libtool
+- TODO: usbutils references (cross-)libtool
+- DONE: libusb extract
+- DONE: libusb configure
+- TODO: libusb build - gettext/ftello64/mbrtowc() link failure
+- TODO: libusb install
+- TODO: cross-compilation of usb-utils
+- TODO: "real-life" testing of cross-compiled usb-utils
+
+
+2011-06-30
+==========
+
+* svgalib
+- TODO: running 'svgakeymap' fails - perl dependency
+- NB: '/usr/local/bin/plane' (et al) needs /proc mounted
+- consider apps: e-uae? svncviewer?
+
+* e-uae
+- DONE: native build w/ X11
+- DONE: test native build w/ X11
+- DONE: native build w/ SDL
+- TODO: test native build w/ SDL
+- TODO: test cross compilation
+
+* QEmu:
+- v0.12.4: OK
+- v0.12.5: build issue with 'ld' script syntax error
+- v0.14.1: fails to find AT_FDCWD symbol
+- v0.15.0: fails to find glib-2.0
+- FUTURE: use of arbitrary 'gcc' by qemu/nasm/other dependencies?
+
+
+2011-06-15
+==========
+
+* other SDL-based
+- gnuboy -- http://freshmeat.net/projects/gnuboy
+- Linball -- http://freshmeat.net/projects/linball
+- PipeNightDreams -- http://freshmeat.net/projects/pnd
+- PrBoom -- http://freshmeat.net/projects/prboom
+- Spacewar -- http://freshmeat.net/projects/spacewar
+
+* EeePC-friendly rootfs/kernel elements (contd)
+- TODO: busybox with 'ifconfig' (yes, but also 'ip' -- overkill?)
+- TODO: mtd-utils (and matching kernel support)
+- TODO: e-uae (w/ SDL?)
+- TODO: grub
+- TODO: bios-cmos/cmospwd/dmidecode
+- TODO: hdparm/sdparm/sg3_utils (should be under systools)
+
+
+2011-06-13
+==========
+
+* misc: kernel HDD support
+- TODO: configure -> build OK
+- TODO: test (w/ new busybox 1.18.5 in genext2fs image)
+- TODO: test with previous busybox, if necessary
+
+* misc: new lynx
+- DONE: configure -> build OK
+- TODO: cross-compilation ability
+- TODO: testing
+
+* 'ng' busybox configuration sanity check
+- original deltas omitted CONFIG_BEEP
+- original deltas added CONFIG_PSCAN (? why??)
+
+
+2011-06-07
+==========
+
+* distrotools-ng kernel
+- TODO: device nodes courtesy of devfs? (GKH: "...udev")
+- CONFIG_DEVTMPFS likely useful
+
+
+2011-05-31
+==========
+
+* nfs-utils
+- nfs-utils: v1.1.6 is installing; v1.2.x broken
+
+* unfs3
+- is "nfs-server-user" (sp?) similarly useful? better?
+
+
+2011-05-19
+==========
+
+- New urldl.sh handling for unknown SERVER/PATH, needs exporting
+
+
+2011-05-15
+==========
+
+* New Quingy (v1.0.0)
+- wants /var/lib/misc writeable
+- needs /etc/passwd populated (root::0:0:root:/root/:/bin/sh)
+- possibly also /etc/group (root::0:)
+- should have root's home directory made
+- invoke: `qingy tty<n> -t` for text login
+- TODO: hangs running shell (? due to busybox's current [built-in] inittab)
+- need /etc/qingy/sessions/ and /etc/qingy/settings?
+- copying example 'inittab' verbatim causes scrolling weirdness
+
+
+playvideo:
+- FAIL: playvideo.c:(.text+0x2bc): undefined reference to `playvideo'
+
+svncviewer:
+- FAIL: no Xlib.h (Config/gui/libX11)
+
+* microwindows:
+- TODO: (re)test full-0.91
+- full-0.92 to link 'nano-X'; fonts and subdriver problems
+- TODO: test snapshot
+- build OK
+- nano-X runtime needs /tmp
+- opens blank screen; unclear where the associated apps are
+
+
+2011-11-16
+==========
+
+* Toolchain builds
+- unspecified problem with gcc v4 build (lfs and Ubuntu) (...64bit?)
+- Ubuntu gcc 2 build needed bison
+
+* binutils build failure on Ubuntu
+- DONE: basic fix implementation
+- TODO: actual use-in-RL testing
+
+* new syslinux et al
+- DONE: v4.03 - these build
+- TODO: v4.x missing build rules - if {iso|pxe}linux '*.bin' deleted
+- TODO: dodgy installation of something - 'usr2' in toolchain(!!)
+
+* memtest/memdisk
+- memtest86: "Invalid or unsupported executable format" booted directly
+- memtest86: fails boot loaded via memdisk
+- memtest86+: OK - boots directly from compiled binary
+
+
+2010-10-26
+==========
+
+* twin
+- 0.6.2 has 'configure' (as does 0.5.x?)
+- cross-compilation of 'endianity' detection tool remains bogus :(
+
+
+2010-10-13
+==========
+
+* 'ng' arm CPU support
+- kernel (OK) (TODO: configuration sanity)
+- uClibc (TODO) (TODO: configuration sanity)
+- busybox (TODO) (TODO: configuration sanity)
+
+...
+
+* 'non-pc' mips support
+- distrotools-legacy: done
+- distrotools-ng: uClibc endianness problem?
+
+* other
+- CONFIG_EMBEDDED for 'non-pc' targets?
+
+
+2010-08-17
+==========
+
+* wget: missing sane source package
+
+
+2010-08-02
+==========
+
+* vlc
+- dependency on xcb-proto; partial configuration, needs build test
+
+
+2010-07-12
+==========
+
+* 'non-pc' arm coverage
+- `qemu-system-arm -M versatilepb`: HDD, display, ethernet
+
+	$ ./toolchain/usr/bin/qemu-system-arm -M versatilepb -kernel exttemp/cti-lx26config-2.6.20.1/vmlinux -initrd testrd
+	qemu: fatal: Trying to execute code outside RAM or ROM at 0xc0008000
+	
+	R00=00000000 R01=00000000 R02=00000000 R03=00000000
+	R04=00000000 R05=00000000 R06=00000000 R07=00000000
+	R08=00000000 R09=00000000 R10=00000000 R11=00000000
+	R12=00000000 R13=00000000 R14=00000000 R15=c0008000
+	PSR=400001d3 -Z-- A svc32
+	Aborted
+
+
+2010-07-06
+==========
+
+* misc other
+- 'halt' doesn't? How does Debian Live set CONFIG_{ACPI|PM}?
+
+
+2010-06-27/28
+=============
+
+* Kernel configuration?
+- xserver-xorg-video-intel for EeePC; needs kernel with "KMS"
+
+
+2010-06-24
+==========
+
+* distrotools-ng
+- works but "/bin/sh: can't access tty; job control turned off"
+- other kernel config? CONFIG_PARIDE non-default
+
+
+2010-06-14
+==========
+
+* senban ctris/seatris
+- all have 'ncurses' dependency
+- seatris: wants to use /usr/include for ncurses.h because of --prefix=
+
+
+2010-06-10
+==========
+
+* media generator scripts for Config/fstools utils:
+- ISOs (see 'emul-dev' mkdisk)
+- msdos boot media (see messy)
+- linux ext2 (see geex isofs.mak in tcdev)
+
+
+2010-06-04
+==========
+
+- rationalise microperl/ppt Makefiles and retest?
+
+
+2010-02-17
+==========
+
+* GrUB, QEmu
+- added --enable-diskless and --enable-rtl8139
+- now produces toolchain/usr/lib/grub/i386-pc/{nb|pxe}grub
+- run QEmu with -net user -net nic,model=rtl8139
+- pxelinux.0 works, but booting memtest directly/with memdisk doesn't
+- pxegrub (gPXE 0.9.9) wierded after card initialisation
+
+* netboot for above
+- 1. build GrUB boot disk with networking (cat stage1, stage2)
+- 2. run with `qemu grub.dsk -tftp /`
+- 3. Reference files via GrUB `(nd)/...` path syntax
+
+- ...does this trump the qemu kernel/initrd CLI options?
+
+
+2009-12-10
+==========
+
+* qemu: various failures
+- works: ./toolchain/usr/bin/qemu-i386 -L ../chroot/sw39-test/ ../chroot/sw39-test/bin/ls
+
+* qemu/fakeroot
+- fails: 'chroot' - lacks permission. Opportunity for 'fakeroot'?
+- fails - libraries incompatible: ./toolchain/usr/bin/fakeroot ./toolchain/usr/bin/qemu-i386 -L ../chroot/sw39-test/ ../chroot/sw39-test/usr/bin/whoami
+- fails - is a script: ./toolchain/usr/bin/qemu-i386 toolchain/usr/bin/fakeroot
+- fails - /bin/sh fork() (cross-compiled busybox OK but won't fakeroot)
+	[williamt@williamt-ccws:7] tftpdev-091209 $ ./toolchain/usr/bin/qemu-i386 -L / /bin/sh
+	[williamt@williamt-ccws:7] tftpdev-091209 $ whoami
+	sh: fork: Invalid argument
+
+* qemu/pretendroot
+- fails - symbol lookup error: LD_PRELOAD=./toolchain/usr/lib/libpretendroot.so ./toolchain/usr/bin/qemu-i386 -L ../chroot/lch096-1020/ ../chroot/lch096-1020/bin/sh
+
+
+2009-09-02
+==========
+
+* tcc
+- has some uClibc support - triggered by /lib files existing
+- possibly unlikely to seek correct libc after cross compilation?
+
+
+2009-08-10
+==========
+
+Resources
+=========
+
+* Cross compilation HOWTO (Firmware Linux)
+-- http://landley.net/ols/ols2007/tutorial.txt
+
+pxeboot and freedos
+- http://osdir.com/ml/network.etherboot.user/2005-09/msg00034.html

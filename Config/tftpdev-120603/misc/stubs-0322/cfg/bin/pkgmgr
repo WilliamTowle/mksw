@@ -1,0 +1,235 @@
+#!/bin/sh
+
+###
+### parameters
+###
+#
+#COMMAND=$1
+#[ -n "$1" ] && shift
+
+SED=`which sed`
+if [ -z "$SED" ] ; then
+	echo "$0: No 'sed' prerequisite"
+	exit 1
+fi
+SED=`echo FOO | sed 's%\[%\\\\[%' 2>&1`
+if [ "$SED" != 'FOO' ] ; then
+	echo "$0: 'sed' unsuitable"
+	exit 1
+fi
+
+##
+## execution - subroutines
+##
+
+. `dirname $0`/lib-pkg.sh
+
+package_main()
+{
+	ARCHIVE=$1
+	SOURCEDIR=$2
+	if [ -z "$ARCHIVE" ] ; then
+		echo "$0: No target-ARCHIVE supplied (or SOURCEDIR)"
+		exit 1
+	fi
+	if [ -z "$SOURCEDIR" ] ; then
+		echo "$0: No 'SOURCEDIR' supplied"
+		exit 1
+	fi
+	if [ ! -d $SOURCEDIR ] ; then
+		echo "$0: SOURCEDIR $SOURCEDIR does not exist"
+		exit 1
+	fi
+
+	[ "$TMPDIR" ] || TMPDIR=/usr/tmp/$$
+	if [ ! -d $TMPDIR ] ; then
+		mkdir $TMPDIR
+		CLEAN=$TMPDIR
+	else
+		CLEAN="$TMPDIR/*"
+	fi
+
+	[ -r "$SOURCEDIR.exc" ] && cp ${SOURCEDIR}.exc $TMPDIR/pkgfiles.exc
+
+	( cd $SOURCEDIR && (
+		DATFILE=$TMPDIR/pkgfiles.dat
+		echo -n '' > $DATFILE
+		# busybox "find" doesn't "-o"
+		#for FOUND in `find ./ -type l -o -type f` ; do
+		for FOUND in `find ./ -type l ; find ./ -type f` ; do
+			FILE=`echo $FOUND | sed 's%\./%%'`
+			case $FILE in 
+			*/man/*|*/info/*)
+				echo "M $FILE" >> $DATFILE
+				;;
+			*)
+				if [ -L $FILE ] ; then
+					echo "L $FILE" >> $DATFILE
+				elif [ ! -d $FILE ] ; then
+					if [ -x $FILE ] ; then
+						echo "X $FILE" >> $DATFILE
+					else
+						echo "F $FILE" >> $DATFILE
+					fi
+				fi
+				;;
+			esac
+		done
+
+		tar cf $TMPDIR/pkgfiles.tar *
+	) || exit 1 ) || exit 1
+	( cd $TMPDIR && tar cf - pkgfiles.* ) | gzip -9 > $ARCHIVE
+	rm -rf $CLEAN
+}
+
+do_install_tgp()
+{
+	ARCHIVE=$1
+	TARGETDIR=$2
+	[ -z "$EXTTYPES" ] && EXTTYPES="MXLF"
+
+	if [ ! -d $TARGETDIR ] ; then
+		## were given 
+		. $TARGETDIR
+		EXTTYPES="XLF"
+		[ "$MANUALS" = 'y' ] && EXTTYPES="${EXTTYPES}M"
+		TARGETDIR=$TARGET_ROOT
+	fi
+
+	if [ ! -d $TARGETDIR ] ; then
+		echo "$0: do_install_tgp: No TARGETDIR $TARGETDIR"
+		exit 1
+	fi
+
+	TMPDIR=`pwd`/tmp.$$
+	[ -d $TMPDIR ] || mkdir $TMPDIR
+	cat $ARCHIVE | gzip -d | ( cd $TMPDIR && tar xf - )
+	TOPTS=''
+	if [ "$EXCLUDES" != 'n' ] ; then
+		if [ -r $TMPDIR/pkgfiles.exc ] ; then
+			TOPTS="-X $TMPDIR/pkgfiles.exc"
+		fi
+	fi
+
+	# assume .tgp (for now)
+	cat $TMPDIR/pkgfiles.dat | while read FILESPEC ; do
+		TYPE=`echo $FILESPEC | cut -c-1`
+		FILE=`echo $FILESPEC | cut -c3-`
+
+		case $EXTTYPES in
+		*${TYPE}*)
+			case $TYPE in
+			X)
+				STRIPNOW=$STRIPPED
+				;;
+			L|M|F)
+				STRIPNOW=n
+				;;
+			*)
+				echo "$0: Type $TYPE (FILE $FILE): Confused"
+				STRIPNOW=n
+				;;
+			esac
+
+			## unless in pkgfiles.exc...
+			cat $TMPDIR/pkgfiles.tar | ( cd $TARGETDIR && \
+				[ -L $FILE ] && rm $FILE ;\
+				tar xf - `echo $FILE | sed 's%\[%\\\\[%'` $TOPTS \
+				)
+			if [ "$STRIPNOW" = 'y' ] ; then
+				if [ -r $TARGETDIR/$FILE ] ; then
+					if [ `basename $FILE` != 'e3' ] ; then
+						strip $TARGETDIR/$FILE 2>/dev/null
+					fi
+				fi
+			fi
+			;;
+		esac
+	done
+
+	rm -rf $TMPDIR
+}
+
+install_main()
+{
+	DIRECTORY=$1
+	if [ -z "$DIRECTORY" ] ; then
+		echo "$0: INSTALL: Expected DIRECTORY and ARCHIVE(s)"
+		exit 1
+	else
+		shift
+	fi
+
+	if [ -z "$1" ] ; then
+		echo "$0: INSTALL: Expected ARCHIVE(s) also"
+		exit 1
+	fi
+
+	while [ "$1" ] ; do
+		ARCHIVE=$1
+		shift
+
+		case $ARCHIVE in
+		*.tgz | *.tar.gz)
+			echo -n "[ EXTRACT $ARCHIVE ] "
+			cat $ARCHIVE | gzip -d -c | ( cd $DIRECTORY && tar xvf - )
+			echo "OK"
+			;;
+		*.tbz | *.tar.bz2)
+			echo -n "[ EXTRACT $ARCHIVE ] "
+			cat $ARCHIVE | bzip2 -d | ( cd $DIRECTORY && tar xvf - )
+			echo "OK"
+			;;
+		*.tgp)
+			echo -n "[ EXTRACT $ARCHIVE ] "
+			do_install_tgp $ARCHIVE $DIRECTORY || exit 1
+			echo "OK"
+			;;
+		*.lst)
+			echo "[ $ARCHIVE ] ..."
+			cat $ARCHIVE | while read ARCLINE ; do
+				$0 install $DIRECTORY $ARCLINE
+			done
+			echo "[ $ARCHIVE ] OK"
+			;;
+		*)
+			if [ -d $ARCHIVE ] ; then
+				echo "[ $ARCHIVE ] ..."
+				ls $ARCHIVE | while read DIRENT ; do
+					$0 install $DIRECTORY ${ARCHIVE}/${DIRENT}
+				done
+				echo "[ $ARCHIVE ] OK"
+			else
+				echo "$0: ARCHIVE $ARCHIVE - type unknown"
+				exit 1
+			fi
+			;;
+		esac
+	done
+}
+
+##
+## execution - main
+##
+
+COMMAND=$1
+[ "$COMMAND" ] && shift
+
+case $COMMAND in
+package)	## build a TGP package
+	package_main $* || exit 1
+	echo "$0: PACKAGE OK"
+	;;
+install)	## install a tar.bz2/tar.gz/TGP package
+	install_main $* || exit 1
+	echo "$0: INSTALL OK"
+	;;
+*)
+	if [ -n "$COMMAND" -a "$COMMAND" != 'help' ] ; then
+		echo "$0: Unrecognised command '$COMMAND'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z]*)" $0 | sed "s/^/	/"
+	exit 1
+	;;
+esac

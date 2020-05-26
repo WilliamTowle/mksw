@@ -1,0 +1,19 @@
+* loopback example (GrUB2):
+- further information: http://www.supergrubdisk.org/wiki/Loopback.cfg
+
+	menuentry 'Ubuntu Rescue Remix ISO ' {
+		set isofile="/iso/ubuntu-rescue-remix-12-04.iso"
+		loopback loop (hd0,5)$isofile
+		linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
+		initrd (loop)/casper/initrd.gz
+	}
+
+	## askubuntu.com version
+	menuentry "Fedora 15 (DVD)" {
+		insmod loopback
+		insmod iso9660
+		set isofile="/Fedora-15-x86_64-DVD.iso"
+		loopback loop (hd0,2)$isofile
+		linux (loop)/isolinux/vmlinuz rootfstype=auto  root=live:UUID=:$isofile ro quiet
+		initrd (loop)/isolinux/initrd.img
+	}

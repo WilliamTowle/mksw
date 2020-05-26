@@ -1,0 +1,16 @@
+#!/bin/sh
+
+SUBDIR=$1
+if [ -z "$SUBDIR" ] ; then
+	echo "$0: No SUBDIR supplied"
+	exit 1
+fi
+
+BINDIR=`dirname $0`
+if [ ! -d $BINDIR/$SUBDIR ] ; then
+	echo "$0: SUBDIR $SUBDIR not found"
+	exit 1
+fi
+
+rm ` find $BINDIR -type l `
+( cd $BINDIR && ln -s $SUBDIR/* ./ )

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+WHEN=`date +%y%m%d`
+for SUBDIR in rc scripts ; do
+	tar cvzf bochs-${SUBDIR}-${WHEN}.tgz ${SUBDIR} || exit 1
+done || exit 1

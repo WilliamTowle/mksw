@@ -1,0 +1,31 @@
+#!/bin/sh
+
+bomb()
+{
+	echo $*
+	exit 1
+}
+
+CFG=$1
+CFGTGT=$2
+if [ -z "$CFG" ] ; then
+	bomb "$0: CFG not supplied"
+fi
+
+CFGDIR=cfg
+[ -z "$CFGTGT" ] && CFGTGT=./current
+
+if [ -L $CFGTGT ] ; then
+	rm $CFGTGT
+elif [ -r $CFGTGT ] ; then
+	bomb "$0: target '$CFGTGT' exists -- and is not link"
+fi
+
+if [ -d $CFGDIR/$CFG ] ; then
+	ln -s $CFGDIR/$CFG $CFGTGT || bomb "$0: Failed"
+elif [ -d $CFG ] ; then
+	ln -s $CFG $CFGTGT || bomb "$0: Failed"
+else
+	bomb "$0: $CFG not found. Confused"
+fi
+echo "$0: OK (set dist `basename $CFG` as $CFGTGT)"

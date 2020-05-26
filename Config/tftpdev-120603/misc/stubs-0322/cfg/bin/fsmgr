@@ -1,0 +1,992 @@
+#!/bin/sh
+
+##
+##	global config
+##
+
+CFGTREE=`pwd`/cfg
+PKGTREE=`pwd`/packages
+TOOLROOT=`pwd`/mklx-i386
+	
+###
+###	subroutines
+###
+
+config_load()
+{
+	NOFILE=n
+	if [ -r $CFGTREE/fsmgr.cfg ] ; then
+		. $CFGTREE/fsmgr.cfg
+	else
+		NOFILE=y
+	fi
+
+	[ -d "${LOC_CONFIG}" ] || LOC_CONFIG=$CFGTREE/floppies
+	[ -d "${LOC_KERNEL}" ] || LOC_KERNEL=$PKGTREE/mkf-kernels
+	[ -d "${LOC_PKG}" ] || LOC_PKG=$CFGTREE/mkf-pkg
+	[ -d "${LOC_INITRD}" ] || LOC_INITRD=$PKGTREE/mkf-initrd
+
+	[ -z "${INITRD_SIZE}" ] || INITRD_SIZE=1536
+	[ -z "${INITRD_FS}" ] || INITRD_FS=minix
+
+	[ $NOFILE != 'n' ] || true
+}
+
+config_save()
+{
+	cat > $CFGTREE/fsmgr.cfg <<EOF
+LOC_CONFIG=${LOC_CONFIG}
+CFG_CONFIG=$CFG_CONFIG
+LOC_KERNEL=${LOC_KERNEL}
+CFG_KERNEL=$CFG_KERNEL
+LOC_PKG=${LOC_PKG}
+LOC_INITRD=${LOC_INITRD}
+INITRD_SIZE=${INITRD_SIZE}
+INITRD_FS=${INITRD_FS}
+EOF
+}
+
+configure_basis()
+{
+	SETTING=$CFG_CONFIG
+	[ "$SETTING" = '' ] && SETTING="not set"
+
+	OKAY='n'
+	while [ "$OKAY" = 'n' ] ; do
+	    echo "Current basis: $SETTING"
+	    echo "Options:"
+	    ls ${LOC_CONFIG}/*.lst | sed 's/${LOC_CONFIG}\/*//' | sed 's/^/	/'
+	    echo -n "New ${LOC_CONFIG} (enter: $CFG_CONFIG): "
+	    read NEWVAL
+	    if [ -z "$NEWVAL" ] ; then
+		if [ -n "$CFG_CONFIG" ] ; then
+		    LOC_CONFIG=${LOC_CONFIG}
+		    NEWVAL=$CFG_CONFIG
+		    OKAY='y'
+		fi
+	    elif [ -r ${LOC_CONFIG}/$NEWVAL ] ; then
+		LOC_CONFIG=${LOC_CONFIG}
+		OKAY='y'
+	    elif [ -r ${LOC_CONFIG}/$NEWVAL.lst ] ; then
+		LOC_CONFIG=${LOC_CONFIG}
+		NEWVAL=$NEWVAL.lst
+		OKAY='y'
+	    fi
+	done
+
+	CFG_CONFIG=$NEWVAL
+}
+
+configure_kernels()
+{
+	SETTING=$CFG_KERNEL
+	[ "$SETTING" = '' ] && SETTING="not set"
+
+	OKAY='n'
+	while [ "$OKAY" = 'n' ] ; do
+	    echo "Current kernel: $SETTING"
+	    echo "Options:"
+	    ls ${LOC_KERNEL} | sed 's/${LOC_KERNEL}.//' | sed 's/^/	/'
+	    echo -n "New kernel (enter: $CFG_KERNEL): "
+	    read NEWVAL
+	    if [ -z "$NEWVAL" ] ; then
+		if [ -n "$CFG_KERNEL" ] ; then
+		    LOC_KERNEL=${LOC_KERNEL}
+		    NEWVAL=$CFG_KERNEL
+		    OKAY='y'
+		fi
+	    elif [ -r ${LOC_KERNEL}/$NEWVAL ] ; then
+		LOC_KERNEL=${LOC_KERNEL}
+		OKAY='y'
+	    fi
+	done
+
+	CFG_KERNEL=$NEWVAL
+}
+
+configure_main()
+{
+	config_load || exit 1
+
+	OPTION=''
+	while [ -z "$OPTION" ] ; do
+		echo "b) basis ($CFG_CONFIG)"
+		echo "k) kernels ($CFG_KERNEL)"
+		echo "q) quit"
+		echo -n "CHOICE? "
+		read OPTION
+	
+		echo
+		case $OPTION in
+		b)	configure_basis || exit 1
+			;;
+		k)	configure_kernels || exit 1
+			;;
+		esac
+		echo
+	
+		[ "$OPTION" != "q" ] && OPTION=''
+	done
+	config_save || exit 1
+}
+
+sosume_initrd()
+{
+	if [ "$UID" != 0 -a "$UID" ] ; then
+		echo "$0: Failed: You are not root"
+		exit 1
+	fi
+
+	INITRD=$1
+	if [ -z "${INITRD}" ] ; then
+		echo "$0: No INITRD supplied"
+		exit 1
+	else
+		shift
+	fi
+
+	IMAGEFS=$1
+	if [ -z "$IMAGEFS" ] ; then
+		echo "$0: no IMAGEFS supplied"
+		exit 1
+	else
+		shift
+	fi
+
+	INSTLIST=$1
+	if [ -z "$INSTLIST" ] ; then
+		echo "$0: no INSTLIST supplied"
+		exit 1
+	else
+		shift
+	fi
+
+	if [ -z "$TMPDIR" ] ; then
+		TMPDIR=tmp.$$
+	fi
+	if [ -d "$TMPDIR" ] ; then
+		HAD_TMPDIR=y
+	else
+		HAD_TMPDIR=n
+		mkdir $TMPDIR
+	fi
+
+	FAILED=n
+	(
+		mkdir $TMPDIR/mnt
+		/bin/mount -o loop ${INITRD} $TMPDIR/mnt || exit 1
+
+		SUBFAILED=n
+		(
+			echo -n "Making directories... "
+			mkroot_main $TMPDIR/mnt || exit 1
+			echo "OK"
+
+			echo -n "Making devices... "
+			mkdevs_main $TMPDIR/mnt || exit 1
+			echo "OK"
+
+			[ -z "$EXTTYPES" ] && export EXTTYPES=XFL
+			[ -z "$EXCLUDES" ] && export EXCLUDES=y
+			[ -z "$STRIPPED" ] && export STRIPPED=y
+
+			install_main $TMPDIR/mnt $INSTLIST
+		) || SUBFAILED=y
+
+		/bin/umount $TMPDIR/mnt || SUBFAILED=y
+
+		[ $SUBFAILED = 'y' ] && exit 1
+	) || FAILED=y
+
+	rm -rf $TMPDIR/*
+	if [ $HAD_TMPDIR = 'n' ] ; then
+		rmdir $TMPDIR
+	fi
+
+##	we should care that $FAILED has a 'y' or 'n' value, but `su`
+##	discards the return value from the function :(
+}
+
+sosume_floppy()
+{
+	config_load || {
+		echo "$0: No settings. Run \`$0 configure\`"
+		exit 1
+	}
+
+	RD_PREFIX=$1
+	INITRD_SIZE=$2
+	INITRD_FS=$3
+	TMPDIR=$4
+	FLOPNAME=$5
+
+	/sbin/losetup /dev/loop0 $FLOPNAME || exit 1
+	mount /dev/loop0 $TMPDIR || exit 1
+
+	echo '' > $TMPDIR/syslinux.dpy
+	echo -e "\01704\xb0\xb1\xb2\01703It's \01704\xb2\xb1\xb0                       \01701,----------------------------." >> $TMPDIR/syslinux.dpy
+	echo -e "\01704\xb0\xb1\xb2\01703ALIVE\01704\xb2\xb1\xb0                       \01701| \01702FRANKI LINUX ver.\"TooSoon\" \01701|" >> $TMPDIR/syslinux.dpy
+	echo -e "\01704\xb0\xb1\xb2\01703!!!!!\01704\xb2\xb1\xb0                       \01701\`----------------------------'" >> $TMPDIR/syslinux.dpy
+	echo -e "            \01706Build date: `date`\01707" >> $TMPDIR/syslinux.dpy
+	echo '' >> $TMPDIR/syslinux.dpy
+
+	cat <<EOF >$TMPDIR/syslinux.cfg
+DISPLAY syslinux.dpy
+TIMEOUT 0
+DEFAULT $CFG_KERNEL load_ramdisk=1 ramdisk_size=${INITRD_SIZE} initrd=${RD_PREFIX}.mnz initrd_archive=${INITRD_FS} root=/dev/ram0 boot=/dev/fd0,msdos ide0=noprobe ide0=0x1f0,0x3f6,14
+EOF
+
+	cp ${LOC_KERNEL}/${CFG_KERNEL} $TMPDIR/ || exit 1
+#	if [ ! -r ${LOC_INITRD}/$RD_PREFIX ] ; then
+#		$0 mkinitrd
+#	fi
+	cat ${LOC_INITRD}/$RD_PREFIX | gzip -9 > ${TMPDIR}/${RD_PREFIX}.mnz
+
+	umount /dev/loop0 || exit 1
+	${TOOLROOT}/usr/bin/syslinux /dev/loop0 || exit 1
+	/sbin/losetup -d /dev/loop0 || exit 1
+}
+
+mkroot_main()
+{
+	if [ "$UID" != 0 -a "$UID" ] ; then
+		echo "Failed: you are not root"
+		exit 1
+	fi
+
+	ROOTDIR=$1
+	if [ -z "$ROOTDIR" ] ; then
+		echo "Failed: ROOTDIR not supplied"
+		exit 1
+	fi
+
+	( cd $ROOTDIR && (
+		## directories
+		mkdir bin boot dev etc home mnt lib \
+			proc root sbin usr tmp var
+		mkdir mnt/cdrom
+		mkdir mnt/fd0 mnt/fd1
+		mkdir mnt/hda1 mnt/hda5 mnt/hda6
+		mkdir var/run var/tmp
+		( cd usr && ln -sf ../var/tmp ./ )
+		chmod 1777 var/tmp
+
+		( cd etc && (
+			cat <<EOF >group
+root::0:root
+EOF
+			cat <<EOF >passwd
+root::0:0:root:/root:/bin/sh
+EOF
+		)) || exit 1
+	) || exit 1 ) || exit 1
+}
+
+mkdevs_main()
+{
+	if [ "$UID" != 0 -a "$UID" ] ; then
+		echo "Failed: you are not root"
+		exit 1
+	fi
+
+	ROOTDIR=$1
+	if [ -z "$ROOTDIR" ] ; then
+		echo "Failed: ROOTDIR not supplied"
+		exit 1
+	fi
+
+	( cd $ROOTDIR/dev && (
+		mknod console c 5 1
+		mknod full c 1 7
+		mknod kmem c 1 2
+		mknod mem c 1 1
+		mknod null c 1 3
+		mknod port c 1 4
+		mknod random c 1 8
+		mknod urandom c 1 9
+		mknod zero c 1 5
+		ln -sf /proc/kcore core
+	
+		# IDE FD devs
+		mknod fd0 b 2 0
+		mknod fd0h720 b 2 24
+		mknod fd0u720 b 2 16
+		mknod fd1 b 2 1
+		mknod fd1h720 b 2 25
+		mknod fd1u720 b 2 17
+	
+		# IDE HD devs
+		# note: not going to bother creating all
+		# concievable partitions; that can be done
+		# from within the installed OS
+		mknod hda b 3 0
+			mknod hda1 b 3 1
+			mknod hda2 b 3 2
+			mknod hda3 b 3 3
+			mknod hda4 b 3 4
+			mknod hda5 b 3 5
+			mknod hda6 b 3 6
+			mknod hda7 b 3 7
+		mknod hdb b 3 64
+			mknod hdb1 b 3 65
+			mknod hdb2 b 3 66
+			mknod hdb3 b 3 67
+			mknod hdb4 b 3 68
+			mknod hdb5 b 3 69
+			mknod hdb6 b 3 70
+			mknod hdb7 b 3 71
+		mknod hdc b 22 0
+			mknod hdc1 b 22 1
+			mknod hdc2 b 22 2
+			mknod hdc3 b 22 3
+			mknod hdc4 b 22 4
+			mknod hdc5 b 22 5
+			mknod hdc6 b 22 6
+			mknod hdc7 b 22 7
+		mknod hdd b 22 64
+			mknod hdd1 b 22 65
+			mknod hdd2 b 22 66
+			mknod hdd3 b 22 67
+			mknod hdd4 b 22 68
+			mknod hdd5 b 22 69
+			mknod hdd6 b 22 70
+			mknod hdd7 b 22 71
+
+		# loop devs
+		for i in 0 1 2 3 4 5 6 7 ; do
+			mknod loop$i b 7 $i
+		done
+
+		# ram devs
+		for i in 0 1 2 3 4 5 6 7 8 9 ; do
+			mknod ram$i b 1 $i
+		done
+		ln -sf ram0 ram
+
+		# ttys
+		mknod tty c 5 0
+		for i in 0 1 2 3 4 5 6 7 8 9 ; do
+			mknod tty$i c 4 $i
+		done
+
+		# virtual console screen devs
+		for i in 0 1 2 3 4 5 6 7 8 9 ; do
+			mknod vcs$i b 7 $i
+		done
+		ln -sf vcs0 vcs
+
+		# virtual console screen w/ attributes devs
+		for i in 0 1 2 3 4 5 6 7 8 9 ; do
+			mknod vcsa$i b 7 $i
+		done
+		ln -sf vcsa0 vcsa
+	) || exit 1 ) || exit 1
+}
+
+mkinitrd_main()
+{
+	config_load || {
+		echo "$0: No settings. Run \`$0 configure\`"
+		exit 1
+	}
+
+	if [ -z "${INITRD_FS}" ] ; then
+		echo "Need to configure INITRD_FS"
+		exit 1
+	fi
+
+	if [ -z "${INITRD_SIZE}" ] ; then
+		echo "Need to configure INITRD_SIZE"
+		exit 1
+	fi
+
+	INSTLIST=$1
+	if [ -z "$INSTLIST" ] ; then
+		INSTLIST=cfg/floppies/freg-dev.lst
+	else
+		shift
+	fi
+	if [ ! -r $INSTLIST ] ; then
+		echo "INSTLIST $INSTLIST not found"
+		exit 1
+	fi
+
+	RDNAME=${LOC_INITRD}/`echo $CFG_CONFIG | sed 's/\..*//'`
+
+	FAILED=n
+	(
+		dd if=/dev/zero of=$RDNAME bs=1k count=${INITRD_SIZE} || exit 1
+		/sbin/mkfs -t ${INITRD_FS} $RDNAME || exit 1
+		if [ "$UID" != 0 -a "$UID" ] ; then
+			SUCMD='su root'
+			echo -n "Root "
+		fi
+		$SUCMD $0 su-initrd $RDNAME ${INITRD_FS} $INSTLIST || exit 1
+	) || FAILED=y
+
+	if [ $FAILED = 'y' ] ; then
+		echo "$0: Failed"
+		false
+	fi
+}
+
+install_main()
+{
+	[ -n "$TMPDIR" ] || TMPDIR=/tmp
+
+	TARGETDIR=$1
+	[ -z "$1" ] || shift
+
+	if [ -z "$TARGETDIR" ] ; then
+		echo "$0: Confused: No 'TARGETDIR' (or FILEs) supplied"
+		exit 1
+	fi
+	if [ -z "$1" ] ; then
+		echo "$0: Confused: (TD $TARGETDIR) No 'FILE'(s) supplied"
+		exit 1
+	fi
+
+#	[ -r `pwd`/$TARGETDIR ] && TARGETDIR=`pwd`/$TARGETDIR
+	[ -d $TARGETDIR ] || TARGETDIR=`pwd`/$TARGETDIR
+
+	while [ -n "$1" ] ; do
+		FILE=$1
+		shift
+	
+		if [ ! -r $FILE ] ; then
+			echo "$0: Confused: FILE $FILE does not exist?"
+			exit 1
+		fi
+	
+		if [ ! -d $TARGETDIR ] ; then
+			echo "$0: Confused: TARGETDIR $TARGETDIR does not exist (or not directory)"
+			exit 1
+		fi
+	
+#		config_load || {
+#			echo "$0: No settings. Run \`$0 configure\`"
+#			exit 1
+#		}
+	
+		echo -n "[ $FILE ] "
+		FAILED=n
+		case $FILE in
+		*.cfg|*.lst)
+			echo "..."
+			for LINE in `cat $FILE` ; do
+				[ -r $LINE ] || LINE=${LOC_PKG}/$LINE
+				install_main $TARGETDIR $LINE || FAILED=y
+			done
+			;;
+		*.tar.gz|*.tgz)
+			## TODO: 'cd' in subshell *could* fail silently :(
+			cat $FILE | gzip -d -c | ( cd $TARGETDIR && tar xf - ) || FAILED=y
+			[ $FAILED = 'n' ] && echo OK
+			;;
+		*.tar.bz2|*.tbz)
+			## TODO: 'cd' in subshell *could* fail silently :(
+			cat $FILE | bzip2 -d | ( cd $TARGETDIR && tar xf - ) || FAILED=y
+			[ $FAILED = 'n' ] && echo OK
+			;;
+		*.tgp)
+			TMPDIR=$TMPDIR do_install_tgp $FILE $TARGETDIR || FAILED=y
+			[ $FAILED = 'n' ] && echo OK
+			;;
+		*)
+			if [ -d $FILE ] ; then
+				echo "..."
+				SUBDIR=$FILE
+				/bin/ls $SUBDIR | while read SUBFILE ; do
+					install_main $TARGETDIR $SUBDIR/$SUBFILE
+				done
+				echo "[ $FILE ] OK"
+			else
+				echo "UNKNOWN FILETYPE"
+				FAILED=y
+			fi
+			;;
+		esac
+		if [ "$FAILED" = 'n' ] ; then
+			if [ -z "$UID" -o "$UID" = 0 ] ; then
+				if [ -r $TARGETDIR/sbin/ldconfig ] ; then
+					CHROOT=/usr/bin/chroot
+					[ -x $CHROOT ] || CHROOT=/usr/sbin/chroot
+					$CHROOT $TARGETDIR /sbin/ldconfig
+				fi
+			fi
+		else
+			false
+		fi
+	done
+}
+
+##!/bin/sh
+#
+####
+#### parameters
+####
+##
+##COMMAND=$1
+##[ -n "$1" ] && shift
+#
+#SED=`which sed`
+#if [ -z "$SED" ] ; then
+#	echo "$0: No 'sed' prerequisite"
+#	exit 1
+#fi
+#SED=`echo FOO | sed 's%\[%\\\\[%' 2>&1`
+#if [ "$SED" != 'FOO' ] ; then
+#	echo "$0: 'sed' unsuitable"
+#	exit 1
+#fi
+#
+###
+### execution - subroutines
+###
+#
+#. `dirname $0`/lib-pkg.sh
+#
+#package_main()
+#{
+#	ARCHIVE=$1
+#	SOURCEDIR=$2
+#	if [ -z "$ARCHIVE" ] ; then
+#		echo "$0: No target-ARCHIVE supplied (or SOURCEDIR)"
+#		exit 1
+#	fi
+#	if [ -z "$SOURCEDIR" ] ; then
+#		echo "$0: No 'SOURCEDIR' supplied"
+#		exit 1
+#	fi
+#	if [ ! -d $SOURCEDIR ] ; then
+#		echo "$0: SOURCEDIR $SOURCEDIR does not exist"
+#		exit 1
+#	fi
+#
+#	[ "$TMPDIR" ] || TMPDIR=/usr/tmp/$$
+#	if [ ! -d $TMPDIR ] ; then
+#		mkdir $TMPDIR
+#		CLEAN=$TMPDIR
+#	else
+#		CLEAN="$TMPDIR/*"
+#	fi
+#
+#	[ -r "$SOURCEDIR.exc" ] && cp ${SOURCEDIR}.exc $TMPDIR/pkgfiles.exc
+#
+#	( cd $SOURCEDIR && (
+#		DATFILE=$TMPDIR/pkgfiles.dat
+#		echo -n '' > $DATFILE
+#		# busybox "find" doesn't "-o"
+#		#for FOUND in `find ./ -type l -o -type f` ; do
+#		for FOUND in `find ./ -type l ; find ./ -type f` ; do
+#			FILE=`echo $FOUND | sed 's%\./%%'`
+#			case $FILE in 
+#			*/man/*|*/info/*)
+#				echo "M $FILE" >> $DATFILE
+#				;;
+#			*)
+#				if [ -L $FILE ] ; then
+#					echo "L $FILE" >> $DATFILE
+#				elif [ ! -d $FILE ] ; then
+#					if [ -x $FILE ] ; then
+#						echo "X $FILE" >> $DATFILE
+#					else
+#						echo "F $FILE" >> $DATFILE
+#					fi
+#				fi
+#				;;
+#			esac
+#		done
+#
+#		tar cf $TMPDIR/pkgfiles.tar *
+#	) || exit 1 ) || exit 1
+#	( cd $TMPDIR && tar cf - pkgfiles.* ) | gzip -9 > $ARCHIVE
+#	rm -rf $CLEAN
+#}
+
+do_install_tgp()
+{
+	ARCHIVE=$1
+	TARGETDIR=$2
+	[ -z "$EXTTYPES" ] && EXTTYPES="MXLF"
+
+	if [ ! -d $TARGETDIR ] ; then
+		## were given 
+		. $TARGETDIR
+		EXTTYPES="XLF"
+		[ "$MANUALS" = 'y' ] && EXTTYPES="${EXTTYPES}M"
+		TARGETDIR=$TARGET_ROOT
+	fi
+
+	if [ ! -d $TARGETDIR ] ; then
+		echo "$0: do_install_tgp: No TARGETDIR $TARGETDIR"
+		exit 1
+	fi
+
+	TMPDIR=`pwd`/tmp.$$
+	[ -d $TMPDIR ] || mkdir $TMPDIR
+	cat $ARCHIVE | gzip -d | ( cd $TMPDIR && tar xf - )
+	TOPTS=''
+	if [ "$EXCLUDES" != 'n' ] ; then
+		if [ -r $TMPDIR/pkgfiles.exc ] ; then
+			TOPTS="-X $TMPDIR/pkgfiles.exc"
+		fi
+	fi
+
+	# assume .tgp (for now)
+	cat $TMPDIR/pkgfiles.dat | while read FILESPEC ; do
+		TYPE=`echo $FILESPEC | cut -c-1`
+		FILE=`echo $FILESPEC | cut -c3-`
+
+		case $EXTTYPES in
+		*${TYPE}*)
+			case $TYPE in
+			X)
+				STRIPNOW=$STRIPPED
+				;;
+			L|M|F)
+				STRIPNOW=n
+				;;
+			*)
+				echo "$0: Type $TYPE (FILE $FILE): Confused"
+				STRIPNOW=n
+				;;
+			esac
+
+			## unless in pkgfiles.exc...
+			cat $TMPDIR/pkgfiles.tar | ( cd $TARGETDIR && \
+				[ -L $FILE ] && rm $FILE ;\
+				tar xf - `echo $FILE | sed 's%\[%\\\\[%'` $TOPTS \
+				)
+			if [ "$STRIPNOW" = 'y' ] ; then
+				if [ -r $TARGETDIR/$FILE ] ; then
+					if [ `basename $FILE` != 'e3' ] ; then
+						strip $TARGETDIR/$FILE 2>/dev/null
+					fi
+				fi
+			fi
+			;;
+		esac
+	done
+
+	rm -rf $TMPDIR
+}
+
+install_main()
+{
+	DIRECTORY=$1
+	if [ -z "$DIRECTORY" ] ; then
+		echo "$0: INSTALL: Expected DIRECTORY and ARCHIVE(s)"
+		exit 1
+	else
+		shift
+	fi
+
+	if [ -z "$1" ] ; then
+		echo "$0: INSTALL: Expected ARCHIVE(s) also"
+		exit 1
+	fi
+
+	while [ "$1" ] ; do
+		ARCHIVE=$1
+		shift
+
+		case $ARCHIVE in
+		*.tgz | *.tar.gz)
+			echo -n "[ EXTRACT $ARCHIVE ] "
+			cat $ARCHIVE | gzip -d -c | ( cd $DIRECTORY && tar xvf - )
+			echo "OK"
+			;;
+		*.tbz | *.tar.bz2)
+			echo -n "[ EXTRACT $ARCHIVE ] "
+			cat $ARCHIVE | bzip2 -d | ( cd $DIRECTORY && tar xvf - )
+			echo "OK"
+			;;
+		*.tgp)
+			echo -n "[ EXTRACT $ARCHIVE ] "
+			do_install_tgp $ARCHIVE $DIRECTORY || exit 1
+			echo "OK"
+			;;
+		*.lst)
+			echo "[ $ARCHIVE ] ..."
+			cat $ARCHIVE | while read ARCLINE ; do
+				$0 install $DIRECTORY $ARCLINE
+			done
+			echo "[ $ARCHIVE ] OK"
+			;;
+		*)
+			if [ -d $ARCHIVE ] ; then
+				echo "[ $ARCHIVE ] ..."
+				ls $ARCHIVE | while read DIRENT ; do
+					$0 install $DIRECTORY ${ARCHIVE}/${DIRENT}
+				done
+				echo "[ $ARCHIVE ] OK"
+			else
+				echo "$0: ARCHIVE $ARCHIVE - type unknown"
+				exit 1
+			fi
+			;;
+		esac
+	done
+}
+
+###
+### execution - main
+###
+#
+#COMMAND=$1
+#[ "$COMMAND" ] && shift
+#
+#case $COMMAND in
+#esac
+
+mkcd_main()
+{
+	config_load || {
+		echo "$0: No settings. Run \`$0 configure\`"
+		exit 1
+	}
+
+	IMAGE=$1
+	if [ -z "$IMAGE" ] ; then
+		echo "$0: No 'IMAGE' (or MASTERDIR) supplied"
+		exit 1
+	else
+		shift
+	fi
+	
+	MASTERDIR=$1
+	if [ -z "$MASTERDIR" ] ; then
+		echo "$0: No 'MASTERDIR' supplied"
+		exit 1
+	else
+		shift
+	fi
+	
+	SYSLDIR=${TOOLROOT}/usr/lib/syslinux
+	if [ ! -d $SYSLDIR ] ; then
+		echo "$0: SYSLDIR $SYSLDIR not directory"
+		exit 1
+	fi
+
+	PKGTREE=`pwd`/packages
+	if [ ! -d $PKGTREE ] ; then
+		echo "$0: PKGTREE $PKGTREE not directory"
+		exit 1
+	fi
+
+	CATFILE=boot.cat
+	BOOTPATH=boot/isolinux
+	
+	mkdir -p ${MASTERDIR}/${BOOTPATH}
+	cp ${SYSLDIR}/isolinux.bin ${MASTERDIR}/${BOOTPATH}/ || exit 1
+	cp ${SYSLDIR}/memdisk ${MASTERDIR}/${BOOTPATH}/ || exit 1
+	
+	RD_PREFIX=`echo $CFG_CONFIG | sed 's/\..*//'`
+	if [ ! -r ${LOC_INITRD}/${RD_PREFIX} ] ; then
+		echo "$0: INITRD ${RD_PREFIX} not found"
+		exit 1
+	fi
+	cat ${LOC_INITRD}/$RD_PREFIX | gzip -9 > ${MASTERDIR}/${BOOTPATH}/${RD_PREFIX}.mnz
+
+	cat > ${MASTERDIR}/${BOOTPATH}/isolinux.cfg << EOF
+SAY about to DISPLAY catfile ${CATFILE}
+DISPLAY ${CATFILE}
+F1 ${CATFILE}
+#DISPLAY syslinux.dpy
+TIMEOUT 100
+
+# NOTE!! "freg-dev.mnz" gets renamed "freg_dev.mnz"!
+
+#DEFAULT default
+
+LABEL default
+	KERNEL $CFG_KERNEL
+	APPEND ide0=noprobe ide0=0x1f0,0x3f6,14
+
+LABEL freg
+	KERNEL $CFG_KERNEL
+	APPEND load_ramdisk=1 ramdisk_size=${INITRD_SIZE} initrd=`echo $RD_PREFIX | sed 's/-/_/g'`.mnz initrd_archive=${INITRD_FS} root=/dev/ram boot=/dev/cdrom,msdos
+
+
+# ...obviously the CD is read-only - hence updating /etc/mtab fails
+
+LABEL hdb
+	KERNEL $CFG_KERNEL
+	APPEND root=/dev/hdb rw
+
+
+# going to hda5 does something silly with read-only mounting??!
+
+LABEL hda5
+	KERNEL $CFG_KERNEL
+	APPEND root=/dev/hda5 rw
+
+
+# this works :)
+
+LABEL floppy
+	LOCALBOOT 0x00
+
+
+# this works :)
+
+LABEL hard
+	LOCALBOOT 0x80
+
+LABEL fdu
+	KERNEL fdu.bin
+
+LABEL hdu
+	KERNEL hdu.bin
+
+
+# Long file names get irretrievably mangled :(
+# ...claims "invalid file" with an 8+3-compliant name :(
+# like "LOCALBOOT -1", bochs doesn't like it
+#LABEL wmfd
+#	KERNEL initrd=wmfd2kt.img
+
+LABEL wmfd
+	KERNEL memdisk
+	APPEND initrd=wmfd2kt.img
+
+# works, although Bochs (v2.0.2) doesn't like it.
+	
+LABEL fail
+	LOCALBOOT -1
+EOF
+	
+	cp ${LOC_KERNEL}/${CFG_KERNEL} ${MASTERDIR}/${BOOTPATH} || exit 1
+	cat <<EOF > ${MASTERDIR}/${BOOTPATH}/${CATFILE}
+========================================
+FRANKI/EARLGREY LINUX DEVELOPMENT BOOTCD
+========================================
+
+At "boot:" prompt, enter one of:
+	freg - franki linux (ramdisk)
+	floppy, hard - boot FDU/HDU through LOCALBOOT directive
+	wmfd - boot Wills' FreeDOS through MEMDISK
+
+	hdb, hda5 - franki linux with alternative root device (experimental)
+	fdu, hdu - boot FDU/HDU through boot blocks (experimental)
+
+========================================
+EOF
+	echo "("`date`")" >> ${MASTERDIR}/${BOOTPATH}/${CATFILE}
+
+#	${TOOLROOT}/usr/bin/mkisofs -R -o $IMAGE \
+#		-b ${BOOTPATH}/isolinux.bin -c ${BOOTPATH}/${CATFILE} \
+#		-no-emul-boot -boot-load-size 4 -boot-info-table \
+#		${MASTERDIR}
+	${TOOLROOT}/usr/bin/mkisofs -R -o $IMAGE \
+		-b ${BOOTPATH}/isolinux.bin \
+		-no-emul-boot -boot-load-size 4 -boot-info-table \
+		${MASTERDIR}
+}
+
+mkflop_main()
+{
+	config_load || {
+		echo "$0: No settings. Run \`$0 configure\`"
+		exit 1
+	}
+
+	FLOPNAME=$1
+	if [ -z "$FLOPNAME" ] ; then
+		echo "$0: FLOPNAME not supplied"
+		exit 1
+	fi
+
+	[ -z $TMPDIR ] && TMPDIR=tmp.$$
+	if [ -d $TMPDIR ] ; then
+		HADTMP=y
+	else
+		mkdir $TMPDIR
+		HADTMP=n
+	fi
+
+	SYSLDIR=${TOOLROOT}/usr/lib/syslinux
+	if [ ! -d $SYSLDIR ] ; then
+		echo "$0: SYSLDIR $SYSLDIR not directory"
+		exit 1
+	fi
+	if [ ! -x ${TOOLROOT}/usr/bin/syslinux ] ; then
+		echo "$0: No syslinux executable"
+		exit 1
+	fi
+
+	RD_PREFIX=`echo $CFG_CONFIG | sed 's/\..*//'`
+	if [ ! -r ${LOC_INITRD}/$RD_PREFIX ] ; then
+		echo "$0: INITRD $RD_PREFIX not found (use 'mkinitrd')"
+		exit 1
+	fi
+
+	(
+		dd if=/dev/zero of=$FLOPNAME bs=1k count=1440 || exit 1
+		/sbin/mkfs -t msdos $FLOPNAME || exit 1
+
+		if [ "$UID" != 0 -a "$UID" ] ; then
+			SUCMD='su root'
+			echo -n "Root "
+		fi
+		$SUCMD $0 su-flop $RD_PREFIX $INITRD_SIZE $INITRD_FS $TMPDIR $FLOPNAME || exit 1
+	)
+
+	[ "$HADTMP" = 'n' ] && /bin/rm -rf "$TMPDIR"
+}
+
+##
+##	main program
+##
+
+COMMAND=$1
+[ "$1" ] && shift
+case $COMMAND in
+mkroot)		## generate default root tree
+	mkroot_main $* || exit 1
+	echo "$0: MKROOT phase OK"
+	;;
+mkdevs)		## generate default /dev tree
+	mkdevs_main $* || exit 1
+	echo "$0: MKDEVS phase OK"
+	;;
+su-initrd)	## INTERNAL
+	sosume_initrd $* || exit 1
+	;;
+su-flop)	## INTERNAL
+	sosume_floppy $* || exit 1
+	;;
+#package)	## build a TGP package
+#	package_main $* || exit 1
+#	echo "$0: PACKAGE OK"
+#	;;
+install)	## install a tar.bz2/tar.gz/TGP package
+	install_main $* || exit 1
+	echo "$0: INSTALL OK"
+	;;
+configure)	## modify/generate configuration
+	configure_main || exit 1
+	echo "$0: CONFIGURE phase OK"
+	;;
+mkinitrd)
+	mkinitrd_main $* || exit 1
+	echo "$0: MKINITRD phase OK"
+	;;
+mkcd)		## generate ISO image
+	mkcd_main $* || exit 1
+	echo "$0: MKCD phase OK"
+	;;
+mkflop)		## generate floppy image
+	mkflop_main $* || exit 1
+	echo "$0: MKFLOP phase OK"
+	;;
+*)
+	if [ -n "$COMMAND" -a "$COMMAND" != 'help' ] ; then
+		echo "$0: Unrecognised command '$COMMAND'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z]*)" $0 | sed "s/^/	/"
+	exit 1
+	;;
+esac

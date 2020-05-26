@@ -1,0 +1,9 @@
+Configure busybox with userland management tools (USE_BB_PWD_GROUP
+reduces the dependency on external (NSS) library code)
+	CONFIG_PASSWD=y
+	CONFIG_ADDUSER=y
+	CONFIG_ADDGROUP=y
+	CONFIG_USE_BB_PWD_GROUP=y
+
+Add root user/group (!! check due to possible bugs)
+	touch /etc/group && addgroup -g 0 root

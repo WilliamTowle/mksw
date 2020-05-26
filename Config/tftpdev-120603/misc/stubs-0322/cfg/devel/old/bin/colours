@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo -e "[33mhello yellow[0m"
+echo -e "[41m [43m [45m [0m"

@@ -1,0 +1,120 @@
+#!/bin/sh
+
+##
+##	subroutines
+##
+
+. `dirname $0`/lib-main.sh
+
+dl_filemode()
+{
+	DLFILE=$1
+	TARGET=$2
+	# wget -P <DIRECTORY> --passive-ftp <URL>
+	lynx -dump $DLFILE > $TARGET || exit 1
+}
+
+read_package()
+{
+	if [ -r $PKGCFG/package.cfg ] ; then
+		PKGCFG=$PKGCFG/package.cfg
+	elif [ ! -r $PKGCFG ] ; then
+		echo "$0: Invalid PKGCFG $PKGCFG? -- confused"
+		exit 1
+	fi
+	
+	ENVCFG=`find_file $PKGCFG env.cfg`
+	if [ -z "$ENVCFG" ] ; then
+		echo "$0: Missing env.cfg? -- confused"
+		exit 1
+	fi
+	
+	. $ENVCFG
+	. $PKGCFG
+}
+
+do_list()
+{
+	if [ -z "$1" ] ; then
+		echo "$0: LIST: Expected PACKAGE(s)"
+		exit 1
+	fi
+
+	NONELIST=''
+	for PKGCFG in $* ; do
+		read_package $PKGCFG
+		if [ -z "$PKGURLS" ] ; then
+			[ "$NONELIST" ] && NONELIST="${NONELIST} "
+			NONELIST="${NONELIST}$PKGCFG"
+		else
+			echo $PKGCFG
+			for URL in $PKGURLS ; do
+				echo "	$URL"
+			done
+		fi
+	done
+
+	if [ "$NONELIST" ] ; then
+		echo "NO PACKAGES FOR:"
+		for PKGCFG in $NONELIST ; do
+			echo "	$PKGCFG"
+		done
+	fi
+}
+
+do_download()
+{
+	if [ -z "$1" ] ; then
+		echo "$0: DOWNLOAD: Expected PACKAGE(s)"
+		exit 1
+	fi
+
+	for PKGCFG in $* ; do
+		echo "[ $PKGCFG ]"
+		read_package $PKGCFG
+		if [ "$PKGURLS" ] ; then
+			for URL in $PKGURLS ; do
+				echo "- $URL"
+				TARGNAME=`basename $URL | sed 's/?.*//'`
+
+				if [ -r $SRCPATH/$TARGNAME ] ; then
+					DOWNLOAD=$FORCE
+				else
+					DOWNLOAD=y
+				fi
+
+				echo -n "..."
+				if [ "$DOWNLOAD" = 'y' ] ; then
+					echo -n "downloading... "
+					dl_filemode $URL tempfile.$$ || exit 1
+					[ -d $SRCPATH ] || mkdir -p $SRCPATH
+					mv tempfile.$$ $SRCPATH/$TARGNAME
+				fi
+				echo "OK"
+			done
+		fi
+	done
+}
+
+COMMAND=$1
+[ "$COMMAND" ] && shift
+
+case $COMMAND in
+list)		## list download URLs for given packages
+	do_list $* || exit 1
+	;;
+download)	## download (and overwrite) files for given packages
+	FORCE=y do_download $* || exit 1
+	;;
+ensure)		## download files for given packages (where missing)
+	FORCE=n do_download $* || exit 1
+	;;
+*)
+	if [ -n "$COMMAND" -a "$COMMAND" != 'help' ] ; then
+		echo "$0: Unrecognised command '$COMMAND'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z]*)" $0 | sed "s/^/	/"
+	exit 1
+	;;
+esac

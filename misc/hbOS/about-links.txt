@@ -1,0 +1,42 @@
+<p>Building on the previous article where I <a href="http://dunedlin.wordpress.com/2014/08/23/image-viewing-with-fbv/">built 'fbv'</a> to provide JPEG and PNG image support, I will move on to a (framebuffer-based) web browser with image support - links</p>.
+
+<strong>Requirements</strong>
+<ul>
+<li> libtool and <a href="http://dunedlin.wordpress.com/2013/04/25/more-perl-the-perl-power-tools/">perl</a>,
+<li> <a href="http://www.mirrorservice.org/sites/ftp.gnu.org/gnu/autoconf/">autoconf</a> v2.65 and <a href="http://www.mirrorservice.org/sites/ftp.gnu.org/gnu/automake/">automake</a> v1.14.1,
+<li> <a href="http://www.mirrorservice.org/sites/ftp.gnu.org/gnu/bison/">bison</a> v2.4.1, <a>m4</a> v1.4.12, <a href="http://www.mirrorservice.org/sites/ftp.gnu.org/gnu/shtool/">shtool</a> v2.0.8
+<li> <a href="http://www.nico.schottelius.org/software/gpm/">gpm</a> v1.20.7
+<li><a href="http://sourceforge.net/projects/libpng/files/libpng14/1.4.13/">libpng v1.4.13</a>
+<li><a href="http://mirrorservice.org/sites/ftp.gnu.org/gnu/libtool/libtool-1.5.26.tar.gz">libtool v1.5.26</a>
+<li><a href="http://pkgconfig.freedesktop.org/releases/pkg-config-0.23.tar.gz">pkg-config v0.23</a>
+<li><a href="http://sourceforge.net/projects/libpng/files/zlib/1.2.8/zlib-1.2.8.tar.gz/download?use_mirror=heanet&amp;download=">zlib v1.2.8</a>
+</ul>
+
+<strong>Step 1: Build prerequisites</strong>
+<p>The prerequisites for links are covered in previous articles: toolchain-based versions of libtool and pkgconfig as usual,
+libpng and gpm etc. in either
+fbv: http://dunedlin.wordpress.com/2014/08/23/image-viewing-with-fbv
+or
+gpm: http://dunedlin.wordpress.com/2014/07/28/gpm-the-general-purpose-mouse-server/
+</p>
+
+<strong>Step 2: Build links</strong>
+<pre>
+		CPPFLAGS='-I'/home/william/notes/misc/mksw-140823-0827b/toolchain'/usr/include' \
+		LDFLAGS='-L'/home/william/notes/misc/mksw-140823-0827b/toolchain'/usr/lib' \
+		PKG_CONFIG=/home/william/notes/misc/mksw-140823-0827b/toolchain/usr/bin/x86_64-provider-linux-gnu-pkg-config \
+		PKG_CONFIG_PATH=/home/william/notes/misc/mksw-140823-0827b/toolchain/usr/x86_64-provider-linux-gnu/lib/pkgconfig \
+		  ./configure \
+			--prefix=/home/william/notes/misc/mksw-140823-0827b/toolchain/usr \
+			--enable-graphics \
+			--without-x --without-directfb --without-svgalib \
+			--with-fb --enable-gpm \
+			--with-zlib \
+			--disable-utf8
+</pre>
+
+<strong>Step 3: Testing</strong>
+<pre>
+# ./toolchain/usr/sbin/gpm -m /dev/psaux -t imps2
+# ./misc/alsalibs.sh  ./toolchain/usr/bin/links -g testimage.png
+</pre>

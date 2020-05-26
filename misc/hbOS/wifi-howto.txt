@@ -1,0 +1,26 @@
+Scan:
+	ifconfig wlan0 up
+	? iwconfig wlan0 essid any
+	<SETLDLIBS> iwlist wlan0 scan
+
+Progress/troubleshooting:
+#1. without `ifconfig wlan0 up`
+#	wlan0     Failed to read scan data : Operation not permitted
+#2. latest (without `iwconfig wlan0 essid any`)
+#	wlan0     No scan results
+#	? "Are you putting it in monitor mode?"
+#	? How this compares to stock Debian?
+
+* wpa_supplicant -i wlan0 -c CONFFILE
+	"Failed to inialialise driver interface"
+	"r8180: WW: nic has lost pointer"
+
+Diagnostic output:
+wlan0     802.11b/g  Mode:Managed  Frequency=2.422 GHz  
+          Access Point: Not-Associated   Bit Rate:11 Mb/s   
+          Retry min limit:7   RTS thr:off   Fragment thr:off
+          Encryption key:off
+          Power Management:off
+          Link Quality=0/100  Signal level=0 dBm  Noise level=0 dBm
+          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0
+          Tx excessive retries:0  Invalid misc:0   Missed beacon:0

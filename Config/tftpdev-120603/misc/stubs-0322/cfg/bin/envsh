@@ -1,0 +1,27 @@
+#!/bin/sh
+
+DIRECTORY=$1
+if [ -z "$DIRECTORY" ] ; then
+	echo "$0: No DIRECTORY supplied"
+	exit 1
+fi
+
+if [ ! -r $DIRECTORY/env.cfg ] ; then
+	echo "$0: No env.cfg in DIRECTORY $DIRECTORY"
+	exit 1
+fi
+
+CTRLROOT=`pwd`
+. $DIRECTORY/env.cfg
+
+CUSTPATH=''
+for DIR in $PATHDIRS ; do
+echo DIR $DIR
+	for SUBDIR in bin usr/bin ; do
+		if [ -d $DIR/$SUBDIR ] ; then
+			[ "$CUSTPATH" ] && CUSTPATH=${CUSTPATH}:
+			CUSTPATH=${CUSTPATH}${DIR}/${SUBDIR}
+		fi
+	done
+done
+PATH=$CUSTPATH /bin/sh

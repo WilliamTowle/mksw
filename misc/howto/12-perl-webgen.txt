@@ -1,0 +1,24 @@
+REQUIREMENTS
+------------
+
+* AppConfig (v1.66)
+- http://search.cpan.org/CPAN/authors/id/A/AB/ABW/AppConfig-1.66.tar.gz
+
+* Template Toolkit (v2.22)
+- http://search.cpan.org/CPAN/authors/id/A/AB/ABW/Template-Toolkit-2.22.tar.gz
+
+* Perl
+(RH4: v5.8.5)
+
+METHOD
+------
+
+perl Makefile.PL
+make
+make install DESTDIR=${TOOLCHAIN}
+
+
+
+
+Template Toolkit asks some configuration questions
+Some insistence on AppConfig presence but not fatal if missing

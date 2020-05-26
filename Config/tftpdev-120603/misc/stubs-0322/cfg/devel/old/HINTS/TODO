@@ -1,0 +1,79 @@
+* Installation: man/info content detection: fails to spot
+symlinks (eg /usr/man/man8/fsck.msdos.8) to real pages, therefore
+they get installed on the floppy versions...
+
+* software:
+	e3/e3vi: No 'vi' symlink
+	smartctl - for predicting drive failures ("smart suite") - http://freshmeat.net/redir/smartsuite/10879/url_tgz/smartsuite-2.1.tar.gz
+	gpart - guess hard disk partition layout (in case of failure) - http://freshmeat.net/redir/gpart/3637/url_tgz/gpart-0.1h.tar.gz
+	hdparm - http://freshmeat.net/redir/hdparm/4062/url_tgz/hdparm-5.2.tar.gz
+
+* inittab:
+     ::sysinit:/etc/init.d/rcS
+     tty1::askfirst:/bin/login
+     tty2::askfirst:/bin/login
+     tty3::askfirst:/bin/login
+     tty4::askfirst:/bin/login
+     ::respawn:/sbin/getty -L ttyS0 9600
+     ::respawn:/sbin/getty -L ttyS1 9600
+     ::ctrlaltdel:/sbin/swapoff -a
+     ::ctrlaltdel:/sbin/umount -a
+
+* rcS:
+	#!/bin/sh
+	
+	PATH=/sbin:/bin:/usr/bin:/usr/sbin:
+	export $PATH
+	
+	# Mount filesystems in /etc/fstab.
+	/bin/mount -a -v
+	
+	#Start inet services
+	/usr/bin/inetd
+	/sbin/arp
+	
+	# Set host name
+	/bin/hostname localhost.localdomain
+	
+	#Config localhost
+	/sbin/ifconfig lo 127.0.0.1
+	
+	# Add route to localhost
+	/sbin/route add -net 127.0.0.0 netmask 255.0.0.0 metric 1 lo
+	
+	# Display machine type and kernel
+	/bin/uname -a
+	
+	# Start system log
+	echo "Starting System Log"
+	/sbin/syslogd
+	 
+	# Display /etc/issue file.
+	/usr/bin/clear
+	/bin/sh /etc/issue
+
+
+TALK
+	dietlibc as alternative:
+	- fully static linking
+	- uClibc more compatible (better application support)
+	newlibc? klibc?
+
+REFERENCE http://www-106.ibm.com/developerworks/linux/library/l-lwl1/?t=gr,lnxw12=LLP1
+	- kernel config + reasons
+
+uClibc
+	- version now at v0.9.16+/snapshot-20021111
+
+Busybox: Has a DOLFS (in Makefile - should match (uC)libc)
+
+e2fsprogs:
+     1.mkdir build 
+     2.cd build 
+     3.../configure --enable-elf-shlibs 
+     4.make 
+     5.make distribution_tar_file
+
+"a complete linux system runs quite nicely in 500K of memory on
+an Intel 386 microprocessor with an 8-bit bus (SX)"
+[http://www-106.ibm.com/developerworks/linux/library/l-embl.html]

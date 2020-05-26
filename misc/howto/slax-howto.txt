@@ -1,0 +1,24 @@
+http://www.slax.org/
+slax 6.1.2
+kernel 2.6.27.27
+gcc 4.2.4
+
+GRUB2 stanza:
+
+menuentry "Slax (HDD /os) quote test" {
+	set	root=(hd0,2)
+	echo	"GRUB: load kernel..."
+	linux	/os/slax.lx ramdisk_size=6666 root=/dev/ram0 rw autoexec="xconf;telinit~4" changes=/slax/
+	echo	"GRUB: load initrd..."
+	initrd	/os/slax.gz
+}
+
+users need shell, basic home directory, adding to audio/video groups:
+	useradd -d /home/wills -s /bin/bash -m -G audio,video
+
+NB. Enter walks between screens on the KDE desktop settings wizard but
+Control Centre tends to lay out better out on a small screen. For
+applications that support it, alt-O will activate the OK button.
+
+configure panel
+- hiding: hide after 1sec, raise on pointer contact with bottom edge

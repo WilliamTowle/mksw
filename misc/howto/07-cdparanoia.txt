@@ -1,0 +1,12 @@
+Utilites
+	/usr/bin/eject
+	/usr/bin/cdparanoia
+	/usr/bin/lame
+
+Ubuntu: Need to be in 'cdrom' group.
+
+Not default state -> edit /etc/group as root.
+
+cdparanoia -B
+
+lame encodes at 128kbps by default

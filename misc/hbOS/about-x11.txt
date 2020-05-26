@@ -1,0 +1,30 @@
+2014-08-30
+==========
+
+* Hardware
+- "Screen0" maps to "Card0" (Intel Corp. i915) and "Monitor0" (Asus EeePC 701SD internal)
+- '-ac' causes read of xorg.conf, with extmod/dbe/intel/mouse/kbd requirement
+
+* Software: Xorg configuration
+- needs RgbPath, ModulePath(, ...?) installation (or symlinks):
+	/etc/X11/	xorg.conf
+	/usr/share/X11
+	/usr/lib/X11
+	/usr/lib/xorg
+	...
+- fbdev "does not require modes in the screen section of the config file"
+
+
+2014-08-17
+==========
+
+* test build and status
+- xorg-server is 1.7.1-xorgfb, jwm is 2.2.2, mrxvt is 0.5.4
+- **FIXME** needs /usr/lib/xorg/modules linked to toolchain version
+- X with ':0 -ac' seeks intel, mouse, kbd modules
+- xf86-input-mouse and xf86-input-keyboard will build
+- xf86-video-intel -> libdrm "requires atomic operations, please define them for your CPU/compiler" (gcc 4.3.6 *and* gcc 4.4.7)
+
+* misc
+- xorg-server 1.7.1-kdrive (Xfbdev) also builds; keyboard/mouse response fails
+- xorg-server 1.7.1-sdl (Xsdl) also builds; keyboard/mouse reponse fails, odd resolution set

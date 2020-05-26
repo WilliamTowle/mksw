@@ -1,0 +1,140 @@
+#!/bin/sh
+
+##
+##	subroutines
+##
+
+build_main()
+{
+	SOURCE=$1
+	if [ -z "${SOURCE}" ] ; then
+		echo "$0: BUILD: No SOURCE supplied"
+		exit 1
+	else
+		shift
+	fi
+
+	if [ -d ${SOURCE} ] ; then
+		PREFIX=${SOURCE}
+	else
+		# extract
+		PREFIX=`basename ${SOURCE} | sed 's/\.t.*//'`
+		[ -d ${PREFIX} ] && rm -rf ${PREFIX}
+		case ${SOURCE} in
+		*bz*)
+			cat ${SOURCE} | bzip2 -d -c | tar xvf -
+			;;
+		*gz*)
+			cat ${SOURCE} | gzip -d -c | tar xvf -
+			;;
+		esac \
+			|| exit 1
+	fi || exit 1
+	( cd ${PREFIX} &&
+		./configure ${XCFG} || exit 1
+		make || exit 1
+	) || exit 1
+	cp ${PREFIX}/.bochsrc rc/${PREFIX}
+}
+
+setver_main()
+{
+	BUILDDIR=$1
+	if [ -z "${BUILDDIR}" ] ; then
+		echo "$0: SETVER: No BUILDDIR supplied"
+		exit 1
+	else
+		shift
+	fi
+
+	case `uname` in
+	CYGWIN*)
+		EXEEXT=.exe
+		;;
+	*)
+		EXEEXT=
+		;;
+	esac
+
+	if [ ! -x ${BUILDDIR}/bochs${EXEEXT} ] ; then
+		echo "$0: BUILDDIR ${BUILDDIR}: No 'bochs' built?"
+		exit 1
+	else
+		shift
+		ln -sf ${BUILDDIR}/bochs${EXEEXT} ./
+	fi
+	if [ ! -x ${BUILDDIR}/bximage${EXEEXT} ] ; then
+		echo "$0: BUILDDIR ${BUILDDIR}: No 'bximage' built?"
+		exit 1
+	else
+		shift
+		ln -sf ${BUILDDIR}/bximage${EXEEXT} ./
+	fi
+	case `uname` in
+	CYGWIN*)	## assume we've extracted the Win/DOS exe
+		mkdir bios
+		cp ${BUILDDIR}/bios/* bios/
+		;;
+	*)
+		ln -sf ${BUILDDIR}/bios ./
+		;;
+	esac
+}
+
+setrc_main()
+{
+	RCFILE=$1
+	if [ -z "${RCFILE}" ] ; then
+		echo "$0: RCFILE ${RCFILE} unsupplied"
+		exit 1
+	elif [ ! -r ${RCFILE} ] ; then
+		echo "$0: RCFILE ${RCFILE} not found"
+		exit 1
+	else
+		shift
+	fi
+
+	case `uname` in
+	CYGWIN*)
+		cp ${RCFILE} bochsrc.txt
+		;;
+	*)
+		[ -L ./.bochsrc -o -r ./.bochsrc ] && rm ./.bochsrc
+		ln -s ${RCFILE} ./.bochsrc
+		;;
+	esac
+}
+
+##
+##	main program
+##
+
+COMMAND=$1
+[ "$1" ] && shift
+case ${COMMAND} in
+build-plain)	## Generate application from given SOURCEFILE
+	build_main $* || exit 1
+	echo "$0: BUILD phase OK"
+	;;
+build-net)	## Generate application from given SOURCEFILE
+	#XCFG=--enable-ne build_main $* || exit 1
+	XCFG="--enable-config-interface --enable-idle-hack --enable-ne2000" build_main $* || exit 1
+	echo "$0: BUILD phase OK"
+	;;
+setver)		## Make 'current-version' links into given BUILDDIR
+	setver_main $* || exit 1
+	echo "$0: SETVER phase OK"
+	;;
+setrc)		## Set the current RCFILE
+	setrc_main $* || exit 1
+	echo "$0: SETRC phase OK"
+	;;
+*)
+	if [ -n "${COMMAND}" -a "${COMMAND}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${COMMAND}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z|-]*)" $0 | sed "s/^/	/"
+	exit 1
+	;;
+esac

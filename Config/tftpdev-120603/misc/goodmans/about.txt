@@ -1,0 +1,18 @@
+Goodmans Digital Audio Player GMP32000S
+Firmware 0.1.02
+
+fdisk reports:
+- physical capacity of: 2147 MB, 2147483136 bytes
+- geometry of: 67 heads, 62 sectors/track, 1009 cylinders
+
+formatting notes:
+- software does not support FAT32 format despite device size
+- FAT16 can support 2^16-10 (=65,526) clusters
+- 65526 32KiB clusters will address 2147155968 bytes
+- 'dc' says geometry supplies 2145989632 bytes
+
+files and directories:
+- can use VFAT filenames
+- manual specifies /Music and /Voice for files
+- device creates /Config (for 'config.tcc')
+- /Music not necessary for mp3 detection

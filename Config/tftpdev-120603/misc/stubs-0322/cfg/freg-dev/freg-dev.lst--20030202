@@ -1,0 +1,14 @@
+00a-nasm-0.98.35
+00b-syslinux-0.76
+01a-linux-2.0.39
+01b-uClibc-20030122
+02-rootdir-0.2e
+03-busybox-0.60.5
+04a-bzip2-1.0.2
+04b-gzip-1.2.4b
+04c-tar-1.13
+05-sed-3.02
+06-umsdos_progs-1.32
+07-e3-2.4
+08-dosfstools-2.8
+09-util-linux-2.11y

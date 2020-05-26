@@ -1,0 +1,82 @@
+#!/bin/sh
+
+##
+##	subroutines
+##
+
+do_make_parts()
+{
+	SKIP=0
+	PARTNUM=1
+	[ -z "$SKIPK" ] && SKIPK=1420
+
+	if [ -z "$1" ] ; then
+		echo "$0 do_make_parts(): No 'FILE' supplied"
+		exit 1
+	fi
+
+	while [ "$1" ] ; do
+		FILE=$1
+		shift
+
+		echo -n "[ $FILE ] "
+		while [ $SKIPK != 0 ] ; do
+			SEG=$FILE.$PARTNUM
+			dd if=$FILE of=$SEG skip=$SKIP bs=1k count=$SKIPK 2>/dev/null || exit 1
+			if [ -s $SEG ] ; then
+				echo -n ".$PARTNUM "
+				SKIP=`expr $SKIP + $SKIPK`
+				PARTNUM=`expr $PARTNUM + 1`
+			else
+				## dd will succeed even if zero bytes came out :(
+				rm $SEG
+				SKIPK=0
+				echo ; echo "Done"
+			fi
+		done
+	done
+}
+
+do_make_tarfs()
+{
+	if [ -z "$1" ] ; then
+		echo "$0 do_tarfs(): No 'FILENAME'(s) supplied"
+		exit 1
+	fi
+
+	while [ "$1" ] ; do
+		FILE=$1
+		shift
+
+		echo "[ $FILE -> $FILE.dsk ]"
+		( tar cf - $FILE ; cat /dev/zero ) | dd of=$FILE.dsk bs=1k count=1440
+	done
+}
+
+##
+##	main program
+##
+
+COMMAND=$1
+[ "$COMMAND" ] && shift
+
+case $COMMAND in
+1420)	# split supplied 'FILE'(s) into 1400K segments
+	do_make_parts $*
+	;;
+700)	# split supplied 'FILE'(s) into 700K segments
+	SKIPK=700 do_make_parts $* || exit 1
+	;;
+tarfs)	# make supplied 'FILE'(s) into 1420K-sized tar file
+	do_make_tarfs $* || exit 1
+	;;
+*)
+	if [ -n "$COMMAND" -a "$COMMAND" != 'help' ] ; then
+		echo "$0: Unrecognised command '$COMMAND'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z]*)" $0 | sed "s/^/	/"
+	exit 1
+	;;
+esac
+echo "$0: OK"

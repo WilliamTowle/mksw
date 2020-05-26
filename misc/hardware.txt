@@ -1,0 +1,8 @@
+* Wondermedia WM8650 "android laptop"
+- single core ARM CPU (armv5te); 2.6.32 kernel sources published
+- kernel config needs CONFIG_ARCH_WM8505 (ARCH_VT8500, CPU_ARM926T)
+- devices boot with U-Boot, will autorun custom boot scripts from SSD
+- thorough HOWTO at https://github.com/projectgus/kernel_wm8505
+
+* ASUS EeePC
+- Atom CPU, underclocked; Xandros Linux OS (Debian Etch respin)

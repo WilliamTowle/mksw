@@ -1,0 +1,262 @@
+2018
+----
+
+Containers: Configuring the Network with Static Addresses
+https://dunedlin.wordpress.com/2018/01/31/containers-configuring-the-network-with-static-addresses/
+
+
+2017
+----
+
+Kernel Builds: Custom Version Numbers
+https://dunedlin.wordpress.com/2017/11/29/kernel-builds-custom-version-numbers/
+
+Package Builds on Debian - From 'git'
+https://dunedlin.wordpress.com/2017/10/28/package-builds-on-debian-from-git/
+
+Kernel Builds on Debian (From Source Repo Tarball)
+https://dunedlin.wordpress.com/2017/09/30/kernel-builds-on-debian/
+
+Creating/updating an 'initramfs' Archive
+https://dunedlin.wordpress.com/2017/08/31/updating-an-initramfs-archive/
+
+Testing a Disk with 'smartctl'
+https://dunedlin.wordpress.com/2017/06/26/testing-a-disk-with-smartctl/
+
+Emulating an ARM System With QEmu
+https://dunedlin.wordpress.com/2017/05/28/emulating-an-arm-system-with-qemu/
+
+'SirClive': A Console Font for Linux
+https://dunedlin.wordpress.com/2017/04/29/sirclive-a-console-font-for-linux/
+
+Comparing Floating Point Numbers in 'bash' scripts
+https://dunedlin.wordpress.com/2017/03/29/comparing-floating-point-numbers-in-bash-scripts/
+
+Emulating an Amiga with 'UAE'
+https://dunedlin.wordpress.com/2017/02/26/emulating-an-amiga-with-uae/
+
+Emulating a MIPS System With QEmu
+https://dunedlin.wordpress.com/2017/01/26/emulating-a-mips-system-with-qemu/
+
+
+2016
+----
+
+Creating an amd64 'Stretch' Install
+https://dunedlin.wordpress.com/2016/11/30/creating-an-amd64-stretch-install/
+
+Securing an Ad-Hoc Network
+https://dunedlin.wordpress.com/2016/10/28/securing-an-ad-hoc-network/
+
+Creating an Ad-Hoc Network
+https://dunedlin.wordpress.com/2016/09/30/creating-an-ad-hoc-network/
+
+Basic Access Point Setup
+https://dunedlin.wordpress.com/2016/08/28/basic-access-point-setup/
+
+Creating a Bridged Network for Containers
+https://dunedlin.wordpress.com/2016/07/23/creating-a-bridged-network-for-containers/
+
+A Brief Introduction to 'LXC' Containers
+https://dunedlin.wordpress.com/2016/06/28/a-brief-introduction-to-lxc-containers/
+
+Chain Loading New GrUB From Old GrUB
+https://dunedlin.wordpress.com/2016/05/29/chain-loading-new-grub-from-old-grub/
+
+Disk Images cont'd: VBR dump
+https://dunedlin.wordpress.com/2016/04/30/disk-images-contd-vbr-dump/
+
+Anatomy of a Disk Image
+https://dunedlin.wordpress.com/2016/03/31/anatomy-of-a-disk-image/
+
+A Basic Access Point with 'hostapd'
+https://dunedlin.wordpress.com/2016/02/29/a-basic-access-point-with-hostapd/
+
+Audio CDs with 'cdrdao'
+https://dunedlin.wordpress.com/2016/01/24/audio-cds-with-cdrdao/
+
+
+2015
+----
+
+'dnsmasq' and 'iptables' - to LAN and beyond
+https://dunedlin.wordpress.com/2015/11/30/dnsmasq-and-iptables-to-lan-and-beyond/
+
+'schroot': 'chroot' for Regular Users
+https://dunedlin.wordpress.com/2015/10/31/schroot-chroot-for-regular-users/
+
+Creating a Server for Remote Access
+https://dunedlin.wordpress.com/2015/09/30/creating-a-server-for-remote-access/
+
+Emulation: Making Disk Images with 'mksquashfs'
+https://dunedlin.wordpress.com/2015/08/31/emulation-making-disk-images-with-mksquashfs/
+
+EeePCs: Upgrading with the XEPC Image
+https://dunedlin.wordpress.com/2015/07/31/eeepcs-upgrading-with-the-xepc-image/
+
+Emulation: Making Disk Images with 'genext2fs'
+https://dunedlin.wordpress.com/2015/06/30/emulation-making-disk-images-with-genext2fs/
+
+Volume normalisation in audio files
+https://dunedlin.wordpress.com/2015/05/26/volume-normalisation-in-audio-files/
+
+'screen': Dynamic Titles Explained
+https://dunedlin.wordpress.com/2015/04/29/screen-dynamic-titles-explained/
+
+'screen': Customising the Caption Line with Scripts
+https://dunedlin.wordpress.com/2015/03/29/screen-customising-the-caption-with-scripts/
+
+'screen', and Some Basic Configuration
+https://dunedlin.wordpress.com/2015/02/28/screen-and-some-basic-configuration/
+
+'acpi' - Reading Laptop Battery Status
+https://dunedlin.wordpress.com/2015/01/26/acpi-reading-laptop-battery-status/
+
+
+2014
+----
+
+Kernel Hacking: container_of
+https://dunedlin.wordpress.com/2014/11/28/kernel-hacking-container_of/
+
+get-iplayer: Downloading when Search Breaks
+https://dunedlin.wordpress.com/2014/10/31/get-iplayer-downloading-when-search-breaks/
+
+Web Browsing: Images in 'links'
+https://dunedlin.wordpress.com/2014/09/29/web-browsing-images-in-links/
+
+Image Viewing with 'fbv'
+https://dunedlin.wordpress.com/2014/08/23/image-viewing-with-fbv/
+
+GPM: the General Purpose Mouse Server
+http://dunedlin.wordpress.com/2014/07/28/gpm-the-general-purpose-mouse-server/
+
+More Simple Apps: n2048 (Configuration with ncurses5-config)
+http://dunedlin.wordpress.com/2014/06/30/more-simple-apps-n2048-configuration-with-ncurses5-config/
+
+Web Browsing with Lynx
+http://dunedlin.wordpress.com/2014/05/31/web-browsing-with-lynx/
+
+'dnsmasq' on a Debian Server
+https://dunedlin.wordpress.com/2014/04/23/dnsmasq-on-a-debian-server/
+
+CurseTheWeather: a Python Program
+https://dunedlin.wordpress.com/2014/03/29/cursetheweather-a-python-program/
+
+Debian: A Live USB Primer
+https://dunedlin.wordpress.com/2014/02/25/debian-a-live-usb-primer/
+
+OpenSSH for Remote Shell Connections
+https://dunedlin.wordpress.com/2014/01/23/openssh-for-remote-shell-connections/
+
+
+2013
+----
+
+A First Initial Ramdisk 'init' script
+http://dunedlin.wordpress.com/2013/11/30/a-first-initial-ramdisk-init-script/
+
+Modern Initial Ramdisks
+http://dunedlin.wordpress.com/2013/10/27/modern-initial-ramdisks/
+
+Network Connections with udhcpc and udhcpd
+http://dunedlin.wordpress.com/2013/09/
+
+Dropbear: A simple ssh client
+http://dunedlin.wordpress.com/2013/08/28/dropbear-a-simple-ssh-client/
+
+Music Playback Control With Jinamp
+http://dunedlin.wordpress.com/2013/07/31/music-playback-control-with-jinamp/
+
+Deeper with Debian
+http://dunedlin.wordpress.com/2013/06/27/deeper-with-debian/
+
+Dabbling with Debian
+http://dunedlin.wordpress.com/2013/05/26/dabbling-with-debian/
+
+More Perl: The Perl Power Tools
+http://dunedlin.wordpress.com/2013/04/25/more-perl-the-perl-power-tools/
+
+FBZX: Emulating the Sinclair Spectrum
+http://dunedlin.wordpress.com/2013/03/21/fbzx-emulating-the-sinclair-spectrum/
+
+Shim - Viewing Images with DirectFB
+http://dunedlin.wordpress.com/2013/02/22/shim-viewing-images-with-directfb/
+
+DirectFB with a Custom Kernel
+http://dunedlin.wordpress.com/2013/02/06/directfb-with-a-custom-kernel/
+
+
+2012
+----
+
+ALSA with a Custom Linux Kernel
+http://dunedlin.wordpress.com/2012/12/12/alsa-with-a-custom-linux-kernel/
+
+On Transferring Slax to HDD
+http://dunedlin.wordpress.com/2012/10/27/on-transferring-slax-to-hdd/
+
+Simple Cross-Compiler HOWTO
+http://dunedlin.wordpress.com/2012/09/30/simple-cross-compiler-howto/
+
+Small Linux Distributions: Slax
+http://dunedlin.wordpress.com/2012/08/31/small-linux-distributions-slax/
+
+Restoring Windows XP on an EeePC
+http://dunedlin.wordpress.com/2012/07/31/restoring-windows-xp-on-an-eeepc/
+
+
+2011
+----
+
+Network Booting (Customer Linux Kernel and RootFS)
+http://dunedlin.wordpress.com/2011/06/11/network-booting-a-custom-kernel/
+
+Testing Initial Ramdisks
+http://dunedlin.wordpress.com/2011/03/29/testing-initial-ramdisks/
+
+Web Pages with Perl and Template::Toolkit
+http://dunedlin.wordpress.com/2011/02/28/web-pages-with-perl-and-templatetoolkit/
+
+Simple Bootable CD Creation
+http://dunedlin.wordpress.com/2011/01/28/simple-bootable-cd-creation/
+
+
+2010
+----
+
+Understanding Software Descriptions
+http://dunedlin.wordpress.com/2010/12/21/understanding-software-descriptions/
+
+Making DOS Boot Floppies on Linux
+http://dunedlin.wordpress.com/2010/11/29/making-dos-boot-floppies-on-linux/
+
+Puzzling
+http://dunedlin.wordpress.com/2010/10/31/puzzling/
+
+Windows Usability Tweaks
+http://dunedlin.wordpress.com/2010/09/24/windows-usability-tweaks/
+
+Linux with Loadlin
+http://dunedlin.wordpress.com/2010/09/01/linux-with-loadlin/
+
+Firefly: Serving Music Remotely
+http://dunedlin.wordpress.com/2010/07/31/firefly-serving-music-remotely/
+
+USB-Booting FreeDOS (and Other OSes)
+http://dunedlin.wordpress.com/2010/06/04/usb-booting-freedos-and-other-oses/
+
+FreeDOS primer
+http://dunedlin.wordpress.com/2010/05/31/freedos-primer/
+
+Network-booting the EeePC (Linux Kernel and Ramdisk)
+http://dunedlin.wordpress.com/2010/04/07/network-booting-the-eeepc/
+
+Troubleshooting the EeePC - BIOS updates
+http://dunedlin.wordpress.com/2010/02/25/troubleshooting-the-eeepc-bios-updates/
+
+When EeePCs Misbehave - Troubleshooting Xandros Linux
+http://dunedlin.wordpress.com/2010/02/24/when-eeeps-misbehave-troubleshooting-xandros-linux/
+
+Hello World!
+http://dunedlin.wordpress.com/2010/02/05/hello-world/

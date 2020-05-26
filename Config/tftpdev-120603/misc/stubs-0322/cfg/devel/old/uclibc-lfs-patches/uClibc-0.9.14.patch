@@ -1,0 +1,159 @@
+diff -Naur uClibc-0.9.14.orig/Makefile uClibc-0.9.14/Makefile
+--- uClibc-0.9.14.orig/Makefile	Thu Aug  8 03:55:31 2002
++++ uClibc-0.9.14/Makefile	Thu Aug 15 11:43:19 2002
+@@ -31,7 +31,11 @@
+ TOPDIR=./
+ include Rules.mak
+ 
+-DIRS = extra ldso libc libcrypt libresolv libutil libm libpthread
++DIRS = ldso libc libcrypt libresolv libutil libm libpthread
++
++ifneq ($(strip $(DOSHAREDMAIN)),true)
++	DIRS := extra $(DIRS)
++endif
+ 
+ all: headers uClibc_config subdirs shared utils finished
+ 
+@@ -251,7 +255,14 @@
+ 	-find $(PREFIX)$(DEVEL_PREFIX) -name CVS | xargs rm -rf;
+ 	-chown -R `id | sed 's/^uid=\([0-9]*\).*gid=\([0-9]*\).*$$/\1.\2/'` $(PREFIX)$(DEVEL_PREFIX)
+ ifeq ($(strip $(HAVE_SHARED)),true)
++ifeq ($(strip $(DOSHAREDMAIN)),true)
++	@for i in lib/lib*.so.$(MAJOR_VERSION); do \
++		ln -sf ../../$$i $(PREFIX)$(DEVEL_PREFIX)/`echo $$i | sed -e 's/\.$(MAJOR_VERSION)$$//'`; \
++	done
++	ln -sf crt0.o $(PREFIX)$(DEVEL_PREFIX)/lib/crt1.o
++else
+ 	-find lib/ -type l -name '*.so' -exec cp -a {} $(PREFIX)$(DEVEL_PREFIX)/lib ';'
++endif
+ 	# If we build shared libraries then the static libs are PIC...
+ 	# Make _pic.a symlinks to make mklibs.py and similar tools happy.
+ 	for i in `find lib/  -type f -name '*.a' | sed -e 's/lib\///'` ; do \
+@@ -267,6 +278,13 @@
+ ifeq ($(strip $(HAVE_SHARED)),true)
+ 	install -d $(PREFIX)$(DEVEL_PREFIX)/lib
+ 	install -d $(PREFIX)$(DEVEL_PREFIX)/bin
++ifeq ($(strip $(DOSHAREDMAIN)),true)
++	install -d $(PREFIX)/lib
++	install -m 755 lib/lib*-$(MAJOR_VERSION).$(MINOR_VERSION).$(SUBLEVEL).so $(PREFIX)/lib
++	install -m 755 lib/ld-uClibc-$(MAJOR_VERSION).$(MINOR_VERSION).$(SUBLEVEL).so $(PREFIX)/lib
++	ln -sf ld-uClibc-$(MAJOR_VERSION).$(MINOR_VERSION).$(SUBLEVEL).so $(PREFIX)$(SHARED_LIB_LOADER_PATH)/$(UCLIBC_LDSO)
++	cp -a lib/*.so.$(MAJOR_VERSION) $(PREFIX)/lib
++else
+ 	install -m 644 lib/lib*-$(MAJOR_VERSION).$(MINOR_VERSION).$(SUBLEVEL).so \
+ 		$(PREFIX)$(DEVEL_PREFIX)/lib
+ 	cp -a lib/*.so.* $(PREFIX)$(DEVEL_PREFIX)/lib
+@@ -279,13 +297,16 @@
+ 			$(PREFIX)$(SHARED_LIB_LOADER_PATH)/$(UCLIBC_LDSO) || true; \
+ 	fi;
+ endif
++endif
+ 
+ install_toolchain:
+ 	install -d $(PREFIX)$(DEVEL_PREFIX)/lib
+ 	install -d $(PREFIX)$(DEVEL_PREFIX)/bin
+ 	install -d $(PREFIX)$(DEVEL_TOOL_PREFIX)/bin
+ 	install -d $(PREFIX)$(SYSTEM_DEVEL_PREFIX)/bin
++ifneq ($(strip $(DOSHAREDMAIN)),true)
+ 	$(MAKE) -C extra/gcc-uClibc install
++endif
+ 
+ ifeq ($(strip $(HAVE_SHARED)),true)
+ utils: $(TOPDIR)ldso/util/ldd
+@@ -297,6 +318,12 @@
+ install_utils: utils
+ ifeq ($(strip $(HAVE_SHARED)),true)
+ 	install -d $(PREFIX)$(DEVEL_TOOL_PREFIX)/bin;
++ifeq ($(strip $(DOSHAREDMAIN)),true)
++	install -m 755 ldso/util/ldd $(PREFIX)$(DEVEL_TOOL_PREFIX)/bin/ldd
++	install -d $(PREFIX)/etc
++	install -d $(PREFIX)/sbin
++	install -m 755 ldso/util/ldconfig $(PREFIX)/sbin/ldconfig
++else
+ 	install -m 755 ldso/util/ldd \
+ 		$(PREFIX)$(SYSTEM_DEVEL_PREFIX)/bin/$(TARGET_ARCH)-uclibc-ldd
+ 	ln -fs $(SYSTEM_DEVEL_PREFIX)/bin/$(TARGET_ARCH)-uclibc-ldd \
+@@ -315,6 +342,7 @@
+ 	    ln -fs $(SYSTEM_DEVEL_PREFIX)/bin/$(TARGET_ARCH)-uclibc-ldconfig \
+ 		    $(PREFIX)$(DEVEL_TOOL_PREFIX)/bin/ldconfig; \
+ 	fi;
++endif
+ endif
+ 
+ # Installs run-time libraries and helper apps in preparation for
+diff -Naur uClibc-0.9.14.orig/Rules.mak uClibc-0.9.14/Rules.mak
+--- uClibc-0.9.14.orig/Rules.mak	Mon Aug 12 09:49:56 2002
++++ uClibc-0.9.14/Rules.mak	Thu Aug 15 11:43:19 2002
+@@ -94,6 +94,23 @@
+ 	-I$(TOPDIR)include -iwithprefix include -I. -D_LIBC $(ARCH_CFLAGS)
+ NATIVE_CFLAGS:=-O2 -Wall
+ 
++# If we are building uClibc to be the main shared libc on a system without libc, 
++# we'll need to do things differently.
++ifeq ($(strip $(DOSHAREDMAIN)),true)
++	UCLIBC_LDSO:=ld-linux.so.2
++	SHARED_LIB_LOADER_PATH:=/lib
++	NATIVE_CFLAGS:=-I$(TOPDIR)include $(WARNINGS) $(OPTIMIZATION)
++	NATIVE_LDFLAGS:=-nostdlib -L$(TOPDIR)lib -Wl,--dynamic-linker,$(SHARED_LIB_LOADER_PATH)/$(UCLIBC_LDSO) $(TOPDIR)lib/crt0.o -lc
++	DEVEL_PREFIX:=/usr
++	DEVEL_TOOL_PREFIX:=$(DEVEL_PREFIX)
++	SYSTEM_DEVEL_PREFIX:=/usr
++	HAVE_SHARED:=true
++	BUILD_UCLIBC_LDSO:=true
++	LIBRARY_CACHE:=-DUSE_CACHE
++else
++	NATIVE_LDFLAGS:=
++endif
++
+ ifeq ($(strip $(DODEBUG)),true)
+     CFLAGS += -g
+     LDFLAGS:= -shared --warn-common --warn-once -z combreloc
+@@ -105,7 +122,9 @@
+ 
+ ifeq ($(strip $(HAVE_SHARED)),true)
+     DOPIC:=true
++ifneq ($(strip $(DOSHAREDMAIN)),true)
+     LIBRARY_CACHE:=#-DUSE_CACHE
++endif
+     ifeq ($(strip $(BUILD_UCLIBC_LDSO)),true)
+ 	LDSO:=$(TOPDIR)lib/$(UCLIBC_LDSO)
+ 	DYNAMIC_LINKER:=$(SHARED_LIB_LOADER_PATH)/$(UCLIBC_LDSO)
+diff -Naur uClibc-0.9.14.orig/ldso/util/Makefile uClibc-0.9.14/ldso/util/Makefile
+--- uClibc-0.9.14.orig/ldso/util/Makefile	Thu Aug  8 10:28:46 2002
++++ uClibc-0.9.14/ldso/util/Makefile	Thu Aug 15 11:43:19 2002
+@@ -37,7 +37,7 @@
+ 	ln -fs $(TOPDIR)include/elf.h
+ 
+ readelf: readelf.c
+-	$(NATIVE_CC) $(NATIVE_CFLAGS) -I . readelf.c -o $@
++	$(NATIVE_CC) $(NATIVE_CFLAGS) $(NATIVE_LDFLAGS) -I . readelf.c -o $@
+ 	strip -x -R .note -R .comment $@
+ 
+ readelf.target: readelf.c
+@@ -54,11 +54,11 @@
+ 	strip -x -R .note -R .comment $*.o
+ 
+ ldconfig: ldconfig.o readsoname.o
+-	$(NATIVE_CC) $(NATIVE_CFLAGS) $^ -o $@
++	$(NATIVE_CC) $(NATIVE_CFLAGS) $(NATIVE_LDFLAGS) $^ -o $@
+ 	strip -x -R .note -R .comment $@
+ 
+ ldd: ldd.c
+-	$(NATIVE_CC) $(NATIVE_CFLAGS) -DUCLIBC_TARGET_PREFIX=\"$(TARGET_PREFIX)\" \
++	$(NATIVE_CC) $(NATIVE_CFLAGS) $(NATIVE_LDFLAGS) -DUCLIBC_TARGET_PREFIX=\"$(TARGET_PREFIX)\" \
+ 		-DUCLIBC_DEVEL_PREFIX=\"$(DEVEL_PREFIX)\" \
+ 		-DUCLIBC_BUILD_DIR=\"$(shell cd $(TOPDIR) && pwd)\" \
+ 		-DUCLIBC_LDSO=\"$(UCLIBC_LDSO)\" -I . \
+diff -Naur uClibc-0.9.14.orig/libc/sysdeps/linux/common/bits/uClibc_stdio.h uClibc-0.9.14/libc/sysdeps/linux/common/bits/uClibc_stdio.h
+--- uClibc-0.9.14.orig/libc/sysdeps/linux/common/bits/uClibc_stdio.h	Mon Aug 12 00:32:41 2002
++++ uClibc-0.9.14/libc/sysdeps/linux/common/bits/uClibc_stdio.h	Thu Aug 15 11:44:12 2002
+@@ -101,7 +101,9 @@
+ #define __STDIO_AUTO_RW_TRANSITION
+ #define __STDIO_FOPEN_EXCLUSIVE_MODE
+ #define __STDIO_PRINTF_M_SPEC
++#if ! defined __cplusplus && ! defined _NO_STDIO_GLIBC_CUSTOM_STREAMS
+ #define __STDIO_GLIBC_CUSTOM_STREAMS
++#endif
+ 
+ 
+ /* ANSI/ISO mandate at least 256. */

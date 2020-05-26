@@ -1,0 +1,13 @@
+00-rootdir-0.2e
+01-linux-2.0.39
+02-uClibc-20030108
+03-busybox-0.60.5
+04a-bzip2-1.0.2
+04b-gzip-1.2.4b
+04c-tar-1.13
+05-sed-3.02
+06-umsdos_progs-1.32
+07a-nasm-0.98.35
+07b-e3-2.4
+09-util-linux-2.11y
+10-dosfstools-2.8

@@ -1,0 +1,56 @@
+* about quiz hosting
+- Debian Live for EeePC, historically
+- moving to homebrewed minimal, with 'screen' hosting the clock
+	...because the more SSD space I can leave, the better
+	https://dunedlin.wordpress.com/2014/02/25/debian-a-live-usb-primer/
+	https://dunedlin.wordpress.com/2015/03/29/screen-customising-the-caption-with-scripts/
+- Wheezy's mplayer and ffmpeg are old, however
+	https://packages.debian.org/wheezy/mplayer
+	https://packages.debian.org/wheezy/ffmpeg
+
+* about volume normalisation
+- is possible with mplayer:
+	...can just "-af volnorm"
+	...has options: "volnorm[=<method>:<target>]"
+	method: 1 = single sample smoothing, 2 = multiple sample smoothing
+	target: fraction of total volume for given sample type (0.25)
+	http://www.commandlinefu.com/commands/view/8893/normalize-volume-output-in-mplayer
+
+- ...but with separately-built ffmpeg/lame I can have
+audio files playable with 'mplayer' of any age ... or indeed on borrowed
+equipment, should it come to that
+
+* Building
+nasm-2.11.08/
+http://www.nasm.us/pub/nasm/releasebuilds/2.11.08/nasm-2.11.08.tar.bz2
+		CC=/usr/bin/gcc \
+		  CFLAGS='-O2' \
+			./configure \
+			  --prefix=/home/william/notes/misc/mksw-150520-0521/toolchain/usr \
+			  || exit 1 ;\
+
+lame-3.99.5/
+http://downloads.sourceforge.net/project/lame/lame/3.99/lame-3.99.5.tar.gz?use_mirror=ignum
+	  CFLAGS='-O2' \
+		./configure \
+			--prefix=/home/william/notes/misc/mksw-150520-0521/toolchain/usr \
+			--enable-nasm \
+
+ffmpeg-2.6.3/
+http://ffmpeg.org/releases/ffmpeg-2.6.3.tar.bz2
+		CFLAGS='-O2 -I'/home/william/notes/misc/mksw-150520-0521/toolchain'/usr/include' \
+		LDFLAGS='-L'/home/william/notes/misc/mksw-150520-0521/toolchain'/usr/lib' \
+		./configure \
+			--prefix=/home/william/notes/misc/mksw-150520-0521/toolchain/usr \
+			--enable-libmp3lame \
+
+* Execution
+	..."-dialnorm <value>"
+	Determines level shift during audio reproduction
+	My complain "encoder not found" (...because needs 'lame'?) 
+	1. `ffmpeg -i video.avi -af "volumedetect" -f null /dev/null`
+	...study "max_volume"; 0 means normalisation is unneeded/damaging
+	...for max_volume -5.0dB, we can apply 5dB gain
+	2. then apply `ffmpeg -i input.mp4 -af "volume=5dB" output.mp3`
+	http://ffmpeg.org/download.html
+	http://superuser.com/questions/323119/how-can-i-normalize-audio-using-ffmpeg

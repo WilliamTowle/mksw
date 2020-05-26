@@ -1,0 +1,5 @@
+default nfsboot
+
+label nfsboot
+	kernel vmlinuz
+	append ip=::::::dhcp rootfstype=nfs root=/dev/nfs nfsroot=192.168.74.1:/var/tmp/exttemp/insttemp/,v3,rsize=16384,wsize=16384

@@ -1,0 +1,140 @@
+Omitted -- /etc/networks
+	if0	192.168.1.3
+	if1	172.16.1.254
+
+Changed -- /etc/rc.config
+	IFCONFIG_1="172.16.1.254 broadcast 172.31.255.255 netmask 255.240.0.0"
+
+Omitted 192.* -- /etc/hosts
+	172.16.1.254   	fileserv.indynet.localnet	fileserv
+	192.168.1.3    	susebox.basement.localnet 	susebox
+	192.168.1.254	gateway.basement.localnet	gateway
+
+Added 0720 -- /etc/hosts.allow
+	ALL: 172.16.0.0/20
+
+Changed -- /etc/resolv.conf
+	nameserver 192.168.1.254
+	search basement.localnet indynet.localnet
+
+Changed -- /etc/route.conf
+	#
+	# `man 5 route.conf`
+	#
+	# destn		dummy/gateway	netmask		device
+
+	default		192.168.1.254
+
+	127.0.0.0	0.0.0.0		255.255.255.0	lo
+	192.168.1.0	0.0.0.0		255.255.255.0	eth0
+	172.16.0.0	0.0.0.0		255.240.0.0	eth1
+
+	# barred:
+
+	10.0.0.0	0.0.0.0		255.0.0.0	reject
+
+
+	(/etc/rc.d/network restart)
+	(/etc/rc.d/route start)
+
+Additional -- /etc/dhcpd.conf (was blank)
+	## start dhcpd.conf common wills 28/04/2002-02 ##
+
+	default-lease-time 600;
+	max-lease-time 7200;
+	#?! ddns-update-style none;
+	ddns-update-style ad-hoc;
+	#option subnet-mask 255.255.255.0;
+
+	## end dhcpd.conf common ##
+
+	## start dhcpd.conf eth0/basement wills 28/04/2002-02 ##
+
+	subnet 192.168.1.0 netmask 255.255.255.0 {
+		#server-name "gateway.basement.localnet";
+		server-name "192.168.1.254";
+		option domain-name "basement.localnet";
+
+		option domain-name-servers gateway.basement.localnet;
+		option broadcast-address 192.168.1.255;
+		option routers 192.168.1.254;
+
+		host susebox {
+			fixed-address 192.168.1.3;
+		}
+
+		host gateway {
+			fixed-address 192.168.1.254;
+		}
+	}
+
+	## end dhcpd.conf eth0/basement ##
+
+	## start dhcpd.conf eth1/indynet wills 28/04/2002-02 ##
+
+	subnet 172.16.0.0 netmask 255.240.0.0 {
+		##range omittable for BOOTP provision only
+		#range 172.16.1.1 172.16.1.16;
+		server-name "172.16.1.254";
+
+		option domain-name "indynet.localnet";
+		option domain-name-servers 172.16.1.254;
+
+		host indy {
+			hardware ethernet 08:00:69:08:10:1f;
+			fixed-address 172.16.1.1;
+			#filename "/netbsd";
+			option root-path "/home/distro/indy/0606";
+
+			option host-name "indy";
+			#option routers 172.16.1.254;
+		}
+
+		host fileserv {	# susebox.basement.localnet eth1
+			fixed-address 172.16.1.254;
+		}
+	}
+
+	## end dhcpd.conf eth1/indynet ##
+
+	***	http://www.ping.uio.no/~toffer/indy-sid.txt	***
+
+LINUX
+
+	/proc/sys/net/ipv4/ip_{no_pmtu_disc = 1,local_port_range = 2048 32767}
+	inetd.conf line:
+		tftp dgram udp wait nobody /usr/sbin/tcpd /usr/sbin/in.tftpd /home/distro/indy/0606
+	/etc/rc.d/inetd restart
+	/etc/rc.d/dhcpd (re)start
+	`netstat -a` for lines:
+		udp        0      0 *:bootps                *:*
+		udp        0      0 *:tftp                  *:*
+
+INDY
+
+	unsetenv netaddr
+	unsetenv dlserver
+	unsetenv osloadpartition
+	unsetenv osloadfilename
+	setenv systempartition bootp()/home/distro/indy/0606
+	setenv osloader tftpboot.img
+	setenv diskless 1
+	boot
+
+LINUX - OPTIONAL?
+
+	/etc/exports line:
+		/home/distro/indy/0606	172.16.1.1(rw,no_root_squash)
+	/etc/rc.d/nfsserver stop
+		(make sure no nfsd and mount daemons)
+	/etc/rc.d/nfsserver start
+	`exportfs`
+
+INDY
+
+	setenv osloader linux
+	setenv osloadpartition /dev/sda1
+	setenv systempartition scsi(0)disk(1)rdisk(0)partition(8)
+	unsetenv systemloadpartition
+	unsetenv osloadfilename
+	boot

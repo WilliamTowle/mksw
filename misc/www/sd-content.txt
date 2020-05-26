@@ -1,0 +1,84 @@
+Slashdot
+
+* FIXME: Comboot article claims there is an angelfire download; it's
+missing :(
+
+2009-08-19 Puzzling		http://slashdot.org/journal/235377/puzzling
+
+2009-07-08 Comboot basics/QEmu	http://slashdot.org/journal/232825/computing-comboot-basics-another-qemu-demonstration
+
+2009-05-12 Netbook Effect	http://slashdot.org/journal/229675/the-netbook-effect
+
+2009-12-23 Comical Christmas	http://slashdot.org/journal/220085/a-comical-christmas
+
+2008-10-24 Netbooks One Year On	http://slashdot.org/journal/215333/netbooks-one-year-on
+
+2008-10-10 Mythbusting Linux	http://slashdot.org/journal/214145/moving-past-stuck-in-the-past-mythbusting-with-linux
+
+2008-09-30 Networking 101/QEmu	http://slashdot.org/journal/213231/networking-101-a-demo-with-qemu
+
+2008-08-18 Find Me With Google	http://slashdot.org/journal/209459/you-can-find-me-with-google
+
+2008-07-21 Otley Run		http://slashdot.org/journal/207549/recollection-of-leeds-otley-run
+
+2008-07-14 Netbooks Next Gen	http://slashdot.org/journal/207077/netbooks-the-next-generation
+
+2008-05-12 Windows Usability	http://slashdot.org/journal/202662/windows-usability-tweaks
+
+2008-05-11 When Eees Misbehave	http://slashdot.org/journal/202640/netbooks-when-eees-misbehave---tips-tricks-issues
+
+2008-04-02 Guinness' White Pint	http://slashdot.org/journal/199944/guinness-white-pint-no-really--and-other-foolishness
+
+2008-03-19 Retro Computing	http://slashdot.org/journal/198870/retro-computing-stuff
+
+2008-03-04 More Chart Jokes	http://slashdot.org/journal/197590/humour-more-chart-jokes
+
+2008-03-04 Eee competitors	http://slashdot.org/journal/197576/netbooks-eee-competitors-next-gen-hardwareos-choice
+
+2008-02-26 WiFi in Wetherspoons	http://slashdot.org/journal/197080/free-wifi-in-wetherspoons-uk-pubs
+
+2008-02-21 Microsoft Tax	http://slashdot.org/journal/196708/microsoft-taxes-and-tactics
+
+2008-03-14 OSI 10 Years Old	http://slashdot.org/journal/196144/open-source-initiative-10-years-old-progress-philosophy
+
+2008-02-06 Youtube Playlists	http://slashdot.org/journal/195386/on-having-youtube-playlists
+
+2008-02-25 Understanding Art	http://slashdot.org/journal/194230/humour-understanding-art
+
+2008-01-25 Inspirations		http://slashdot.org/journal/193252/inspirations
+
+2007-12-19 Eeesy Peasy		http://slashdot.org/journal/190876/netbooks-eeesy-peasy
+
+2007-11-28 xkcd			http://slashdot.org/journal/188913/humour-xkcd
+
+2007-10-11 Cracking Argument	http://slashdot.org/journal/184415/cracking-argument-grommit-not-or-how-to-boil-an-egg
+
+2007-09-28 Happy Birthday Two	http://slashdot.org/journal/183155/ents-happy-birthday-two-you
+
+2007-09-24 Unbundling Windows	http://slashdot.org/journal/182793/unbundling-windows-and-then-theres
+
+2007-09-12 GUI/Display Mgmt	http://slashdot.org/journal/181687/linux-guidisplay-management
+
+2007-09-07 Portable Players	http://slashdot.org/journal/181245/goodness-in-portable-players
+
+2007-09-06 Small Distros	http://slashdot.org/journal/181137/linuxunix-smallspecialised-distributions
+
+2007-09-05 UMPC			http://slashdot.org/journal/181029/gadgets-umpc
+
+2007-09-04 Plasma/LCD/Blu-Ray	http://slashdot.org/journal/180921/plasmalcd-blu-rayhd-dvd
+
+2007-08-31 DRM Explained	http://slashdot.org/journal/180641/drm-explained
+
+2007-08-28 OS Metaphor 2.0	http://slashdot.org/journal/180387/opinion-operating-system-metaphor-v20
+
+2007-08-24 Small Programs	http://slashdot.org/journal/180095/programming-small-programs-and-such
+
+2007-08-23 That 90's Flowchart	http://slashdot.org/journal/180023/humour-that-90s-flow-chart-and-other-geek-jokes
+
+2007-08-23 PS3 TV		http://slashdot.org/journal/180013/gadgets-ps3-tv
+
+2007-08-23 Linux Present/Future	http://slashdot.org/journal/179997/commentaries-on-linux-present-and-linux-future
+
+2007-08-22 "User Friendly"?	http://slashdot.org/journal/179905/opinion-what-user-friendly-means
+
+2007-07-20 "Whee!"		http://slashdot.org/journal/179211/20-jul-2007-whee

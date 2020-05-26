@@ -1,0 +1,18 @@
+mount /dev/sdc1 /opt/temp
+sudo ./toolchain/usr/sbin/grub-install --no-floppy --root-directory=/opt/temp /dev/sdc
+
+v1 boot stanza - menu.lst
+# This file manually created
+
+set color_normal=light-cyan/black
+default 0
+timeout 10
+
+title	memtest86+
+	root (hd0,0)
+	kernel /boot/utils/memtest.bin
+
+#title	memtest86+
+#	root (hd0,0)
+#	kernel FILENAME OPTIONS
+#	initrd OPTIONS

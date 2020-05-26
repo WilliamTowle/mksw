@@ -1,0 +1,17 @@
+[AMD machines with glibc-2.2.3]
+
+ cp lib/Makefile.in lib/Makefile.in.backup &&
+ sed -e 's/\(.*\)\(fopen-safer\.c \)\\/\1\2atexit.c \\/' \
+    -e 's/\(.*\)\(idcache\$U\.\$.*\)\\/\1\2atexit$U.$(OBJEXT) \\/' \
+    lib/Makefile.in.backup > lib/Makefile.in
+
+
+
+Install fileutils by running the following commands:
+
+ ./configure --disable-nls \
+    --prefix=$LFS/usr --bindir=$LFS/bin &&
+ make LDFLAGS=-static &&
+ make install &&
+ cd $LFS/usr/bin &&
+ ln -sf ../../bin/install

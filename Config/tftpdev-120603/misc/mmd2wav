@@ -1,0 +1,28 @@
+#!/bin/sh
+
+if [ -z "$1" ] ; then
+	echo "$0: Need MMD files" 1>&2
+	exit 1
+fi
+
+TCUSR=`pwd`/toolchain/usr
+#OUTTYPE=au
+#OUTEXTN=au
+#OUTTYPE=raw
+#OUTEXTN=raw
+OUTTYPE=wav
+OUTEXTN=wav
+
+while [ "$1" ] ; do
+	MMD=$1
+	shift
+
+	# --subsong=1
+	LD_PRELOAD=${TCUSR}/lib/libao.so ${TCUSR}/bin/uade123 --detect-format-by-content ${MMD} --subsong=1 --one -e ${OUTTYPE} -f ${MMD}.${OUTEXTN}
+
+	if [ -r ${MMD}.${OUTEXTN} ] ; then
+#		echo "Compressing source and corresponding output..."
+#		bzip2 -9 ${MMD} ${MMD}.${OUTEXTN}
+		./toolchain/usr/bin/lame ${MMD}.${OUTEXTN} ${MMD}.mp3
+	fi
+done

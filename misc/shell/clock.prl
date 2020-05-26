@@ -1,0 +1,179 @@
+#!/usr/bin/perl
+use	warnings;
+use	strict;
+
+# xterm -bg black -fg white -geometry 24x3 -fn '-adobe-courier-bold-r-*-*-20-*-*-*-*-*-*-*' +sb -e ~williamt/bin/clock.prl
+# xterm -bg black -fg white -geometry 24x3 -fn '-*-courier-*-r-*-*-*-180-*-*-*-*-*-*' +sb -e ~williamt/bin/clock.prl
+# xterm -bg black -fg white -geometry 24x3 -fn '-*-lucidatypewriter-medium-r-*-*-18-*-*-*-*-*-*-*' +sb -e ~williamt/bin/clock.prl
+
+# ---------------------------------------------------------------- --x8
+package ooclock;
+
+my @sDayNames= ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
+my @sMonthNames= ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+			'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+
+sub new
+{
+  my	$proto= shift;
+  my	$class= ref($proto) || $proto;
+  my	$self= { };
+
+	bless $self, $class;
+  return $self
+}
+
+sub now
+{
+  my	$self= shift;
+  my	$unixtime= time;
+
+	$self->{'unixts'}=  $unixtime;
+	$self->{'localtm'}= [ localtime($unixtime) ];
+
+  return $self->{'tNow'}= time;
+}
+
+sub sDate
+{
+  my	$self= shift;
+  my	($wday, $mday, $mon)= @{$self->{'localtm'}}[6,3,4];
+
+  return sprintf('%s %02d %s',
+		$sDayNames[$wday], $mday, $sMonthNames[$mon]),
+}
+
+sub sTime
+{
+  my	$self= shift;
+  my	($hour, $min, $sec)= @{$self->{'localtm'}}[2, 1, 0];
+  return sprintf('%02d:%02d:%02d', $hour,$min,$sec)
+}
+
+# ---------------------------------------------------------------- --x8
+package main;
+
+use	POSIX;
+use	FileHandle;
+
+my %sColours= ( 'OFF' => "\033[0m",
+		'RED' => "\033[31;01m",
+		'MAG' => "\033[35m",
+		'GRN' => "\033[32m",
+		'YEL' => "\033[33m",
+		'CYA' => "\033[36;01m",
+		'BOLD' => "\033[01m" );
+
+my $sConfigFile= $ENV{'HOME'}.'/.perlclock.rc';
+
+sub kill_terminal_echo
+{
+  my	$please= shift;
+  my	$termios= POSIX::Termios->new();
+  my	($attrs, $c_lflag);
+
+	$attrs= $termios->getattr();	# for STDIN
+	$c_lflag= $termios->getlflag();
+	if ($please)
+	{
+	    $termios->setlflag( $c_lflag & ~(&POSIX::ECHO) )
+	}
+	else
+	{
+	    $termios->setlflag( $c_lflag | &POSIX::ECHO )
+	}
+	$termios->setattr( 0, &POSIX::TCSANOW ) || die "Oops\n";
+}
+
+sub screen_init
+{
+  my $bAlarm= shift;
+	printf "\033[2J";		# ANSI clear screen
+	printf "\007" if $bAlarm
+}
+
+sub screen_update
+{
+  my	($bAlarm, $sLine1, $sLine2, $sLine3)= @_;
+
+	printf "\033[0;0H";		# ANSI move cursor home
+	printf "%s| %s%s %s|\n",
+		$sColours{'OFF'}, $sColours{'GRN'},
+		$sLine1, $sColours{'OFF'};
+	printf "%s| %s%s %s|\n",
+		$sColours{'OFF'}, $sColours{'YEL'},
+		$sLine2, $sColours{'OFF'};
+	printf "%s| %s%s %s",
+		 $sColours{'OFF'},
+		$bAlarm? $sColours{'CYA'} : $sColours{'MAG'},
+		$sLine3, $sColours{'OFF'}
+}
+
+sub main
+{
+  my	$tCfgMtime= 0;
+  my	%alarms= ();
+  my	@tLocal;
+  my	$clock= ooclock->new();
+  my	$tEpoch= $clock->now();
+
+  local $|= 1;				# autoflush on STDOUT
+
+	kill_terminal_echo(1);
+
+	while (1)			# outer loop - forever
+	{
+	  my	$bColon= 1;
+          my	$tOrigSecs;		# for inner loop control
+
+	  my	$tCfgMtimeNow= 0;
+	  my	($bAlarm, $sAlarm)= (0, '');
+
+	    $tCfgMtimeNow= (-r $sConfigFile)? (stat($sConfigFile))[9] : 0;
+	    if ($tCfgMtimeNow > $tCfgMtime)
+	    {
+	      my $fhConfig= new FileHandle($sConfigFile);
+		$tCfgMtime= $tCfgMtimeNow;
+		%alarms= ();
+		while (defined (my $line= $fhConfig->getline))
+		{
+		  my ($key, $val);
+		    chop $line;
+		    ($key, $val)= split m/[|]/, $line;
+		    $alarms{$key . ':00'}= $val
+		}
+	    }
+
+	    if (exists $alarms{$_= (join ', ', $clock->sDate(), $clock->sTime())})
+	    {
+		($bAlarm, $sAlarm)= (1, $alarms{$_})
+	    }
+
+	    screen_init($bAlarm);
+
+	    do				# inner loop - until end of minute
+	    {
+	      my ($sDate, $sTime)= ($clock->sDate(), $clock->sTime());
+		$sTime=~ s/:/ /g unless $bColon= !$bColon;
+
+		screen_update(
+			$bAlarm,
+			sprintf('%s, %s%s', $sDate, $sColours{'BOLD'}, $sTime),
+			sprintf('  Epoch+%s%10d  ', $sColours{'BOLD'}, $tEpoch),
+			$bAlarm? sprintf('%20s', $sAlarm)
+				: sprintf('  Events count: %s%02d  ',
+					$sColours{'BOLD'},
+					scalar keys %alarms)
+			);
+
+		$tOrigSecs= $tEpoch % 60;
+		sleep 1;
+		$tEpoch= $clock->now();
+
+		# now we slept an whole second,
+		# has minutes-past changed?
+	    } while ($tEpoch % 60) >= $tOrigSecs;
+	}
+}
+
+main @ARGV

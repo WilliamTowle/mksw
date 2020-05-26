@@ -1,0 +1,60 @@
+I've always thought the ZX Spectrum font
+was quite readable, but recently found I
+couldn't track down the tools I once used to try this.
+
+
+In the ZX Spectrum, the character set largely matches ASCII with some
+differences
+
+https://en.wikipedia.org/wiki/ZX_Spectrum_character_set
+
+(eg. some byte ranges reserved for system graphics characters,
+user-defined graphics characters, and the BASIC keywords).
+
+On the 48K Spectrum, the data for the 96 printable characters
+is contained in the last 768 bytes of its ROM, in a straightforward
+8x8-pixel bitmap known as "ch8" format. This region
+can be saved to tape
+from the BASIC interpreter with SAVE "FONT.CH8" CODE 15616,768.
+If emulating (eg. with FBZX)
+
+https://dunedlin.wordpress.com/2013/03/21/fbzx-emulating-the-sinclair-spectrum/
+
+...this creates a file with 25 bytes of header included, and the relevant
+768 bytes at the end.
+
+In order to create a usable PC font, we'll start with an existing one.
+Debian has /usr/share/consolefonts/Lat15-VGA8.psf.gz,
+which is also 8x8 characters, and is 3516 bytes uncompressed;
+'file' describes the uncompressed data as
+"Linux/i386 PC Screen Font v1 data, 256 characters, Unicode directory, 8x8"
+
+First, we need to preserve the caret and backtick symbols. Since 'psf1'
+fonts have a four-byte header and a bitmap from ASCII NUL, we can do this
+with:
+	zcat Lat15-VGA8.psf.gz > Lat15-VGA8.psf
+	dd if=Lat15-VGA8.psf of=Lat15-5E.bin skip=$((4 + 0x5E*8)) bs=1 count=8
+	dd if=Lat15-VGA8.psf of=Lat15-60.bin skip=$((4 + 0x60*8)) bs=1 count=8
+
+We can copy the font and inject the Spectrum's with (if you made zx48font.tap, add 'skip=25' to remove the header)
+	cp Lat15-VGA8.psf sirclive-VGA8.psf
+	dd if=zx48font.ch8 of=sirclive-VGA8.psf seek=$((4 + 0x20*8)) bs=1 conv=notrunc
+
+And restore the dumped characters:
+	dd if=Lat15-5E.bin of=sirclive-VGA8.psf seek=$((4 + 0x5E*8)) bs=1 conv=notrunc
+	dd if=Lat15-60.bin of=sirclive-VGA8.psf seek=$((4 + 0x60*8)) bs=1 conv=notrunc
+
+Finally, test the result:
+	setfont sirclive-VGA8.psf
+
+It works! The restored characters are a little out of place (better
+baseline fonts might be available) and some of the styling is
+noticeably irregular ... but if the sound of a less-bright, less-bold
+alternative font works for you then it's a quick start!
+
+
+* Related links:
+- Other 8-bit computer fonts:
+	https://damieng.com/blog/2011/02/20/typography-in-8-bits-system-fonts
+- PSF fonts explained:
+	http://www.win.tue.nl/~aeb/linux/kbd/font-formats-1.html

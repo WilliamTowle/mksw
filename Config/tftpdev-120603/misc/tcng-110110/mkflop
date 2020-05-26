@@ -1,0 +1,89 @@
+#!/bin/sh
+##	mkflop			floppy image builder (via mtools)
+##	Last modified		2011-01-12, WmT
+## STUBS scripts and configurations (c) and GPLv2 Wm. Towle 1999-2011
+#
+#*   Open Source software - copyright and GPLv2 apply. Briefly:       *
+#*    - No warranty/guarantee of fitness, use is at own risk          *
+#*    - No restrictions on strictly-private use/copying/modification  *
+#*    - No re-licensing this work under more restrictive terms        *
+#*    - Redistributing? Include/offer to deliver original source      *
+#*   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html  *
+
+BINDIR=${PWD}/toolchain/usr/bin
+NASM=${BINDIR}/nasm
+SYS_FREEDOS=${BINDIR}/sys-freedos.pl
+
+do_mkflop()
+{
+	# output disk image
+	# [optional] file|dir[s] for populating disk follow
+	DISKIMG=$1
+
+	if [ -z "${DISKIMG}" ] ; then
+		echo "$0: Expected DISKIMG [and ROOTFS]" 1>&2
+		exit 1
+	else
+		shift
+	fi
+
+	echo 'Populating image of required size...'
+	PATH=${BINDIR}:${PATH} mformat -C -f 1440 -i ${DISKIMG} :: || exit 1
+
+	if [ ${BOOTABLE} = 'y' ] ; then
+		if [ ! -r "${NASM}" ] ; then
+			echo "No ${NASM}, cannot continue" 1>&2
+			exit 1
+		fi
+		if [ ! -r "${SYS_FREEDOS}" ] ; then
+			echo "No ${SYS_FREEDOS}, cannot continue" 1>&2
+			exit 1
+		fi
+
+		PATH=${BINDIR}:${PATH} ${SYS_FREEDOS} --disk=${DISKIMG} --offset=0 --drive=0 || exit 1
+	fi
+
+	echo "\n====="
+	echo "Optional extras:"
+	if [ -z "$1" ] ; then
+		echo "...no arguments supplied. A kernel and command.com (or equivalent) are NOT part of the image"
+	else
+		while [ "$1" ] ; do
+			# populate with files
+			ADDNL=$1
+			echo "Adding ${ADDNL}..."
+			shift
+	
+			if [ -f ${ADDNL} ] ; then
+				PATH=${BINDIR}:${PATH} mcopy -i ${DISKIMG} ${ADDNL} :: || exit 1
+			else
+				PATH=${BINDIR}:${PATH} mcopy -i ${DISKIMG} -s ${ADDNL}/* :: || exit 1
+			fi
+		done
+	fi
+
+	echo "\nFinished"
+}
+
+##
+##	main program
+##
+
+ACTION=$1
+[ "$1" ] && shift
+case ${ACTION} in
+boot1440)	## make BOOTIMG [from FILE|DIR...]
+	BOOTABLE=y do_mkflop $* || exit 1
+;;
+nonboot1440)	## make DISKIMG [from FILE|DIR...]
+	BOOTABLE=n do_mkflop $* || exit 1
+;;
+*)
+	if [ "${ACTION}" -a "${ACTION}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${ACTION}'"
+	fi
+	echo "$0: Usage:" 1>&2
+	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/" 1>&2
+	exit 1
+;;
+esac

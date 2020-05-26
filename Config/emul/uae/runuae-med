@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# - amiga/UAE:
+#	...there is an AROS kickstart ROM replacement
+#	...'-m'/'-M' for filesystem-as-volume, -W for hardfile
+#	...'-S' for sound
+#	...'-R' for frame-skip rate
+#	...'-J xy' sets joystick - might "hog" useful keys otherwise
+#	...'-C 2' specifies '020 (A1200) CPU ('-C 4' for '040) { cpu_type=68020 }
+#	...'-w -1' should be "as fast as possible" CPU speed { cpu_speed=max }
+#	...'-n' is for immediate blits; enable this (=1) { immediate_blits=true }
+#	...'-v 4' emulates AGA { chipset=aga }
+#	...'-O width:height:modifiers' l=lores - amiga: 800x600 suits all resolution possibilities but 320 columns might be sufficient { gfx_lores=false }
+#	...might want to set immediate blitter, disable fast copper (A1200)
+#	...other: collision_level=none, floppy_speed=800
+#	...hardfile2= needs geometry if it's a partition image; 'handler' is required if the filesystem is not present in Kickstart
+#	| hardfile2=rw,DH1:/home/evilrich/myhardfile,32,1,2,512,1,
+#	| hardfile2=rw,:/home/evilrich/rdbimage,0,0,0,0,0,
+#	...sound_output=normal|exact
+
+./toolchain/usr/bin/uae -G \
+	-s cpu_type=68020 \
+	-s cpu_speed=max \
+	-s immediate_blits=true \
+	-s chipset=aga \
+	-s collision_level=none \
+	-s floppy_speed=800 \
+	-s sound_frequency=8000 \
+	-s sound_bits=16 \
+	-s sound_latency=100 \
+	-s sound_output=exact \
+	-s sound_channels=mono \
+	-s gfx_lores=false \
+	-r ROMs/kick31.rom \
+	${1+"$@"}
+
+#	-s filesystem=ro,dh0:dh/WB \
+#	-s filesystem=ro,dh2:dh/Play/ \
+
+# hardfile2: unspecified 'handler' => uses FFS in kickstart ROM
+#	-s hardfile2=ro,dh1:dh/pkg-5mb.hdf,10240,1,2,512,1, \
+#	-s hardfile2=ro,dh3:dh/octamed-zip,196608,1,2,512,1, \
+#	-s hardfile2=ro,dh4:medv321.adf,1760,1,2,512,1,

@@ -1,0 +1,10 @@
+usr/bin/xargs
+usr/bin/locate
+usr/bin/updatedb
+usr/bin/frcode
+usr/bin/code
+usr/bin/bigram
+usr/man/man1/xargs.1
+usr/man/man1/locate.1
+usr/man/man1/updatedb.1
+usr/man/man5/locatedb.5

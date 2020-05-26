@@ -1,0 +1,513 @@
+#!/bin/sh
+
+##
+##	global config
+##
+
+CFGTREE=cfg
+
+##
+##	subroutines
+##
+
+config_load()
+{
+	NOFILE=n
+	if [ -r $CFGTREE/mkflop.cfg ] ; then
+		. $CFGTREE/mkflop.cfg
+	else
+		NOFILE=y
+	fi
+
+	[ -d "$LOC_CONFIG" ] || LOC_CONFIG=$CFGTREE/floppies
+	[ -d "$LOC_KERNEL" ] || LOC_KERNEL=packages/mkf-kernels
+	[ -d "$LOC_PKG" ] || LOC_PKG=$CFGTREE/mkf-pkg
+	[ $NOFILE != 'n' ] || true
+}
+
+config_save()
+{
+	cat > $CFGTREE/mkflop.cfg <<EOF
+LOC_CONFIG=$LOC_CONFIG
+CFG_CONFIG=$CFG_CONFIG
+LOC_KERNEL=$LOC_KERNEL
+CFG_KERNEL=$CFG_KERNEL
+LOC_PKG=$LOC_PKG
+EOF
+}
+
+configure_basis()
+{
+	SETTING=$CFG_CONFIG
+	[ "$SETTING" = '' ] && SETTING="not set"
+
+	OKAY='n'
+	while [ "$OKAY" = 'n' ] ; do
+	    echo "Current basis: $SETTING"
+	    echo "Options:"
+	    ls $LOC_CONFIG/*.lst | sed 's/$LOC_CONFIG\/*//' | sed 's/^/	/'
+	    echo -n "New $LOC_CONFIG (enter: $CFG_CONFIG): "
+	    read NEWVAL
+	    if [ -z "$NEWVAL" ] ; then
+		if [ -n "$CFG_CONFIG" ] ; then
+		    LOC_CONFIG=$LOC_CONFIG
+		    NEWVAL=$CFG_CONFIG
+		    OKAY='y'
+		fi
+	    elif [ -r $LOC_CONFIG/$NEWVAL ] ; then
+		LOC_CONFIG=$LOC_CONFIG
+		OKAY='y'
+	    elif [ -r $LOC_CONFIG/$NEWVAL.lst ] ; then
+		LOC_CONFIG=$LOC_CONFIG
+		NEWVAL=$NEWVAL.lst
+		OKAY='y'
+	    fi
+	done
+
+	CFG_CONFIG=$NEWVAL
+}
+
+configure_kernels()
+{
+	SETTING=$CFG_KERNEL
+	[ "$SETTING" = '' ] && SETTING="not set"
+
+	OKAY='n'
+	while [ "$OKAY" = 'n' ] ; do
+	    echo "Current kernel: $SETTING"
+	    echo "Options:"
+	    ls $LOC_KERNEL | sed 's/$LOC_KERNEL.//' | sed 's/^/	/'
+	    echo -n "New kernel (enter: $CFG_KERNEL): "
+	    read NEWVAL
+	    if [ -z "$NEWVAL" ] ; then
+		if [ -n "$CFG_KERNEL" ] ; then
+		    LOC_KERNEL=$LOC_KERNEL
+		    NEWVAL=$CFG_KERNEL
+		    OKAY='y'
+		fi
+	    elif [ -r $LOC_KERNEL/$NEWVAL ] ; then
+		LOC_KERNEL=$LOC_KERNEL
+		OKAY='y'
+	    fi
+	done
+
+	CFG_KERNEL=$NEWVAL
+}
+
+configure_main()
+{
+	config_load || exit 1
+
+	OPTION=''
+	while [ -z "$OPTION" ] ; do
+		echo "b) basis ($CFG_CONFIG)"
+		echo "k) kernels ($CFG_KERNEL)"
+		echo "q) quit"
+		echo -n "CHOICE? "
+		read OPTION
+	
+		echo
+		case $OPTION in
+		b)	configure_basis || exit 1
+			;;
+		k)	configure_kernels || exit 1
+			;;
+		esac
+		echo
+	
+		[ "$OPTION" != "q" ] && OPTION=''
+	done
+	config_save || exit 1
+}
+
+build_main()
+{
+	config_load || {
+		echo "$0: No settings. Run \`$0 configure\`"
+		exit 1
+	}
+
+	FLOPPY=./floppy
+	[ -n "$1" ] && FLOPPY=$1
+	INITRD=`echo $CFG_CONFIG | sed 's/\..*//'`.mnz
+	IMAGESZ=1536
+	IMAGEFS=minix
+	ROOTDEV=/dev/ram0
+
+	[ -z "$TMPDIR" ] && TMPDIR=/usr/tmp/$$
+	[ -d $TMPDIR ] || mkdir $TMPDIR
+
+	echo -n "Making images: "
+	dd if=/dev/zero of=$TMPDIR/floppy bs=1k count=1440 2>/dev/null || exit 1
+	dd if=/dev/zero of=$TMPDIR/initrd bs=1k count=$IMAGESZ 2>/dev/null || exit 1
+
+	[ -d $TMPDIR/mnt ] || mkdir $TMPDIR/mnt
+	cat <<EOF >$TMPDIR/fstab
+$ROOTDEV	/		$IMAGEFS defaults		1 1
+none		/proc		proc	auto,defaults		0 0
+/dev/cdrom	/mnt/cdrom	iso9660	noauto,ro		0 0
+/dev/fd0	/mnt/fd0	auto	noauto,rw		0 0
+/dev/fd1	/mnt/fd1	auto	noauto,rw		0 0
+/dev/hda1	/mnt/hda1	auto	noauto,rw		0 0
+/dev/hda5	/mnt/hda5	auto	noauto,rw		0 0
+EOF
+	cat <<EOF >$TMPDIR/mtab
+$ROOTDEV	/	$IMAGEFS	rw 0 0
+EOF
+	echo '' > $TMPDIR/syslinux.dpy
+	echo -e "\01704\xb0\xb1\xb2\01703It's \01704\xb2\xb1\xb0                       \01701,----------------------------." >> $TMPDIR/syslinux.dpy
+	echo -e "\01704\xb0\xb1\xb2\01703ALIVE\01704\xb2\xb1\xb0                       \01701| \01702FRANKI LINUX ver.\"TooSoon\" \01701|" >> $TMPDIR/syslinux.dpy
+	echo -e "\01704\xb0\xb1\xb2\01703!!!!!\01704\xb2\xb1\xb0                       \01701\`----------------------------'" >> $TMPDIR/syslinux.dpy
+	echo -e "            \01706Build date: `date`\01707" >> $TMPDIR/syslinux.dpy
+	echo "" >> $TMPDIR/syslinux.dpy
+	cat <<EOF >$TMPDIR/syslinux.cfg
+DISPLAY syslinux.dpy
+TIMEOUT 0
+DEFAULT $CFG_KERNEL load_ramdisk=1 ramdisk_size=$IMAGESZ initrd=$INITRD initrd_archive=$IMAGEFS root=$ROOTDEV boot=/dev/fd0,msdos ide0=noprobe ide0=0x1f0,0x3f6,14
+EOF
+	echo "done"
+
+	SUCMD=''
+	if [ "$UID" != 0 -a "$UID" ] ; then
+		echo -n "Root "
+		SUCMD='su root'
+	fi
+	# TMPDIR IMAGESZ IMAGEFS
+	SUFAILED=n
+	TMPLOC=$TMPDIR IMAGEFS=$IMAGEFS INITRD=$INITRD $SUCMD $0 su || SUFAILED=y
+
+	## sadly for normal users, `su` gives a true success value
+	## whether or not the subprocess fails :(
+	echo -n "Cleanup..."
+	if [ "$SUFAILED" = 'n' ] ; then
+		echo -n " (writing $FLOPPY) "
+		if [ -b $FLOPPY ] ; then
+			dd if=$TMPDIR/floppy of=$FLOPPY bs=1k >/dev/null 2>&1
+		else
+			cp $TMPDIR/floppy $FLOPPY
+		fi
+	fi
+	[ -d $TMPDIR ] && rm -r $TMPDIR
+	echo "done"
+
+	echo "$0: Finished"
+	[ "$SUFAILED" = 'y' ] && exit 1
+}
+
+sosume_main()
+{
+	if [ -z "$TMPLOC" ] ; then
+		echo "TMPLOC unset"
+		exit 1
+	elif [ -z "$IMAGEFS" ] ; then
+		echo "IMAGEFS unset"
+		exit 1
+	elif [ -z "$INITRD" ] ; then
+		echo "INITRD unset"
+		exit 1
+	fi
+
+	config_load || {
+		echo "$0: No settings. Run \`$0 configure\`"
+		exit 1
+	}
+
+	FAILED=n
+
+	## better to 'mkfs' minix as root, methinks.
+	echo -n "Making filesystems: "
+	/sbin/mkfs -t msdos $TMPLOC/floppy >/dev/null || exit 1
+	/sbin/mkfs -t $IMAGEFS $TMPLOC/initrd >/dev/null
+	echo "done"
+
+	/sbin/losetup /dev/loop0 $TMPLOC/initrd || exit 1
+	/bin/mount /dev/loop0 $TMPLOC/mnt || exit 1
+
+	echo -n "(Initrd): Directories and devices: "
+	mkroot_main $TMPLOC/mnt
+	cp $TMPLOC/fstab $TMPLOC/mtab $TMPLOC/mnt/etc/
+	echo "done"
+
+	#TMPDIR=$TMPLOC install_main $TMPLOC/mnt $LOC_CONFIG/$CFG_CONFIG || FAILED=y
+	TMPDIR=$TMPLOC $0 install $TMPLOC/mnt $LOC_CONFIG/$CFG_CONFIG || FAILED=y
+	[ -r $TMPLOC/mnt/root/syslinux.dpy ] && cp $TMPLOC/mnt/root/syslinux.dpy $TMPLOC/syslinux.dpy
+	/bin/umount /dev/loop0
+	/sbin/losetup -d /dev/loop0
+
+	/sbin/losetup /dev/loop0 $TMPLOC/floppy || FAILED=y
+	mklx-i386/usr/bin/syslinux /dev/loop0 || FAILED=y
+	/bin/mount /dev/loop0 $TMPLOC/mnt
+	cp $TMPLOC/syslinux.cfg $TMPLOC/mnt
+	[ -r $TMPLOC/mnt/syslinux.dpy ] || cp $TMPLOC/syslinux.dpy $TMPLOC/mnt
+	cp $LOC_KERNEL/$CFG_KERNEL $TMPLOC/mnt/$CFG_KERNEL
+	gzip -9 < $TMPLOC/initrd > $TMPLOC/mnt/$INITRD
+	/bin/umount /dev/loop0
+	/sbin/losetup -d /dev/loop0
+
+	[ $FAILED = 'n' ] && true
+}
+
+#install_tgp()
+#{
+#	FILE=$1
+#	TARGETDIR=$2
+#
+#	[ -z "$EXTTYPES" ] && export EXTTYPES=XFL
+#	[ -z "$EXCLUDES" ] && export EXCLUDES=y
+#	[ -z "$STRIPPED" ] && export STRIPPED=y
+#	`dirname $0`/mkd-pi.sh install $TARGETDIR `pwd`/$FILE >/dev/null || exit 1
+#}
+#
+#install_main()
+#{
+#	[ -n "$TMPDIR" ] || TMPDIR=/tmp
+#
+#	TARGETDIR=$1
+#	[ -z "$1" ] || shift
+#
+#	if [ -z "$TARGETDIR" ] ; then
+#		echo "$0: Confused: No 'TARGETDIR' (or FILEs) supplied"
+#		exit 1
+#	fi
+#	if [ -z "$1" ] ; then
+#		echo "$0: Confused: (TD $TARGETDIR) No 'FILE'(s) supplied"
+#		exit 1
+#	fi
+#
+##	[ -r `pwd`/$TARGETDIR ] && TARGETDIR=`pwd`/$TARGETDIR
+#	[ -d $TARGETDIR ] || TARGETDIR=`pwd`/$TARGETDIR
+#
+#	while [ -n "$1" ] ; do
+#		FILE=$1
+#		shift
+#	
+#		if [ ! -r $FILE ] ; then
+#			echo "$0: Confused: FILE $FILE does not exist?"
+#			exit 1
+#		fi
+#	
+#		if [ ! -d $TARGETDIR ] ; then
+#			echo "$0: Confused: TARGETDIR $TARGETDIR does not exist (or not directory)"
+#			exit 1
+#		fi
+#	
+##		config_load || {
+##			echo "$0: No settings. Run \`$0 configure\`"
+##			exit 1
+##		}
+#	
+#		echo -n "[ $FILE ] "
+#		FAILED=n
+#		case $FILE in
+#		*.cfg|*.lst)
+#			echo "..."
+#			for LINE in `cat $FILE` ; do
+#				[ -r $LINE ] || LINE=$LOC_PKG/$LINE
+#				install_main $TARGETDIR $LINE || FAILED=y
+#			done
+#			;;
+#		*.tar.gz|*.tgz)
+#			## TODO: 'cd' in subshell *could* fail silently :(
+#			cat $FILE | gzip -d -c | ( cd $TARGETDIR && tar xf - ) || FAILED=y
+#			[ $FAILED = 'n' ] && echo OK
+#			;;
+#		*.tar.bz2|*.tbz)
+#			## TODO: 'cd' in subshell *could* fail silently :(
+#			cat $FILE | bzip2 -d | ( cd $TARGETDIR && tar xf - ) || FAILED=y
+#			[ $FAILED = 'n' ] && echo OK
+#			;;
+#		*.tgp)
+#			TMPDIR=$TMPDIR install_tgp $FILE $TARGETDIR || FAILED=y
+#			[ $FAILED = 'n' ] && echo OK
+#			;;
+#		*)
+#			if [ -d $FILE ] ; then
+#				echo "..."
+#				SUBDIR=$FILE
+#				/bin/ls $SUBDIR | while read SUBFILE ; do
+#					install_main $TARGETDIR $SUBDIR/$SUBFILE
+#				done
+#				echo "[ $FILE ] OK"
+#			else
+#				echo "UNKNOWN FILETYPE"
+#				FAILED=y
+#			fi
+#			;;
+#		esac
+#		if [ "$FAILED" = 'n' ] ; then
+#			if [ -z "$UID" -o "$UID" = 0 ] ; then
+#				if [ -r $TARGETDIR/sbin/ldconfig ] ; then
+#					CHROOT=/usr/bin/chroot
+#					[ -x $CHROOT ] || CHROOT=/usr/sbin/chroot
+#					$CHROOT $TARGETDIR /sbin/ldconfig
+#				fi
+#			fi
+#		else
+#			false
+#		fi
+#	done
+#}
+
+mkroot_main()
+{
+	if [ "$UID" != 0 -a "$UID" ] ; then
+		echo "Failed: you are not root"
+		exit 1
+	fi
+
+	ROOTDIR=$1
+	if [ -z "$ROOTDIR" ] ; then
+		echo "Failed: ROOTDIR not supplied"
+		exit 1
+	fi
+
+	( cd $ROOTDIR && (
+		## directories
+		mkdir bin boot dev etc home mnt lib \
+			proc root sbin usr tmp var 2>/dev/null
+		mkdir mnt/fd0 mnt/fd1 2>/dev/null
+		mkdir mnt/hda1 mnt/hda5 mnt/hda6 2>/dev/null
+		mkdir var/run var/tmp 2>/dev/null
+		( cd usr && ln -sf ../var/tmp ./ )
+		chmod 1777 var/tmp
+
+		## various device nodes
+		( cd dev && (
+			mknod console c 5 1
+			mknod full c 1 7
+			mknod kmem c 1 2
+			mknod mem c 1 1
+			mknod null c 1 3
+			mknod port c 1 4
+			mknod random c 1 8
+			mknod urandom c 1 9
+			mknod zero c 1 5
+			ln -sf /proc/kcore core
+		
+			# IDE FD devs
+			mknod fd0 b 2 0
+			mknod fd0h720 b 2 24
+			mknod fd0u720 b 2 16
+			mknod fd1 b 2 1
+			mknod fd1h720 b 2 25
+			mknod fd1u720 b 2 17
+		
+			# IDE HD devs
+			# note: not going to bother creating all
+			# concievable partitions; that can be done
+			# from within the installed OS
+			mknod hda b 3 0
+				mknod hda1 b 3 1
+				mknod hda2 b 3 2
+				mknod hda3 b 3 3
+				mknod hda4 b 3 4
+				mknod hda5 b 3 5
+				mknod hda6 b 3 6
+				mknod hda7 b 3 7
+			mknod hdb b 3 64
+				mknod hdb1 b 3 65
+				mknod hdb2 b 3 66
+				mknod hdb3 b 3 67
+				mknod hdb4 b 3 68
+				mknod hdb5 b 3 69
+				mknod hdb6 b 3 70
+				mknod hdb7 b 3 71
+			mknod hdc b 22 0
+				mknod hdc1 b 22 1
+				mknod hdc2 b 22 2
+				mknod hdc3 b 22 3
+				mknod hdc4 b 22 4
+				mknod hdc5 b 22 5
+				mknod hdc6 b 22 6
+				mknod hdc7 b 22 7
+			mknod hdd b 22 64
+				mknod hdd1 b 22 65
+				mknod hdd2 b 22 66
+				mknod hdd3 b 22 67
+				mknod hdd4 b 22 68
+				mknod hdd5 b 22 69
+				mknod hdd6 b 22 70
+				mknod hdd7 b 22 71
+	
+			# loop devs
+			for i in 0 1 2 3 4 5 6 7 ; do
+				mknod loop$i b 7 $i
+			done
+	
+			# ram devs
+			for i in 0 1 2 3 4 5 6 7 8 9 ; do
+				mknod ram$i b 1 $i
+			done
+			ln -sf ram0 ram
+	
+			# ttys
+			mknod tty c 5 0
+			for i in 0 1 2 3 4 5 6 7 8 9 ; do
+				mknod tty$i c 4 $i
+			done
+	
+			# virtual console screen devs
+			for i in 0 1 2 3 4 5 6 7 8 9 ; do
+				mknod vcs$i b 7 $i
+			done
+			ln -sf vcs0 vcs
+	
+			# virtual console screen w/ attributes devs
+			for i in 0 1 2 3 4 5 6 7 8 9 ; do
+				mknod vcsa$i b 7 $i
+			done
+			ln -sf vcsa0 vcsa
+		)) || exit 1
+		( cd etc && (
+			cat <<EOF >group
+root::0:root
+EOF
+			cat <<EOF >passwd
+root::0:0:root:/root:/bin/sh
+EOF
+		)) || exit 1
+	) || exit 1 ) || exit 1
+}
+
+##
+##	main program
+##
+
+ACTION=$1
+[ "$1" ] && shift
+case $ACTION in
+build)		## generate floppy (where CONFIGUREd)
+	build_main $1 || exit 1
+	echo "$0: BUILD phase OK"
+	;;
+configure)	## modify/generate floppy configuration
+	configure_main || exit 1
+	echo "$0: CONFIGURE phase OK"
+	;;
+su)		## INTERNAL
+	sosume_main || exit 1
+	;;
+mkroot)		## generate default root tree
+	mkroot_main $* || exit 1
+	echo "$0: MKROOT phase OK"
+	;;
+install)	## install packages
+#	install_main $* || exit 1
+
+	echo "$0: Calling 'pkgmgr' script"
+	[ -z "$EXTTYPES" ] && export EXTTYPES=XFL
+	[ -z "$EXCLUDES" ] && export EXCLUDES=y
+	[ -z "$STRIPPED" ] && export STRIPPED=y
+	`dirname $0`/pkgmgr install $* || exit 1
+
+	echo "$0: INSTALL phase OK"
+	;;
+*)
+	if [ -n "$COMMAND" -a "$COMMAND" != 'help' ] ; then
+		echo "$0: Unrecognised command '$COMMAND'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z]*)" $0 | sed "s/^/	/"
+	exit 1
+	;;
+esac

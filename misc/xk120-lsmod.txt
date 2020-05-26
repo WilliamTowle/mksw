@@ -1,0 +1,93 @@
+* projects: Thinkpad kernel
+        Card reader, on PCI bus (SDHCI, experim'l - CONFIG_MMC_VIA_SDMMC?)
+        PCI-Express gigabit ethernet (Intel)
+        Intel HD audio w/ CX20585 codec
+        PCI and PCI Express hubs ("5 Series/3400 Series")
+        "Centrino Ultimate-N 6300" wireless interface
+
+Module                  Size  Used by
+nls_utf8               12416  1 
+nls_cp437              12417  1 
+vfat                   17116  1 
+fat                    44497  1 vfat
+bnep                   17288  2 
+rfcomm                 28626  0 
+bluetooth             103791  10 rfcomm,bnep
+crc16                  12327  1 bluetooth
+pci_stub               12397  1 
+vboxpci                18742  0 
+vboxnetadp             25431  0 
+vboxnetflt             23260  0 
+vboxdrv               165027  3 vboxnetflt,vboxnetadp,vboxpci
+uinput                 12991  1 
+i915                  321557  7 
+drm_kms_helper         22738  1 i915
+drm                   146387  3 drm_kms_helper,i915
+snd_hda_codec_hdmi     26352  1 
+snd_hda_codec_conexant    40451  1 
+joydev                 17010  0 
+uvcvideo               56896  0 
+snd_hda_intel          21786  0 
+i2c_algo_bit           12713  1 i915
+qcserial               12410  0 
+usb_wwan               13048  1 qcserial
+usbserial              27365  2 usb_wwan,qcserial
+iwlwifi               146808  0 
+snd_hda_codec          63477  3 snd_hda_codec_conexant,snd_hda_intel,snd_hda_codec_hdmi
+snd_hwdep              12943  1 snd_hda_codec
+snd_pcm                53461  3 snd_hda_codec,snd_hda_intel,snd_hda_codec_hdmi
+snd_page_alloc         12867  2 snd_pcm,snd_hda_intel
+videodev               61658  1 uvcvideo
+media                  13692  2 videodev,uvcvideo
+i2c_core               19116  5 videodev,i2c_algo_bit,drm,drm_kms_helper,i915
+snd_seq                39512  0 
+coretemp               12770  0 
+snd_seq_device         13016  1 snd_seq
+snd_timer              22356  2 snd_seq,snd_pcm
+psmouse                59609  0 
+mac80211              171389  1 iwlwifi
+cfg80211              113445  2 mac80211,iwlwifi
+thinkpad_acpi          47494  0 
+nvram                  12897  1 thinkpad_acpi
+rfkill                 18516  4 thinkpad_acpi,cfg80211,bluetooth
+snd                    42761  10 thinkpad_acpi,snd_timer,snd_seq_device,snd_seq,snd_pcm,snd_hwdep,snd_hda_codec,snd_hda_codec_conexant,snd_hda_intel,snd_hda_codec_hdmi
+crc32c_intel           12659  0 
+acpi_cpufreq           12807  1 
+mperf                  12421  1 acpi_cpufreq
+serio_raw              12803  0 
+evdev                  17225  18 
+soundcore              12921  1 snd
+aesni_intel            17913  0 
+intel_ips              17432  0 
+aes_i586               16647  1 aesni_intel
+iTCO_wdt               16945  0 
+iTCO_vendor_support    12632  1 iTCO_wdt
+battery                12986  0 
+ac                     12552  0 
+aes_generic            32970  2 aes_i586,aesni_intel
+tpm_tis                13190  0 
+tpm                    17566  1 tpm_tis
+tpm_bios               12836  1 tpm
+power_supply           13283  2 ac,battery
+cryptd                 14125  1 aesni_intel
+video                  17459  1 i915
+processor              27565  1 acpi_cpufreq
+button                 12817  1 i915
+wmi                    13051  0 
+ext2                   49826  7 
+mbcache                12938  1 ext2
+sg                     21476  0 
+sd_mod                 35425  10 
+crc_t10dif             12332  1 sd_mod
+ums_realtek            13012  0 
+usb_storage            35142  9 ums_realtek
+ahci                   24917  0 
+libahci                18373  1 ahci
+libata                125014  2 libahci,ahci
+thermal                13103  0 
+thermal_sys            17752  3 thermal,processor,video
+ehci_hcd               39631  0 
+usbcore               104555  8 ehci_hcd,usb_storage,ums_realtek,usbserial,usb_wwan,qcserial,uvcvideo
+scsi_mod              135081  4 libata,usb_storage,sd_mod,sg
+e1000e                122330  0 
+usb_common             12338  1 usbcore

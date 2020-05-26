@@ -1,0 +1,134 @@
+# alsa-lib v1.0.27.2		[ EARLIEST v1.0.25, c.2012-11-30 ]
+# last mod WmT, 2013-07-27	[ (c) and GPLv2 1999-2013 ]
+
+ifneq (${HAVE_ALSA_LIB_CONFIG},y)
+HAVE_ALSA_LIB_CONFIG:=y
+
+include ${CFG_ROOT}/ENV/buildtype.mak
+
+DESCRLIST+= "'nti-alsa-lib' -- alsa-lib"
+DESCRLIST+= "'cui-alsa-lib' -- alsa-lib"
+
+include ${CFG_ROOT}/buildtools/libtool/v1.5.26.mak
+#include ${CFG_ROOT}/buildtools/libtool/v2.4.2.mak
+
+ifeq (${ALSA_LIB_VERSION},)
+#ALSA_LIB_VERSION=1.0.13
+#ALSA_LIB_VERSION=1.0.25
+ALSA_LIB_VERSION=1.0.27.2
+endif
+
+include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
+#include ${CFG_ROOT}/buildtools/pkg-config/v0.27.1.mak
+include ${CFG_ROOT}/buildtools/libtool/v1.5.26.mak
+#include ${CFG_ROOT}/buildtools/libtool/v2.4.2.mak
+
+
+ALSA_LIB_SRC=${SOURCES}/a/alsa-lib-${ALSA_LIB_VERSION}.tar.bz2
+
+URLS+= ftp://ftp.alsa-project.org/pub/lib/alsa-lib-${ALSA_LIB_VERSION}.tar.bz2
+
+
+CUI_ALSA_LIB_TEMP=cui-alsa-lib-${ALSA_LIB_VERSION}
+
+CUI_ALSA_LIB_EXTRACTED=${EXTTEMP}/${CUI_ALSA_LIB_TEMP}/configure.in
+CUI_ALSA_LIB_CONFIGURED=${EXTTEMP}/${CUI_ALSA_LIB_TEMP}/config.log
+CUI_ALSA_LIB_BUILT=${EXTTEMP}/${CUI_ALSA_LIB_TEMP}/src/libasound.la
+CUI_ALSA_LIB_INSTALLED=${NTI_TC_ROOT}/usr/${TARGSPEC}/lib/pkgconfig/alsa.pc
+
+
+NTI_ALSA_LIB_TEMP=nti-alsa-lib-${ALSA_LIB_VERSION}
+
+NTI_ALSA_LIB_EXTRACTED=${EXTTEMP}/${NTI_ALSA_LIB_TEMP}/configure.in
+NTI_ALSA_LIB_CONFIGURED=${EXTTEMP}/${NTI_ALSA_LIB_TEMP}/config.log
+NTI_ALSA_LIB_BUILT=${EXTTEMP}/${NTI_ALSA_LIB_TEMP}/src/libasound.la
+NTI_ALSA_LIB_INSTALLED=${NTI_TC_ROOT}/usr/${HOSTSPEC}/lib/pkgconfig/alsa.pc
+
+
+## ,-----
+## |	Extract
+## +-----
+
+${CUI_ALSA_LIB_EXTRACTED}:
+	echo "*** (i) EXTRACT -> $@ ***"
+	[ ! -d ${EXTTEMP}/alsa-lib-${ALSA_LIB_VERSION} ] || rm -rf ${EXTTEMP}/alsa-lib-${ALSA_LIB_VERSION}
+	bzcat ${ALSA_LIB_SRC} | tar xvf - -C ${EXTTEMP}
+	[ ! -d ${EXTTEMP}/${CUI_ALSA_LIB_TEMP} ] || rm -rf ${EXTTEMP}/${CUI_ALSA_LIB_TEMP}
+	mv ${EXTTEMP}/alsa-lib-${ALSA_LIB_VERSION} ${EXTTEMP}/${CUI_ALSA_LIB_TEMP}
+
+##
+
+${NTI_ALSA_LIB_EXTRACTED}:
+	echo "*** (i) EXTRACT -> $@ ***"
+	[ ! -d ${EXTTEMP}/alsa-lib-${ALSA_LIB_VERSION} ] || rm -rf ${EXTTEMP}/alsa-lib-${ALSA_LIB_VERSION}
+	bzcat ${ALSA_LIB_SRC} | tar xvf - -C ${EXTTEMP}
+	[ ! -d ${EXTTEMP}/${NTI_ALSA_LIB_TEMP} ] || rm -rf ${EXTTEMP}/${NTI_ALSA_LIB_TEMP}
+	mv ${EXTTEMP}/alsa-lib-${ALSA_LIB_VERSION} ${EXTTEMP}/${NTI_ALSA_LIB_TEMP}
+
+
+## ,-----
+## |	Configure
+## +-----
+
+${CUI_ALSA_LIB_CONFIGURED}: ${CUI_ALSA_LIB_EXTRACTED}
+	echo "*** (i) CONFIGURE -> $@ ***"
+	( cd ${EXTTEMP}/${CUI_ALSA_LIB_TEMP} || exit 1 ;\
+		CFLAGS='-O2' \
+		LIBTOOL=${CUI_TC_ROOT}/usr/bin/${TARGSPEC}-libtool \
+		PKG_CONFIG=${CUI_TC_ROOT}/usr/bin/${TARGSPEC}-pkg-config \
+		  ./configure \
+			--prefix=/usr \
+			--with-pkgconfdir=${NTI_TC_ROOT}/usr/${TARGSPEC}/lib/pkgconfig \
+			|| exit 1 \
+	)
+
+
+${NTI_ALSA_LIB_CONFIGURED}: ${NTI_ALSA_LIB_EXTRACTED}
+	echo "*** (i) CONFIGURE -> $@ ***"
+	( cd ${EXTTEMP}/${NTI_ALSA_LIB_TEMP} || exit 1 ;\
+		CFLAGS='-O2' \
+		LIBTOOL=${NTI_TC_ROOT}/usr/bin/${HOSTSPEC}-libtool \
+		PKG_CONFIG=${NTI_TC_ROOT}/usr/bin/${HOSTSPEC}-pkg-config \
+		  ./configure \
+			--prefix=${NTI_TC_ROOT}/usr \
+			--with-pkgconfdir=${NTI_TC_ROOT}/usr/${HOSTSPEC}/lib/pkgconfig \
+			|| exit 1 \
+	)
+
+
+## ,-----
+## |	Build
+## +-----
+
+${NTI_ALSA_LIB_BUILT}: ${NTI_ALSA_LIB_CONFIGURED}
+	echo "*** (i) BUILD -> $@ ***"
+	( cd ${EXTTEMP}/${NTI_ALSA_LIB_TEMP} || exit 1 ;\
+		make LIBTOOL=${HOSTSPEC}-libtool \
+	)
+
+
+## ,-----
+## |	Install
+## +-----
+
+${NTI_ALSA_LIB_INSTALLED}: ${NTI_ALSA_LIB_BUILT}
+	echo "*** (i) INSTALLED -> $@ ***"
+	( cd ${EXTTEMP}/${NTI_ALSA_LIB_TEMP} || exit 1 ;\
+		make install LIBTOOL=${HOSTSPEC}-libtool \
+	)
+
+##
+
+.PHONY: cui-alsa-lib
+cui-alsa-lib: cti-libtool cti-pkg-config ${CUI_ALSA_LIB_INSTALLED}
+#cui-alsa-lib: nti-libtool nti-pkg-config ${CUI_ALSA_LIB_INSTALLED}
+
+ALL_CUI_TARGETS+= cui-alsa-lib
+
+
+.PHONY: nti-alsa-lib
+nti-alsa-lib: nti-libtool nti-pkg-config ${NTI_ALSA_LIB_INSTALLED}
+
+ALL_NTI_TARGETS+= nti-alsa-lib
+
+endif	# HAVE_ALSA_LIB_CONFIG

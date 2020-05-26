@@ -1,0 +1,37 @@
+#!/bin/sh
+
+if [ -t 0 ] ; then
+	echo "$0: Expected show-urls piped-in" 1>&2
+	exit 1
+fi || exit 1
+
+if [ -z "$1" ] ; then
+	echo "$0: Expected SRCDIR" 1>&2
+	exit 1
+else
+	SRCDIR=$1
+	shift
+fi
+
+while read URL ; do
+	OK=y
+	case ${URL} in
+	*.bz2|*.gz)
+		DN=`dirname ${URL}`
+		BN=`basename ${URL}`
+	;;
+	*)
+		OK=n
+		echo "? $URL" 1>&2
+	;;
+	esac
+
+	if [ "${OK}" = 'y' ] ; then
+		SD=`echo ${BN} | cut -c-1 | tr '[A-Z]' '[a-z]'`
+		FN=${SRCDIR}/${SD}/${BN}
+		[ -r "${FN}" ] || OK=n
+	fi
+
+	echo -e "[ ${OK}\t] ${URL}"
+	[ "${OK}${DL}" = 'ny' ] && wget ${URL} -O ${FN}
+done

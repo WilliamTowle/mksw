@@ -1,0 +1,65 @@
+2010-02-21 -- NETBOOT HOWTO
+===========================
+
+* Requirements
+- dnsmasq (v2.52, http://www.thekelleys.org.uk/)
+- htc-nasm-2.07 / htc-pxelinux-3.84
+- syslinux, for pxelinux.0
+- vm2040.lx and freg095.mnz from the Earlgrey Linux disk
+
+*[1] DHCP provisioning
+- always wants /etc/dnsmasq.conf -> use `[sudo] ... -C CONFFILE`
+- two lines, where range is appropriate to eth0 address/netmask:
+`no-hosts` (don't read /etc/hosts)
+`dhcp-range=192.168.74.50,192.168.74.150,1h`
+`dhcp-option=vendor:MSFT,2,1i` - Windows machines not to keep leases
+
+
+
+*[2] EeePC hardware setup:
+- follow "F2 to run setup" prompt
+- under "Boot", set "Onboard LAN boot ROM" to "enabled", no "Boot Booster"
+- save (re-enter to adjust device priority)
+- should say "Bad or missing multicast discovery address" at this point
+- resources: http://brooknet.no-ip.com/~lex/public/eeepc_af/
+- other resources re. device priority, issues?
+
+*[3] additional lines for dnsmasq.conf TFTP boot support
+enable-tftp
+tftp-root=/var/tmp/ftpd
+tftp-secure
+- can use `toolchain/usr/bin/tftp localhost` [tftp-hpa] to test
+
+*[4] additional lines for dnsmasq.conf network boot
+- using 'memtest' as kernel
+- run `sudo chown nobody.nogroup /var/tmp/tftpd/memtest` if using 'tftp-secure'
+dhcp-option-force=208,f1:00:74:7e
+dhcp-boot=memtest
+
+*[5] Advanced configuration -- filter sendout (also "red" -> "vendor:PXEClient")
+- dhcp-range=red,192.168.0.50,192.168.0.150
+- dhcp-mac=red,00:1E:8C:*:*:*   EeePC 00:1E:8C:31:36:7E
+* http://syslinux.zytor.com/pxe.php#special
+- magic number is necessary
+- config file name
+- dhcp-option-force=209,configs/common
+- path prefix
+- dhcp-option-force=210,/tftpboot/pxelinux/files
+* netboot/PXE
+- set boot filename
+- dhcp-boot=pxelinux.0
+* TFTP
+- enable-tftp
+- tftp-root=/var/tftpd
+- tftp-secure
+- dhcp-boot=net:red,pxelinux.red-net
+
+*[6] pxelinux configuration
+- 'pxelinux.cfg' in /var/tmp/tftpd
+- 'default' in /var/tmp/tftpd/pxelinux.cfg/
+- directives 'default default', 'label default' (w/ kernel, append)
+- all 'chown'ed nobody.nogroup
+- 'initrd=' (and BOOT_IMAGE=) are appended to kernel command line automatically
+
+
+

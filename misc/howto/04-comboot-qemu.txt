@@ -1,0 +1,75 @@
+<p><strong>Relevance</strong></p>
+
+<p>
+<ul>
+<li> <a href="http://syslinux.zytor.com/wiki/index.php/Comboot_API">Comboot</a>
+files can be produced by etherboot, and are useful in
+setting up diskless terminals
+<li> <a href="http://syslinux.zytor.com/faq.php">Syslinux</a>
+can load/preinitialise via comboot files
+<li> I'm interested in documenting how to generate these, how to
+identify the resulting images, and the quirks QEmu has with respect
+to emulating a system which uses them.
+</ul>
+</p>
+
+<p><strong>Requirements</strong></p>
+
+<p>
+<ul>
+<li> <a href="http://www.freedos.org/">DOS</a>
+disk image, or 'comboot' boot block
+(<a href="http://www.ibiblio.org/pub/linux/system/boot/ethernet/comboot-1.2.tar.gz">comboot</a>
+sources require
+<a href="http://www.debath.co.uk/dev86/">Dev86</a>
+to build)
+<li> Sources and assembler/compiler for the combooot binary (e.g.
+psptest.com and dotcom.ld in the "IBM PC assembly examples" at
+<a href="http://www.angelfire.com/linux/wills/download.html#other">my downloads page</a>)
+<li> <a href="http://www.qemu.org/">QEmu</a>
+</ul>
+</p>
+
+<p><strong>Method</strong></p>
+
+<p>
+I'm going to produce a comboot boot block which DOS can run, for
+the purposes of testing. First, the sources below build with
+<code>as src/psptest.S -o psptest.o</code> and
+<code>ld -T dotcom.ld psptest.o -o psptest.com</code>.
+To add psptest.com to a DOS disk image, use
+<code>mcopy -i driveA.dsk psptest.com ::</code>, or just
+<code>( cat comboot-1.2/comboot i386-dos-hwdotcom/psptest.com /dev/zero ) | dd bs=1k count=64 of=driveA.dsk</code>.
+</p>
+
+<p>
+<em>NOTE</em>: in the latter case, we create a 64K disk image
+because 'comboot' assumes the need to read this many sectors (it's
+the maximum size of a .com program with its Program Segment Prefix
+included), and QEmu will hang if the image is not big enough. The
+resulting image can be identified by noting the bytes '.', 'C', 'O',
+'M' (from the "loading" message) at offset 452, and 0x3d, LL, HH
+(where LL=0x00, HH=0x10, by default - i.e. 64*1024 bytes) at offset
+176. LL and HH can be changed to suit other disk image sizes.
+</p>
+
+
+<p><strong>Results</strong></p>
+
+<p>
+...with psptest.com you should get an executable which shows an
+exclamation mark in the common code and goes on to print the
+"Hello, World!" message and its command line arguments from DOS,
+and another exclamation mark when run as a boot sector. QED :)
+</p>
+
+<p><strong>Further Resources</strong></p>
+
+<p>
+<ul>
+<li> Ralph Brown's
+<a href="http://www.ctyme.com/rbrown.htm">interrupt list</a>
+<li> About the
+<a href="http://en.wikipedia.org/wiki/Program_Segment_Prefix">Program Segment Prefix</a>
+</ul>
+</p>

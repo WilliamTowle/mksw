@@ -1,0 +1,37 @@
+head,body,html {	/* 'html' for IE6 */
+	background-color: #bbbbff;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	border: none;
+	text-align: center
+}
+
+#splash {
+	height: 100%;	/* important! */
+	margin: 0 auto;
+	text-align: left;
+	vertical-align: middle;
+	border: none
+}
+
+#house {
+	border: 1px solid black;
+	margin: 0;
+	padding: 0;
+	background: lightyellow
+}
+#cell {
+	border: 1px dotted gray;
+	margin: 0;
+	padding: 0
+}
+
+table.gridtable {
+	border: 1px solid black;
+	border-collapse: collapse
+}
+table.gridtable td {
+	border: 1px dotted gray;
+	padding: 0
+}

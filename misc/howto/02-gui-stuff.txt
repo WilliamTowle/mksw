@@ -1,0 +1,44 @@
+<p>Source:</p>
+<ul>
+<li> Athene: "direct access to the graphics hardware, backwards compatible with X" --
+<URL:http://freshmeat.net/projects/athene/>
+<li> fbmodes: "generate modelines, fbset mode descriptions, SVGATextMode mode entries" --
+<URL:http://freshmeat.net/projects/fbmodes/>
+<li> Nano-X (MicroWindows): "Win32
+and Xlib-like windowing environment
+API" --
+<URL:http://www.microwindows.org/>
+<li> MiniGUI: "graphics user
+interface support system" --
+<URL:http://www.minigui.com/>
+<li> OpenGUI:
+<URL:http://www.tutok.sk/fastgl/>
+<li> PicoGUI: "framebuffer, SDL, X window system" --
+<URL:http://freshmeat.net/projects/picogui/>
+<li> perlbox: "perl Tk desktop manager" --
+<URL:http://freshmeat.net/projects/perlbox/>
+<li> SVGAlib: "low level graphics library/VGA and SVGA in a console" --
+<URL:http://freshmeat.net/projects/svgalib>
+<li> Twin/twutils: "text mode window environment" -- <URL:http://freshmeat.net/projects/twin/> -- <URL:http://freshmeat.net/projects/twutils/>
+<li> VWM: "extensible window manager for the console build on libpseudo and libviper" -- <URL:http://freshmeat.net/projects/vwm/>
+<li> X.org 7.3 -- <URL:http://xorg.freedesktop.org/wiki/Releases/7.3>
+<li> XFree86 4.7.0 --
+<URL:http://www.xfree86.org/releases/rel470.html>
+(see also
+<URL:http://freshmeat.net/projects/xfree86/>)
+<li> Xynth: "embedded and portable harware/desktop interface" -- <URL:http://freshmeat.net/projects/xynth/>
+<li> Y Windows:
+<URL:http://www.y-windows.org/about.html>
+</ul>
+
+<p>Guidance:</p>
+<ul>
+<li> Handhelds.org X building
+mini-HOWTO: <URL:http://www.handhelds.org/minihowto/building-x.html>
+<li>TinyX for TuxScreen:
+<URL:http://tuxscreen.net/wiki/view/BuildingTinyXByHand>
+<li> KDrive XFree86 4.2.1 build:
+<URL:http://www.linuxabordo.com.br/wiki/index.php?title=LinuxBIOS_Graphical>
+<li> SVGAlib installation:
+<URL:http://www.linuxjournal.com/article/7109>
+</ul>

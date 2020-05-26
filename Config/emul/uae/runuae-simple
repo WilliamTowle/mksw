@@ -1,0 +1,16 @@
+#!/bin/sh
+
+./toolchain/usr/bin/uae -G \
+	-r ROMs/kick31.rom \
+	${1+"$@"}
+
+#	-s filesystem=readonly,dh0:dh/WB \
+#	-s filesystem=readonly,dh1:dh/pkg-5mb.hdf \
+#	-s filesystem=readonly,dh2:dh/Play/
+
+# hardfile2: unspecified 'handler' => uses FFS in kickstart ROM
+#	-s filesystem=readonly,dh0:dh/WB \
+#	-s hardfile2=ro,dh1:dh/pkg-5mb.hdf,10240,1,2,512,1, \
+#	-s hardfile2=ro,dh2:dh/octamed-zip,196608,1,2,512,1, \
+#	-s filesystem=ro,dh3:dh/Play/ \
+#	-s hardfile2=ro,dh4:medv321.adf,1760,1,2,512,1, \

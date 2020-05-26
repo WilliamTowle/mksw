@@ -1,0 +1,124 @@
+* method produces:
+| - kernel at 3.6MB (with 19MB initrd)
+| - squashfs filesystem at 238MB
+- stretch (Debian 9)
+	...kernel at 3.6MB, with 19MB initrd
+	...squashfs filesystem at 219MB
+
+1. http://dunedlin.wordpress.com/2014/02/25/debian-a-live-usb-primer/
+1a. Create 'minbase' environment with 'debootstrap'
+	debootstrap URL: http://www.mirrorservice.org/sites/ftp.debian.org/debian/pool/main/d/debootstrap/debootstrap_1.0.93.tar.gz
+
+	sudo debootstrap --arch=i386 --variant=minbase sid sid-i386 http://ftp.uk.debian.org/debian/
+	DEBOOTSTRAP_DIR=./debootstrap/ ./debootstrap/debootstrap --arch=i386 --variant=minbase sid sid-i386 http://ftp.uk.debian.org/debian/
+
+1b. Add packages for live boot with network support [use 'gochroot' wrapper]
+
+...note: sysvinit-core is deprecated in favour of systemd (during 'jessie')
+
+	apt-get install live-boot live-config sysvinit-core linux-image-686-pae
+	apt-get install netbase network-manager
+
+...Keyboard: country 21 ("other") -> 29 ("English (UK)")
+...Keyboard: layout 7 ("UK with extended WinKeys")
+
+
+1c. Hardware/comms support and other additional packages:
+	apt-get install net-tools wireless-tools ifupdown	(1503kB)
+	apt-get install dnsutils inetutils-ping traceroute	(16.1MB)
+
+	apt-get install i810switch				(1397kB)
+	apt-get install acpi dc eject file lshw lsof psmisc	(7656kB)
+	apt-get install debootstrap dosfstools squashfs-tools grub2 (42.6MB)
+	apt-get install gpm less screen vim-tiny		(3418kB)
+
+optional:
+	apt-get install openssh-client				(9291kB)
+	apt-get install openssh-server				(3581kB)
+  (...requiring "contrib" and/or "non-free" sources and `apt-get update`)
+	apt-get install firmware-iwlwifi			(5524kB)
+
+..."Continue without installing GRUB?" yes
+| "Encoding to use on the console" 27 (UTF-8)
+| "Character set for console font" 11 (Latin-1 and Latin-5)
+
+
+1d. Set up hostname, users/group, clean up
+	echo 'axiom' > /etc/hostname
+
+	groupadd -g 1000 guest
+	useradd -u 1000 -g guest -G sudo -m -s /bin/bash guest
+	passwd guest
+
+	rm -f /etc/resolv.conf
+	apt-get clean
+
+1e. Generate squashfs filesystem
+
+	sudo mksquashfs sid-i386/ sid-i386.squashfs -e boot
+
+
+2. Post-installation: Further Steps
+
+* Post-boot configuration
+- adjust grub stanzas to suit partition IDs
+- populate/fix /etc/fstab (incl. /proc, /sys, swap ... as appropriate)
+	...then run `update-initramfs -u`
+- adjust udev rules to match names in /etc/network/interfaces
+- check networks/password in wpa_supplicant.conf
+- also adjust /etc/hostname, /etc/resolv.conf
+- additional packages:
+	...openssh client/server
+	...rfkill
+	...lvm
+
+* Further additional steps/packages
+- dnsmasq.conf
+...[G56] Radeon KMS firmware is in firmware-linux-nonfree
+...[G56] may require other firmware?
+
+* Desktop workstation
+- [LXDE] in panel preferences:
+	...under "Panel Applets", add "Battery Monitor"
+	...under "Advanced", allow automatic hiding of panel
+- [LXDE] in advanced desktop preferences:
+	...allow menus provided by window managers
+	...disallow use of desktop as a folder
+- [mplayer] for DVD playback:
+	...ensure libdvdread4 is installed
+	...see wiki.debian.org/CDDVD#DVD regarding libdvdcss2
+
+* Create server and client rootfs on stick:
+- See http://dunedlin.wordpress.com/2014/04/23/dnsmasq-on-a-debian-server/
+
+
+| * References
+| - usb primer http://dunedlin.wordpress.com/2014/02/25/debian-a-live-usb-primer/
+| - dnsmasq http://dunedlin.wordpress.com/2014/04/23/dnsmasq-on-a-debian-server/
+| - netboot custom kernel/rootfs http://dunedlin.wordpress.com/2011/06/11/network-booting-a-custom-kernel/
+| - netboot kernel+ramdisk http://dunedlin.wordpress.com/2011/06/11/network-booting-a-custom-kernel/
+
+
+** UPDATE **
+============
+
+* missing: ntp
+- install package 'ntp'; do `service ntp start`
+	...TODO: how to start permanently?
+- change 'UTC' to 'LOCAL' in /etc/adjtime?
+- run `sudo dpkg-reconfigure tzdata`; select Europe/London
+
+* missing: other
+- alsamixer (via 'alsa-utils'), mplayer; get-iplayer and codecs/libdvdcss
+   + w{32|64}codecs/libdvdcss
+- bzip2, lhasa, unzip
+	...p7zip; CPU microcode utilities ('intel-microcode' and 'iucode-tool')
+- fbset
+- firmware/machine-specific things (may require contrib/non-free apt sources)
+   + eeepc-acpi-scripts
+- games: galaxies, primrose, sgt-puzzles
+- man
+- nfs server (remote root provision) and syslinux (pxelinux.0)
+- syslinux (pxelinux.0 availability)
+- smartctl (via 'smartmontools'); partprobe (which package?)
+- vim (full version)

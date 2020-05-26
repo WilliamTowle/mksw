@@ -1,0 +1,108 @@
+<p><strong>
+Requirements
+</strong></p>
+
+<p>
+<ul>
+<li>	the <a href="http://bellard.org/qemu/">QEMU PC emulator</a>;
+	I am building <a href="http://bellard.org/qemu/qemu-0.9.1.tar.gz">v0.9.1</a> from source,
+	against <a href="http://www.libsdl.org/">SDL</a> release <a href="http://www.libsdl.org/release/SDL-1.2.13.tar.gz">1.2.13</a>
+<li>	A DHCP server -- mine is that from <a href="http://www.freesco.info/">FreeSCO</a> version 0.3.8
+<li>	A system with basic networking (the Earlgrey floppy
+	from <a href="http://www.angelfire.com/linux/wills/stubs.html">STUBS</a>)
+</ul>
+</p>
+
+<p><strong>
+Simple Fully Static Network
+</strong></p>
+
+<p><em>
+Configuration - First guest
+</em></p>
+
+<p>
+QEmu arguments:
+<ul>
+<li>	-m 8						<em># the STUBS floppy needs 8MB RAM to load kernel modules</em>
+<li>	-no-kqemu
+<li>	-net nic,macaddr=52:54:00:12:34:56	<em># a suitable (ne2k) network card</em>
+<li>	-net socket,listen=:1234		<em># socket-based networking between machines</em>
+</ul
+</p>
+
+<p>
+Type, as root:
+<ul>
+<li>	ifconfig eth0 10.0.2.20 broadcast 10.0.2.255 netmask 255.255.255.0
+<li>	route add -net 10.0.2.0 netmask 255.255.255.0
+</ul>
+</p>
+
+<p><em>
+Configuration - Second guest
+</em></p>
+
+<p>
+QEmu arguments:
+<ul>
+<li>	-net nic,macaddr=52:54:00:12:34:57
+<li>	-net socket,connect=:1234		<em># socket-based networking end point</em>
+</ul>
+</p>
+
+<p>
+Type, as root:
+<ul>
+<li>	ifconfig eth0 10.0.2.21 broadcast 10.0.2.255 netmask 255.255.255.0
+<li>	route add -net 10.0.2.0 netmask 255.255.255.0
+</ul>
+</p>
+
+<p><em>
+Observe:
+</em></p>
+
+<p>
+...ping should work between the two.
+</p>
+
+
+<p><strong>
+Simple DHCP Network
+</strong></p>
+
+<p><em>
+Configuration - First guest
+</em></p>
+
+<p>
+Floppyfw: modify /config
+<ul>
+<li>	INSIDE_IP=10.0.2.20, INSIDE_NETMASK 255.255.255.0
+<li>	DHCP_RANGE_START 10.0.2.100 to DHCP_RANGE_END 10.0.2.199
+</ul>
+</p>
+
+<p>
+QEmu arguments:
+<ul>
+<li>	-m 16		<em># FREESCO needs more RAM since v0.3.7</em>
+<li>	-no-kqemu
+<li>	-net nic,vlan=0,macaddr=52:54:00:12:34:56		<em># eth0 card</em>
+<li>	-net nic,vlan=1,macaddr=52:54:00:12:34:66		<em># eth1 card</em>
+<li>	-net socket,vlan=1,listen=:1234
+</ul>
+</p>
+
+<p><em>
+Configuration - Second guest
+</em></p>
+
+<p>
+QEmu arguments:
+<ul>
+<li>	-net nic,vlan=1,macaddr=52:54:00:12:34:67
+<li>	-net socket,vlan=1,connect=:1234
+</ul>
+</p>

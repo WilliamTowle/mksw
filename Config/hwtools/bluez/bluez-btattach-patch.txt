@@ -1,0 +1,263 @@
+
+
+ -->
+
+
+
+
+
+
+
+
+
+
+
+[PATCH BlueZ v3] tools/btattach: add marvell support &mdash; Linux Bluetooth
+
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-760190-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+
+var addthis_config = addthis_config||{};
+addthis_config.data_track_addressbar = false;
+
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-760190-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+
+
+
+
+
+
+
+
+
+<!--
+google_ad_client = "pub-3422782820843221";
+/* new green bar 728x90, created 5/12/11 */
+google_ad_slot = "9066942750";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+
+<!--
+google_ad_client = "pub-3422782820843221";
+/* green bar link 728x15, created 11/11/09 */
+google_ad_slot = "2187712991";
+google_ad_width = 728;
+google_ad_height = 15;
+//-->
+
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+
+
+
+
+
+
+[PATCH BlueZ v3] tools/btattach: add marvell support
+
+
+
+
+
+
+
+
+
+
+
+
+[Date Prev][Date Next][Thread Prev][Thread Next][Date Index][Thread Index]
+
+
+
+
+
+
+
+
+
+
+
+Subject: [PATCH BlueZ v3] tools/btattach: add marvell support
+From: Amitkumar Karwar <akarwar@xxxxxxxxxxx>
+Date: Tue, 1 Mar 2016 09:08:29 -0800
+Cc: Cathy Luo <cluo@xxxxxxxxxxx>, <linux-kernel@xxxxxxxxxxxxxxx>,        Nishant Sarmukadam <nishants@xxxxxxxxxxx>,        Ganapathi Bhat <gbhat@xxxxxxxxxxx>
+In-reply-to: <1456852109-14298-1-git-send-email-akarwar@marvell.com>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+google_ad_client = "ca-pub-3422782820843221";
+/* lists link unit 728x15, created 7/7/08 */
+google_ad_slot = "9367657018";
+google_ad_width = 728;
+google_ad_height = 15;
+//-->
+
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+
+
+
+
+
+From: Ganapathi Bhat <gbhat@xxxxxxxxxxx>
+
+User needs to issue below command for Marvell devices
+btattach -P marvell -B /dev/ttyUSB#
+
+---
+ tools/btattach.c  | 1 +
+ tools/hciattach.h | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/tools/btattach.c b/tools/btattach.c
+index a025bb0..7807e9f 100644
+--- a/tools/btattach.c
++++ b/tools/btattach.c
+@@ -214,6 +214,7 @@ static const struct {
+ 	{ "intel", HCI_UART_INTEL },
+ 	{ "bcm",   HCI_UART_BCM   },
+ 	{ "qca",   HCI_UART_QCA   },
++	{ "marvell", HCI_UART_MRVL   },
+ 	{ }
+ };
+
+diff --git a/tools/hciattach.h b/tools/hciattach.h
+index 4279a33..e109c3e 100644
+--- a/tools/hciattach.h
++++ b/tools/hciattach.h
+@@ -42,6 +42,7 @@
+ #define HCI_UART_INTEL	6
+ #define HCI_UART_BCM	7
+ #define HCI_UART_QCA	8
++#define HCI_UART_MRVL	10
+
+ #define HCI_UART_RAW_DEVICE	0
+ #define HCI_UART_RESET_ON_INIT	1
+--
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-bluetooth" in
+the body of a message to majordomo@xxxxxxxxxxxxxxx
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+
+
+
+
+
+
+
+References:
+
+[PATCH v3] Bluetooth: hci_uart: Support firmware download for Marvell
+From: Amitkumar Karwar
+
+
+
+
+Prev by Date:
+[PATCH v3] Bluetooth: hci_uart: Support firmware download for Marvell
+
+Next by Date:
+[PATCH BlueZ v3] tools/btattach: add marvell support
+
+Previous by thread:
+[PATCH v3] Bluetooth: hci_uart: Support firmware download for Marvell
+
+Next by thread:
+Re: [PATCH v3] Bluetooth: hci_uart: Support firmware download for Marvell
+
+Index(es):
+
+Date
+Thread
+
+
+
+
+
+
+
+
+[Index of Archives]
+
+
+[Bluez Devel]
+
+
+[Linux Wireless Networking]
+
+
+[Linux ATH6KL]
+
+
+[Linux USB Devel]
+
+
+[Linux Media Drivers]
+
+
+[Linux Audio Users]
+
+
+[Linux Kernel]
+
+
+[Linux SCSI]
+
+
+[XFree86]
+
+
+[Big List of Linux Books]
+
+
+
+
+
+
+
+
+
+
+
+
+

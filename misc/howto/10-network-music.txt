@@ -1,0 +1,62 @@
+Requirements
+------------
+
+mt-daapd v0.2.4.2 -- http://www.fireflymediaserver.org/
+gdbm v1.8.3 -- http://freshmeat.net/projects/gdbm
+libid3tag v0.15.1b -- http://freshmeat.net/projects/libmad
+
+Building
+--------
+
+libid3tag: ./configure ; make ; make install
+gdbm: likewise
+mt-daapd:
+	  CFLAGS='-O2 -DDEFAULT_CONFIGFILE=\"$${sysconfdir}\"' \
+		./configure \
+			--prefix=${HTC_ROOT}/usr \
+			--sysconfdir=${HTC_ROOT}/etc \
+			--localstatedir=${HTC_ROOT}/var \
+			--with-id3tag=${HTC_ROOT}/usr \
+			--with-gdbm-includes=${HTC_ROOT}/usr/include \
+			--with-gdbm-libs=${HTC_ROOT}/usr/lib \
+			|| exit 1 \
+
+Installation
+------------
+
+	mkdir -p ${HTC_ROOT}/var/cache/mt-daapd
+	( cd ${EXTTEMP}/${NTI_MTDAAPD_TEMP} || exit 1 ;\
+		cp -ar admin-root ${HTC_ROOT}/etc/mt-daapd-www ;\
+		cp contrib/mt-daapd.playlist ${HTC_ROOT}/etc || exit 1 ;\
+		cat contrib/mt-daapd.conf \
+			| sed '/^mp3_dir/	s%/.*%/opt/local/music/mp3/%' \
+			| sed '/^playlist/	s%/.*%'${HTC_ROOT}'/etc/mt-daapd.playlist%' \
+			| sed '/^web_root/	s%/.*%'${HTC_ROOT}'/etc/mt-daapd-www%' \
+			> ${HTC_ROOT}/etc/mt-daapd.conf || exit 1 ;\
+		make install \
+
+script:
+	#!/bin/sh
+	
+	LD_LIBRARY_PATH=`pwd`/toolchain/usr/lib/ `pwd`/toolchain/usr/sbin/mt-daapd ${1+$@}
+
+invocation
+----------
+
+	sudo ./Config/av/mt-daapd/mt-daapd.sh  -c `pwd`/toolchain/etc/mt-daapd.conf 
+
+
+Listening -- Amarok on EeePC
+----------------------------
+
+1. Click "Media Device" on left
+2. Select "List Music From a Remote Host" (folder labelled "+")
+3. Enter server address "192.168.74.1" (port "3689" should be at default)
+4. Specific tracks selected on LHS will move to playlist on right
+
+
+Resources
+---------
+
+quick start -- http://wiki.fireflymediaserver.org/Quickstart_Tarball
+config page -- http://192.168.74.1:3689/index.html

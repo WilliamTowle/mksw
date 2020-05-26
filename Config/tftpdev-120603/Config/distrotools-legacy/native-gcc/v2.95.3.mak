@@ -1,0 +1,123 @@
+# native-gcc v2.95.3-2		[ since v2.7.2.3, c.2002-10-14 ]
+# last mod WmT, 2011-10-20	[ (c) and GPLv2 1999-2011 ]
+
+ifneq (${HAVE_NATIVE_GCC_CONFIG},y)
+HAVE_NATIVE_GCC_CONFIG:=y
+
+DESCRLIST+= "'nti-native-gcc' -- native-gcc"
+
+include ${CFG_ROOT}/ENV/ifbuild.env
+include ${CFG_ROOT}/ENV/native.mak
+
+include ${CFG_ROOT}/distrotools-legacy/native-binutils/v2.16.1.mak
+
+NATIVE_GCC_VER:=2.95.3
+NATIVE_GCC_SRC=${SRCDIR}/g/gcc-${NATIVE_GCC_VER}.tar.gz
+#NATIVE_GCC_SRC=${SRCDIR}/g/gcc-core-${NATIVE_GCC_VER}.tar.gz
+NATIVE_GCC_PATCHES=
+
+URLS+=http://www.mirrorservice.org/sites/ftp.gnu.org/pub/gnu/gcc/gcc-2.95.3/gcc-${NATIVE_GCC_VER}.tar.gz
+#URLS+=http://www.mirrorservice.org/sites/ftp.gnu.org/pub/gnu/gcc/gcc-2.95.3/gcc-core-${NATIVE_GCC_VER}.tar.gz
+
+#NATIVE_GCC_PATCHES+=${SRCDIR}/g/gcc-2.95.3-patches-1.3.tar.bz2
+#URLS+=http://www.mirrorservice.org/sites/www.ibiblio.org/gentoo/distfiles/gcc-2.95.3-patches-1.3.tar.bz2
+NATIVE_GCC_PATCHES+=${SRCDIR}/g/gcc-${NATIVE_GCC_VER}-2.patch
+URLS+=http://www.linuxfromscratch.org/patches/downloads/gcc/gcc-2.95.3-2.patch
+
+
+# ,-----
+# |	Extract
+# +-----
+
+NTI_NATIVE_GCC_TEMP=nti-native-gcc-${NATIVE_GCC_VER}
+
+NTI_NATIVE_GCC_EXTRACTED=${EXTTEMP}/${NTI_NATIVE_GCC_TEMP}/configure
+
+.PHONY: nti-native-gcc-extracted
+
+nti-native-gcc-extracted: ${NTI_NATIVE_GCC_EXTRACTED}
+
+${NTI_NATIVE_GCC_EXTRACTED}:
+	[ ! -d ${EXTTEMP}/${NTI_NATIVE_GCC_TEMP} ] || rm -rf ${EXTTEMP}/${NTI_NATIVE_GCC_TEMP}
+	make -C ${TOPLEV} extract ARCHIVES=${NATIVE_GCC_SRC}
+ifneq (${NATIVE_GCC_PATCHES},)
+	( cd ${EXTTEMP} || exit 1 ;\
+		for PF in ${NATIVE_GCC_PATCHES} ; do \
+			echo "*** PATCHING -- $${PF} ***" ;\
+			grep '+++' $${PF} ;\
+			patch --batch -d gcc-${NATIVE_GCC_VER} -Np1 < $${PF} ;\
+			rm -f $${PF} ;\
+		done \
+	)
+endif
+	mv ${EXTTEMP}/gcc-${NATIVE_GCC_VER} ${EXTTEMP}/${NTI_NATIVE_GCC_TEMP}
+
+
+# ,-----
+# |	Configure
+# +-----
+
+NTI_NATIVE_GCC_CONFIGURED=${EXTTEMP}/${NTI_NATIVE_GCC_TEMP}/config.status
+
+.PHONY: nti-native-gcc-configured
+
+nti-native-gcc-configured: nti-native-gcc-extracted ${NTI_NATIVE_GCC_CONFIGURED}
+
+${NTI_NATIVE_GCC_CONFIGURED}:
+	echo "*** $@ (CONFIGURED) ***"
+	( cd ${EXTTEMP}/${NTI_NATIVE_GCC_TEMP} || exit 1 ;\
+	  CFLAGS='-O2' \
+	  	CC=${NUI_CC_PREFIX}cc \
+	  	AR=$(shell echo ${NUI_CC_PREFIX} | sed 's/g*$$/ar/') \
+	    	  CFLAGS=-O2 \
+			./configure -v \
+			  --prefix=${NTI_TC_ROOT}/usr \
+			  --host=${NTI_SPEC} \
+			  --build=${NTI_SPEC} \
+			  --target=${NTI_SPEC} \
+			  --with-local-prefix=${NTI_TC_ROOT}/usr \
+			  --enable-languages=c \
+			  --disable-nls \
+			  --enable-shared \
+			  || exit 1 \
+	)
+
+
+# ,-----
+# |	Build
+# +-----
+
+NTI_NATIVE_GCC_BUILT=${EXTTEMP}/${NTI_NATIVE_GCC_TEMP}/gcc/genattrtab
+
+.PHONY: nti-native-gcc-built
+nti-native-gcc-built: nti-native-gcc-configured ${NTI_NATIVE_GCC_BUILT}
+
+${NTI_NATIVE_GCC_BUILT}:
+	echo "*** $@ (BUILT) ***"
+	( cd ${EXTTEMP}/${NTI_NATIVE_GCC_TEMP} || exit 1 ;\
+		make \
+	)
+
+
+# ,-----
+# |	Install
+# +-----
+
+NTI_NATIVE_GCC_INSTALLED=${NTI_TC_ROOT}/usr/bin/${NTI_SPEC}-gcc
+
+.PHONY: nti-native-gcc-installed
+
+nti-native-gcc-installed: nti-native-gcc-built ${NTI_NATIVE_GCC_INSTALLED}
+
+${NTI_NATIVE_GCC_INSTALLED}:
+	echo "*** $@ (INSTALLED) ***"
+	( cd ${EXTTEMP}/${NTI_NATIVE_GCC_TEMP} || exit 1 ;\
+		make install \
+	)
+
+.PHONY: nti-native-gcc
+nti-native-gcc: nti-native-binutils nti-native-gcc-installed
+
+NTARGETS+= nti-native-gcc
+
+endif	# HAVE_NATIVE_GCC_CONFIG

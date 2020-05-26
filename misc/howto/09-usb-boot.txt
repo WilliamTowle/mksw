@@ -1,0 +1,66 @@
+  I picked Tiny Linux specifically because the
+filesystem is
+entirely self-contained in the ramdisk, so for distros with
+a
+partition-encapsulated root filesystem whatever steps
+their
+wiki/installer walks through is advised ... but the
+outline
+for doing this from scratch runs along the following lines
+(adapted from http://www.angelfire.com/linux/wills/grub.html,
+originally written in 2003):
+>
+1. Prime the card with an appropriate partition scheme and
+create filesystems. Note that GrUB has 'root',
+'makeactive',
+and 'chainloader' runtime commands to handle proprietary
+OS
+boot loaders and their expectation partitions will be
+marked
+bootable. See mkdosfs guides re '-F' (msdosfs FAT size) if
+applicable.
+>
+2. Install GrUB to the MBR of the card. You have a choice
+of
+using the 'grub-install' wrapper and the same full
+interpreter
+as the boot loader provides with 'grub'; this adds the
+"stage 1.5" files and configures device.map.
+  Here, 'grub' is useful if 'grub-install' fails with
+"[devicename] does not have any corresponding BIOS drive".
+Advance preparation of /boot/grub/{stage1,stage2,menu.lst}
+may
+be necessary.
+>
+3. Transfer kernels, initrds, etc (I used a loopback mount
+to
+cannibalise Tiny Core's ISO image; for old schoolers the
+poorly-documented 'mcopy' "-i" argument and the "::" drive
+may
+be useful) to the card as necessary, add appropriate
+preamble
+and stanzas to /boot/grub/menu.lst, and that's pretty much
+it.
+Some additional examples from my current setup follow:
+>
+title TinyCore
+    kernel /boot/bz_tc11.lx
+    initrd /boot/rfs_tc11.gz
+    append base
+>
+title    Linux (EeePC HDD)
+    root (hd1,0)
+    kernel /boot/vmlinuz-2.6.21.4-eeepc
+> quiet rw vga=785 irqpoll
+> i8042.noloop=1 root=/dev/sda1
+>     initrd /boot/initramfs-eeepc.img
+>
+title    memtest
+    kernel /boot/memtest.bin
+>
+# FreeDOS ODIN 0.7 (InfoCom HHGTTG FTW!)
+# see http://odin.fdos.org/odin2005/
+>
+title FreeDOS odin0.7 (1440K version, via memdisk)
+    kernel /boot/memdisk/memdisk
+    initrd /boot/odin1440.img.gz

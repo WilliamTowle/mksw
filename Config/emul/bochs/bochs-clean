@@ -1,0 +1,3 @@
+#!/bin/sh
+
+rm -rf bios bochs bochs-* bochsout.txt df dh

@@ -1,0 +1,157 @@
+<p><strong>Previously Investigated</strong>:</p>
+<dl>
+<dt>	<a href="http://basiclinux.com.ru/">BasicLinux</a>
+<dd>
+<ul>
+<li>	Version 3.50, released ??/??/????
+<li>	Features: kernel 2.2.26, old libc (slackware)
+<li>	Format: boot/root image and
+alternative full install
+<li>	<a href="http://freshmeat.net/projects/baslinux/">Freshmeat project record</a>
+</ul>
+
+<dt>	<a href="http://boot.everywhere.dk/">BootE Linux</a>
+<dd>
+<ul>
+<li>	Version 0.20-r2, released 30/08/2003 <!-- checked 17/02/2006 -->
+<li>	Features: kernel 2.4.20, uClibc (0.9.17), busybox
+<li>	Format: boot image and "build" scripts
+<li>	<a href="http://freshmeat.net/projects/boote">Freshmeat project record</a>
+</ul>
+
+<dt>	<a href="http://www.fdlinux.com">FD Linux</a>
+<dd>
+<ul>
+<li>	<em>A small, networkable mini linux distribution</em>
+<li>	Version 3.0-0, released 09/03/2003	<!-- checked 17/02/2006 -->
+<li>	Single floppy boot disk (1667K zip file) for 386 and up
+</ul>
+
+<dt>	<a href="http://the.earth.li/~martin/sisela/">Sisela</a>
+<dd>
+<ul>
+<li>	Version 0.3					<!-- checked 17/02/2006 -->
+<li>	Features: linux 2.4, busybox, uClibc
+<li>	Format: 1.68MB floppy/2.9MB ISO
+</ul>
+
+<dt>	<a href="http://www.giannone.eu/skatos/current/">SkatOS</a>
+<dd>
+<ul>
+<li>	<em>Bootable, standalone, XSkat card playing system</em>
+<li>	Version 2.0, released 2007-02-04	<!-- checked 2008-03-11 -->
+<li>	Features: Busybox 0.60.5, uClibc 0.9.24, TinyX 2.2.1, kernel 2.2.26
+<li>	Format: Single floppy, Eltorito CD image, source/patch archive
+</ul>
+
+<dt>	<a href="http://slimlinux.freezope.org/">Slimlinux</a>
+<dd>
+<ul>
+<li>	Version 0.80, released 29/06/2004	<!-- checked 17/02/2006 -->
+<li>	Requires: 16MB RAM
+<li>	Features: linux 2.4.18, busybox 1.00-pre7, uClibc 0.9.26
+<li>	Format: 1722K floppy and HDU versions
+</ul>
+
+
+<dt>	<a href="http://planeta.terra.com.br/informatica/gleicon/code/tunix.html">Tunix</a>
+<dd>
+<ul>
+<li>	Version: 0.11, released 02/03/2005		<!-- checked 17/02/2006 -->
+<li>	Features: uClibc, busybox - versions unspecified
+<li>	Format: build suite
+</ul>
+
+<dt>	<a href="http://www.giannone.eu/rescue/current/">BG-Rescue</a>
+<dd>
+<ul>
+<li>	Version: 0.9.1, released 2008-04-01
+	<!-- checked 17/02/2006 -->
+<li>	Requires: 386/16MB RAM
+<li>	Features: Linux 2.4.x, uClibc 0.9.24, busybox (1.00, patched)
+<li>	Format: 2x1.44MB floppies or 2.8MB ISO image
+<li>	<a href="http://freshmeat.net/projects/bgrescue/">Freshmeat project record</a>
+</ul>
+
+
+</dl>
+
+<!--
+* Syllable OS (AtheOS fork) - http://freshmeat.net/projects/syllable/
+* Devil Linux 1.0.6 and *new* 1.2beta2 (now also USB-hosted)
+* h3knix - http://h3k.jsuthosting.com/h3knix.html (&gt;300MB)
+* Bering uClibc builds own uclibc-gcc :) but uses "buildtool" (perl)
+* Debian Ham/fli4l? Rock? NBROK?
+* ...Mike`s Jukebox Distro
+* Bering-uClibc 2.1 ISO? (28MB) and 2.2 betas (non-ISO)http://heanet.dl.sourceforge.net/sourceforge/leaf/Bering-uClibc_2.1_iso_bering-uclibc-iso.bin
+* There's an "Automatic Firewall" v0.3
+* eCos 2.0, since 20/05/2004 (ecos.sourceware.org)
+* uzi - ftp://ftp.mayn.de/pub/cpm/archive/uzi/
+-->
+
+<p><em>Pending investigation</em>:
+USB boot scripts/HOWTOs
+</p>
+
+<dl>
+<dt> <a href="http://www.minimalinux.org/ttylinux/">TtyLinux</a>
+installation via via mk-boot-usb:
+<dd>
+...<URL:http://people.ofset.org/~ckhung/p/mk-boot-usb/index.php>
+
+<dt> isotostick (onto Eee):
+<dd>
+...<URL:http://trenteee.blogspot.com/2007/12/howto-install-ubuntu-on-eee-pc-with_10.html>
+
+<dt> USB install howto (for ZenEee):
+<dd>
+...<URL:http://users.zenwalk.org/user-accounts/alisou/zeneee-1.0/zeneee-install-howto.txt>
+
+<dt> Debian [etch]:
+<dd>
+...<URL:http://darwish-07.blogspot.com/2007/08/constructing-minimal-debian-linux-usb.html>
+(<strong>also</strong>: try with
+"uwoody <URL:http://people.debian.org/~andersee/dists/>")
+
+<dt> Gentoo [for running EUAE]:
+<dd>
+...<URL:http://www.amiga.org/modules/newbb/viewtopic.php?topic_id=36486&forum=18>
+
+<dt>Ubuntu Gutsy: pendrivelinux favours syslinux
+<dd>
+...<URL:http://www.pendrivelinux.com/2007/09/28/usb-ubuntu-710-gutsy-gibbon-install/>
+
+<dt> syslinux and usb-boot FreeDOS:
+<dd>
+...<URL:http://syslinux.zytor.com/archives/2005-January/004673.html>
+
+<dt> PeToUSB
+<dd>
+...<URL:http://gocoding.com/page.php?al=petousb>
+</dl>
+
+<p><em>Pending investigation</em>:
+Distros
+</p>
+<ul>
+<li> (Linux) LiveCD Router (v2.0.24),
+LiveCD VoIP Server (v2.0.24):
+<URL:http://freshmeat.net/releases/256089/>,
+<URL:http://freshmeat.net/releases/263917/>
+<li> Syllable Server (GUI method?):
+<URL:http://freshmeat.net/projects/syllable/?branch_id=71625&release_id=263330#top>
+
+<li>	SystemRescueCD:
+<URL:http://freshmeat.net/releases/262534/>
+
+<li> Texas Ramdisk Linux:
+<URL:http://www.kurtnalty.com/ramdisklinux.html>
+
+<li> "Clash" bootable CompactFlash
+distro builder
+<URL:http://sourceforge.net/projects/bclash/>
+
+<li> "Flashdist" OpenBSD installer
+(&lt;32MB):
+<URL:http://www.nmedia.net/flashdist/>
+</ul>

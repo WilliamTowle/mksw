@@ -1,0 +1,48 @@
+#!/bin/make
+## based on LFS v3.2
+
+include ${CONF}
+include ${UNIT}
+
+.PHONY: build build-static check-be prelim
+
+default: build
+
+#
+#
+#
+
+#check-be:
+#	if [ ! -r /dev/null ] ; then \
+#		mknod /dev/null c 1 3 ;\
+#	fi
+
+prelim:
+	[ -d ${INSTTMP}/${PKGNAME}-${PKGVER} ] || mkdir ${INSTTMP}/${PKGNAME}-${PKGVER}
+	( cd ${INSTTMP}/${PKGNAME}-${PKGVER} ;\
+		mkdir lib \
+	)
+
+#build: check-be prelim
+build: prelim
+#	./configure --prefix=${INSTTMP}/${PKGNAME}-${PKGVER}/usr --enable-languages=c,c++ \
+#		--disable-nls --disable-shared --enable-threads=posix
+	./configure --prefix=/usr --enable-languages=c \
+		--enable-shared --enable-threads=posix
+	make bootstrap
+	make prefix=${INSTTMP}/${PKGNAME}-${PKGVER}/usr install
+	( cd ${INSTTMP}/${PKGNAME}-${PKGVER}/lib && ln -sf ../usr/bin/cpp )
+	( cd ${INSTTMP}/${PKGNAME}-${PKGVER}/usr/lib && ln -sf ../bin/cpp )
+	( cd ${INSTTMP}/${PKGNAME}-${PKGVER}/usr/bin && ln -sf gcc cc )
+
+#build-static: check-be prelim
+build-static: prelim
+#	./configure --prefix=${INSTTMP}/${PKGNAME}-${PKGVER}/usr --enable-languages=c,c++ \
+#		--disable-nls --disable-shared --enable-threads=posix
+	./configure --prefix=/usr --enable-languages=c \
+		--disable-nls --disable-shared --enable-threads=posix
+	make BOOT_LDFLAGS=-static bootstrap
+	make prefix=${INSTTMP}/${PKGNAME}-${PKGVER}/usr install
+	( cd ${INSTTMP}/${PKGNAME}-${PKGVER}/lib && ln -sf ../usr/bin/cpp )
+	( cd ${INSTTMP}/${PKGNAME}-${PKGVER}/usr/lib && ln -sf ../bin/cpp )
+	( cd ${INSTTMP}/${PKGNAME}-${PKGVER}/usr/bin && ln -sf gcc cc )

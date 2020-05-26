@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ -t 0 ] ; then
+	if [ -z "$1" ] ; then
+		echo "$0: Expected INFILE[s...]" 1>&2
+		exit 1
+	fi || exit 1
+fi || exit 1
+
+sed 's/<[^<>]*>//g' $* \
+	| sed 's/&amp;*/\&/g' \
+	| sed 's/&#38;*/\&/g' \
+	| sed 's/&nbsp;*/ /g' \
+	| sed 's/&lt;*/</g' \
+	| sed 's/&#60;*/</g' \
+	| sed 's/&gt;*/>/g' \
+	| sed 's/&#62;*/>/g' \
+	| sed 's/&quot;*/"/g' \
+	| sed 's/ *$//'

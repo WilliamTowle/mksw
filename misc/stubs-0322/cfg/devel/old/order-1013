@@ -1,0 +1,16 @@
+01-linux-2.0.39 -> ../../mkd-pkg/linux/2.0.39
+02-sed-3.02 -> ../../mkd-pkg/sed/3.02/
+03-diffutils-2.8.1 -> ../../mkd-pkg/diffutils/2.8.1/
+04-patch-2.5.4 -> ../../mkd-pkg/patch/2.5.4/
+06-busybox-0.60.4 -> ../../mkd-pkg/busybox/0.60.4
+07-gawk-3.1.1 -> ../../mkd-pkg/gawk/3.1.1
+07-mawk-1.3.3 -> ../../mkd-pkg/mawk/1.3.3/
+08a-bzip2-1.0.2 -> ../../mkd-pkg/bzip2/1.0.2
+08b-gzip-1.2.4b -> ../../mkd-pkg/gzip/1.2.4b
+08c-tar-1.13 -> ../../mkd-pkg/tar/1.13
+09-make-3.79.1 -> ../../mkd-pkg/make/3.79.1/
+10a-grep-2.5 -> ../../mkd-pkg/grep/2.5/
+10b-flex-2.5.4a -> ../../mkd-pkg/flex/2.5.4a/
+10c-bison-1.35 -> ../../mkd-pkg/bison/1.35
+11a-binutils -> X11a-binutils-2.13/
+11b-gcc -> X11b-gcc-2.95.3-2/

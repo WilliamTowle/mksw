@@ -1,0 +1,67 @@
+
+dependencies for jessie:
+nti-bison-3.0.2
+nti-flex-2.5.37
+nti-grub-2.00
+nti-m4-1.4.17
+
+I do, based on linuxfromscratch build page:
+	http://www.linuxfromscratch.org/lfs/view/7.3/chapter06/grub.html
+
+1.
+			cat grub-core/gnulib/stdio.in.h.OLD \
+				| sed '/undef gets/,/^$$/ { /WARN_ON_USE/ s%^%// % }' \
+				> grub-core/gnulib/stdio.in.h \
+2. configure opts (...adding --grub-mkfont)
+			--disable-grub-emu-usb \
+			--disable-efiemu \
+			--disable-grub-mkfont \
+			--disable-werror \
+
+sudo cp /mnt/sdb1/boot/grub/echo.mod ./echo.mod 
+sudo cp /mnt/sdb1/boot/grub/halt.mod ./halt.mod 
+sudo cp /mnt/sdb1/boot/grub/linux.mod ./linux.mod 
+sudo cp /mnt/sdb1/boot/grub/echo.mod ./echo.mod 
+sudo cp /mnt/sdb1/boot/grub/halt.mod ./halt.mod 
+sudo cp /mnt/sdb1/boot/grub/reboot.mod ./reboot.mod 
+sudo cp /mnt/sdb1/boot/grub/biosdisk.mod ./biosdisk.mod
+sudo cp /mnt/sdb1/boot/grub/part_msdos.mod ./part_msdos.mod
+sudo cp /mnt/sdb1/boot/grub/msdospart.mod ./msdospart.mod
+sudo cp /mnt/sdb1/boot/grub/ext2.mod ./ext2.mod
+
+custcore.img
+device.map.bak
+echo.mod
+grub.cfg
+halt.mod
+linux.mod
+mod-bak
+mod-builtin
+reboot.mod
+
+sudo grub-mkimage --prefix='/boot2/grub/' -O i386-pc --output=./custcore.img biosdisk part_msdos ext2 linux
+
+load custom core.cfg in standard boot sequence:
+| ...TODO...
+
+in second partition's grub.cfg:
+	...resembles "Dabbling..." version
+	https://dunedlin.wordpress.com/2013/05/26/dabbling-with-debian/
+	...and also built in "Restoring ...EeePC"
+	https://dunedlin.wordpress.com/2012/07/31/restoring-windows-xp-on-an-eeepc/
+| menuentry 'Jessie Live' {
+| 	#set root='(hd0,msdos2)/'
+| 	#insmod ... biosdisk part_msdos ext2 linux ... search_fs_uuid
+| 	insmod echo
+| 	insmod linux
+| 	echo ':)'
+| 	#search --no-floppy --fs-uuid --set=root ADBB-D9C5
+| 	echo	'Loading kernel...'
+| 	linux	/boot2/jessie/vmlinuz-3.16.0-4-686-pae boot=live live-media-path=/boot2/jessie
+| 	echo	'Loading initrd...'
+| 	initrd	/boot2/jessie/initrd.img-3.16.0-4-686-pae
+| }
+
+... references:
+- https://richardfearn.wordpress.com/2008/03/14/chainloading-from-one-grub-to-another/
+- kernel /boot/grub/core.img: http://forums.fedoraforum.org/showthread.php?t=258385

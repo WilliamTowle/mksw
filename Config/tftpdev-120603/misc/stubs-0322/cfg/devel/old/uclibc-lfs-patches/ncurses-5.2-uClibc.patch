@@ -1,0 +1,12 @@
+diff -aur ncurses-5.2.orig/ncurses/tinfo/comp_scan.c ncurses-5.2/ncurses/tinfo/comp_scan.c
+--- ncurses-5.2.orig/ncurses/tinfo/comp_scan.c	Sat Sep 23 21:15:17 2000
++++ ncurses-5.2/ncurses/tinfo/comp_scan.c	Wed Aug 14 01:20:32 2002
+@@ -345,7 +345,7 @@
+ 
+ 	    case '#':
+ 		found = 0;
+-		while (isalnum(ch = next_char())) {
++		while ((ch = next_char()) && isalnum(ch)) {
+ 		    numbuf[found++] = ch;
+ 		    if (found >= sizeof(numbuf) - 1)
+ 			break;

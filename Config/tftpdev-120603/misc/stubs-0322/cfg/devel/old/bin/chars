@@ -1,0 +1,16 @@
+#!/bin/sh
+
+echo -n "#"
+
+for B in `seq 7 9` A B C D E F ; do
+
+for C in `seq 0 9` A B C D E F ; do
+
+	echo -e -n "$B$C\\x$B$C "
+
+done
+
+done
+
+# A4¤ A6¦ AF¯ B3³ B4´ B9¹ BE¾ D0Ð DEÞ F0ð FEþ
+# AB« AC¬ AD­ B7· BB»

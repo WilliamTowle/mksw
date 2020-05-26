@@ -1,0 +1,123 @@
+#!/bin/sh
+
+TMPFILE=/tmp/goodmans.$$
+
+do_dumppt()
+{
+	if [ -z "$1" ] ; then
+		echo "do_dumppt(): Expected DEVICE argument" 1>&2
+		exit 1
+	else
+		DEVICE=$1
+		shift
+	fi
+
+	dd if=${DEVICE} bs=512 count=1 | od -tx1c
+}
+
+do_makept()
+{
+	if [ -z "$1" ] ; then
+		echo "do_makept(): Expected DEVICE argument" 1>&2
+		exit 1
+	else
+		DEVICE=$1
+		shift
+	fi
+
+	dd if=${DEVICE} of=${TMPFILE} bs=512 count=1 2>/dev/null
+	[ -r ${TMPFILE} ] || exit 1
+
+	OK=y
+	(
+		GEOM=`sfdisk -G ${DEVICE} 2>/dev/null | sed 's/[^0-9 ]//g'`
+		set -- $GEOM
+		CYLS=$1
+
+		echo "1,"$((${CYLS} - 1))",6,-" | sfdisk -D ${DEVICE}
+	) || OK=n
+	rm -f ${TMPFILE}
+	[ ${OK} = 'y' ] || false
+}
+
+do_makefs()
+{
+	if [ -z "$1" ] ; then
+		echo "do_makefs(): Expected DEVICE argument" 1>&2
+		exit 1
+	else
+		DEVICE=$1
+		shift
+	fi
+
+	if [ -z "$1" ] ; then
+		echo "do_makefs(): Expected TMPDIR argument" 1>&2
+		exit 1
+	elif [ ! -d "$1" ] ; then
+		echo "do_makefs(): TMPDIR not directory" 1>&2
+		exit 1
+	else
+		TMPDIR=$1
+		shift
+	fi
+
+	OK=y
+	(
+		# trash the partition's idea of its own size
+		$ECHO dd if=/dev/zero of=${DEVICE}1 bs=512 count=1
+
+		# -F -> set 16 bit FAT (no FAT32 support on device)
+		# -s -> sectors per cluster (-s 64 -> 32768 bytes)
+		# -S -> logical sector size (-S 32768)
+		$ECHO mkfs -t msdos -F 16 -s 64 ${DEVICE}1 || exit 1
+
+		$ECHO mount -t vfat ${DEVICE}1 ${TMPDIR}
+		$ECHO mkdir ${TMPDIR}/Music ${TMPDIR}/Voice ${TMPDIR}/Config
+		$ECHO umount ${TMPDIR}
+	) || OK=n
+	rm -f ${TMPFILE}
+	[ ${OK} = 'y' ] || false
+}
+
+## partition table creation
+## ========================
+#
+## device is 2GB
+## [2007-10-23] 67 heads, 62 spt, 1009 cyls => 2147MB
+#
+## software does not support FAT32
+## FAT16 (type 4, for <32MB) is too small
+## Wants either (?!) "FAT16" (type 6) or Win95 FAT16 (LBA) [0e]
+#
+## FAT16 allows for 65,526 (2^16-10) clusters
+## clusters of 32KiB mean FAT16 covers 2,047.69MB of disk
+## ...beware linux choosing 64KiB clusters due to partition size!
+#
+## directories
+## ===========
+#
+## device has /Music and /Voice directories according to manual,
+## but stores 'config.tcc' in /Config (possibly hidden) as well.
+## /Music is not necessary, MP3 discovery will occur without it
+
+ACTION=$1
+[ "$1" ] && shift
+case ${ACTION} in
+dumppt)	## dump partition table
+	do_dumppt $* || exit 1
+;;
+makept)	## size partition table
+	do_makept $* || exit 1
+;;
+makefs)	## make filesystem and directories
+	do_makefs $* || exit 1
+;;
+*)
+	if [ -n "${ACTION}" -a "${ACTION}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${ACTION}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z][0-9a-z|-]*)" $0 | sed "s/^/	/"
+	exit 1
+;;
+esac

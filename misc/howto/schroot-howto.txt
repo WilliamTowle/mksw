@@ -1,0 +1,30 @@
+1. Install 'schroot' package
+	...https://wiki.debian.org/Schroot
+
+2. Create directory tree
+	...I used 'unsquashfs' to create /var/local/exports/squashfs-root
+	...can place files under /etc/schroot/chroot.d
+	...beware empty /etc/apt/sources.list with 'debootstrap'
+
+3. Configure: has ini-like file in /etc/schroot/schroot.conf
+	[jessie-test]
+	description=stick test - jessie
+	#aliases=test
+	type=directory
+	directory=/var/local/exports/squashfs-root
+	#       priority=3
+	users=root,guest
+	root-groups=root
+	#profile=desktop
+	#personality=linux32
+	#preserve-environment=true
+	#run-setup-scripts=true
+	#run-exec-scripts=true
+
+4. Go. eg.
+	guest@minideb:~$ schroot -c jessie-test
+	(jessie-test)guest@minideb:~$
+
+See also
+- Debian's 'schroot' article -- https://wiki.debian.org/Schroot
+- "Virtualizing without Virtualizing" -- http://linuxgazette.net/150/kapil.html">"Virtualizing without Virtualizing

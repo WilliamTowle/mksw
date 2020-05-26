@@ -1,0 +1,25 @@
+#!/bin/sh
+
+if [ -z "$1" ] ; then
+	echo "$0: No ROOTDIR argument supplied" 1>&2
+	exit 1
+fi
+
+ROOTDIR=$1
+shift
+
+if [ ! -c ${ROOTDIR}/dev/null ] ; then
+	echo "$0: /dev/null missing or not character device" 1>&2
+	exit 1
+fi
+
+if [ "`echo '' 2>&1 >${ROOTDIR}/dev/null`" ] ; then
+	echo "$0: /dev/null not working (bad mount perms?)" 1>&2
+	exit 1
+fi
+
+echo "chroot()ing..."
+SUDO=/usr/bin/sudo
+[ -r ${SUDO} ] || SUDO=''
+
+${SUDO} chroot ${ROOTDIR} /bin/sh

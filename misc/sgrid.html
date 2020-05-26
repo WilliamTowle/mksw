@@ -1,0 +1,65 @@
+<HTML>
+<HEAD>
+<style>
+#house {
+	border: 1px solid black;
+	margin: 0;
+	padding: 0
+}
+#cell {
+	padding: 0;
+	border: 1px solid gray;
+	float: left			/* permit bunching up */
+}
+</style>
+</HEAD>
+
+<BODY>
+
+<div id="house" style="border: 1px dotted black">
+
+<!-- row1 (left-aligned) -->
+<div style="width: 100%">
+<div style="width: 50%; float: left">
+	<div id="cell" style="width: 100%; color: red">X</div>
+	<div style="clear: both"></div>
+</div>
+<div style="clear: both"></div>
+</div>
+
+<!-- row2 (right-aligned) -->
+<div style="width: 100%">
+<div style="width: 50%; float: right">
+	<div id="cell" style="width: 100%; color: blue">X</div>
+	<div style="clear: both"></div>
+</div>
+<div style="clear: both"></div>
+</div>
+</div>
+
+
+<div id="house" style="background: lightyellow; width: 50%">
+<div style="width: 100%">
+	<span id="cell" style="width: 31%; color: red">31%</span>
+	<span id="cell" style="width: 31%; color: green">31%</span>
+	<span id="cell" style="width: 31%; color: blue; float: right">31%</span>
+	<div style="clear: both"></div>
+</div>
+<div style="width: 100%">
+	<span id="cell" style="width: 32%; color: red">32%</span>
+	<span id="cell" style="width: 32%; color: green">32%</span>
+	<span id="cell" style="width: 32%; color: blue; float: right">32%</span>
+	<div style="clear: both"></div>
+</div>
+<div style="width: 100%">
+	<span id="cell" style="width: 33%; color: red">33%</span>
+	<span id="cell" style="width: 33%; color: green">33%</span>
+	<span id="cell" style="width: 33%; color: blue; float: right">33%</span>
+	<div style="clear: both"></div>
+</div>
+</div>
+
+</BODY>
+
+</BODY>
+</HTML>

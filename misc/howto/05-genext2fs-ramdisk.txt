@@ -1,0 +1,62 @@
+<!-- "Creating Ramdisks with genext2fs" -->
+
+<p><strong>Relevance</strong></p>
+
+<p>
+<ul>
+<li> Ramdisks are useful for diskless systems
+<li> Simplified ramdisks are useful for testing kernels
+<li> <a href="http://freshmeat.net/projects/genext2fs">genext2fs</a>
+in particular avoids the historical requirement to be
+<a href="http://en.wikipedia.org/wiki/Superuser">superuser</a>
+</ul>
+</p>
+
+<p><strong>Requirements</strong></p>
+<p>
+<ul>
+<li> genext2fs (I'm using
+<a href="http://garr.dl.sourceforge.net/sourceforge/genext2fs/genext2fs-1.4.1.tar.gz">v1.4.1</a>)
+<li> Suitable
+<a href="http://www.kernel.org/pub/linux/kernel/">kernel</a>
+and test program (e.g. shell)
+<li> <a href="http://www.qemu.org/">QEmu</a>
+</ul>
+</p>
+
+<p><strong>Method</strong></p>
+
+<p>
+<em>First, the test program.</em> For speed and simplicity, I've
+written a regular "hello world" program; this compiles with
+`<code>gcc -static -o tmproot/hw misc/hw.c</code>`.
+</p>
+
+<p>
+<em>Next, the root filesystem.</em> Since genext2fs accepts arguments
+for filesystem size, filesystem content, and desired device nodes,
+this means creating one more file. The necessary lines are:
+"<code>/dev	d    755  0    0    -    -    -    -    -</code>"
+(add /dev directory to the disk), and
+"<code>/dev/console c 600  0    0    5    1    0    0    -</code>"
+(add /dev/console device, which stops the "Warning: unable to open an
+initial console" boot failure).
+</p>
+
+<p>
+<em>Then we run genext2fs</em>, specifying filesystem size, device
+nodes list, and image name: `<code>genext2fs -b 500 -D dev.txt -d
+tmproot fs.ext2</code>` (since genext2fs must have a directory for
+the '-d' argument, 'tmproot' is where my "hello world" binary 'hw'
+lives).  Compressing the resulting image is optional.
+</p>
+
+<p>
+<em>Finally</em>, run qemu against the test kernel (I'm using the
+host's native kernel; you'll need to build your own if cross
+compiling executables or if QEmu doesn't support your native
+platform): `qemu -kernel /boot/vmlinuz -initrd fs.ext2 -append
+'root=/dev/ram0 init=/hw'`. You should see the program's output (and
+"Kernel panic - not syncing: Attempted to kill init!" if it exits,
+but this isn't indicative of failure). Job done!
+</p>

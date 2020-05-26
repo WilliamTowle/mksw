@@ -1,0 +1,51 @@
+Requirements:
+
+portmap
+unfsd
+dnsmasq
+pxelinux (pxegrub: # ./configure --enable-diskless --enable-3c90x)
+rootfs with busybox, tty<n> device nodes, etc
+lx26-binary
+
+kernel config - "TCP/IP networking" section
+- IP: kernel level autoconfiguration (CONFIG_IP_PNP)
+- IP: DHCP support (CONFIG_IP_PNP_DHCP)
+-?  IP: BOOTP support (IP_PNP_BOOTP)
+
+kernel config - "File systems -> network file systems"
+- NFSv3 client support (CONFIG_NFS_V3)
+- Root file system on NFS (CONFIG_ROOT_NFS)
+
+[701] "For Atheros L2 PCIE Ethernet Controller v1.0.20.20 (2007/11/28)" -> CONFIG_ATL2
+[701SD] "For Atheros AR8121/AR8113 PCIE Ethernet Controller v1.0.0.4 (2008/01/13)" -> CONFIG_ATL1E?
+* other?
+
+machine-specific dnsmasq config:
+dhcp-host=00:1E:8C:31:36:7E,eeepc701a,192.168.74.127
+dhcp-host=00:23:54:45:49:37,eeepc701sd,192.168.74.126
+
+create /var/tmp/tftpd with 'pxelinux.cfg/default', 'pxelinux.0', 'vmlinuz'
+ensure ownership is nobody.nogroup as per dnsmasq settings
+
+create /var/tmp/exttemp/insttemp WITHOUT symlinks in path
+add /dev/tty and /dev/tty<n>; ensure root.root ownership/a=rw access
+
+create 'exports' for unfsd (toolchain/etc the default) containing:
+/var/tmp/exttemp/insttemp	192.168.74.127(rw,no_root_squash) 192.168.74.126(rw,no_root_squash)
+
+run dnsmasq:
+$ sudo ./toolchain/usr/sbin/dnsmasq -C Config/network/dnsmasq/dnsmasq-nfsroot.conf
+
+run portmap:
+sudo ./toolchain/sbin/portmap
+
+run unfsd:
+sudo ./toolchain/sbin/unfsd -e `pwd`/Config/network/unfs3/exports 
+
+checks:
+rpcinfo -p 192.168.74.1
+showmount --exports 192.168.74.1
+
+diagnostic
+error -101 (ENETUNREACH, network unreachable): check kernel driver support
+error -13 (EACCES, Permission denied): unfs3 dislikes symlinks in export path

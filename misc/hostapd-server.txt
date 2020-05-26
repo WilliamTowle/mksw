@@ -1,0 +1,25 @@
+hostapd
+"A user space daemon for access point and authentication servers"
+
+Debian's package includes:
+- /etc/default/hostapd
+- /etc/hostapd/ifupdown.sh, with symlinks under /etc/network
+- /usr/share/doc/hostapd/examples/hostapd.conf.gz
+
+In config file:
+- correct 'interface=wlan0' if necessary
+- check 'ctrl_interface' directory exists
+	mkdir -p /var/run/hostapd
+- adjust 'ssid=test' to suit desired network name
+- set 'channel' as required
+- add {accept|deny}_mac_file lists if required
+- adjust 'ignore_broadcast_ssid' if clients must specifically request our SSID
+- add 'ap_max_inactivity' if users will be coming and going
+- add 'wpa=1' and 'wpa_{psk|passphrase}', 'wpa_{key_mgmt|pairwise}'
+- consider use of wpa_psk_file for per-device PSKs *recommended*
+- set 'device_name' if a "user-friendly description of device" is required
+
+Steps
+- set DAEMON_CONF in /etc/default/hostapd
+- also tweak DAEMON_OPTS if debugging options are required
+

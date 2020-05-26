@@ -1,0 +1,85 @@
+* Wheezy 2015-03-29 -- automatic connection on Debian
+- on ditto, interfaces are 'eth1' and 'wlan1' because udev rules for *0 exist
+- ifconfig: Enable your wireless device.
+	ifconfig wlan0 up
+- iwlist: List the available wireless access points.
+	iwlist wlan0 scan
+- wpa_passphrase SSID PASSWORD
+	-> update /etc/wpa_supplicant.conf
+- ditto /etc/wpa_supplicant.conf additional:
+	ctrl_interface=/var/run/wpa_supplicant
+	ctrl_interface_group=netdev
+	ap_scan=1
+	fast_reauth=1
+	eapol_version=1
+- check udev rules file for device to interface name mappings
+- adapt /etc/network/interfaces stanza:
+	auto wlan0
+	iface wlan0 inet dhcp
+	wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+- reboot (if udev rules modified) or restart network
+	...should connect. With "auto wlan0" method this is attempted at boot
+
+* misc observations
+- lacking 'cal' ... which package is this?
+- setting a static address (useful for server builds):
+	auto eth0
+	iface eth0 inet static
+	address		192.168.42.253
+	network		192.168.42.0
+	netmask		255.255.255.0
+	broadcast	192.168.42.255
+- maybe use dnsmasq with DHCP provisioning and NFS filesystem
+	# Respond on eth0 only; don't use /etc/hosts, /etc/resolv.conf
+	interface=eth0
+	no-hosts
+	no-resolv
+	#no-poll (optional)
+	
+	# Give addresses to PXE-boot clients:
+	dhcp-range=vendor:PXEClient,192.168.42.17,192.168.42.32,1h
+	# Instruct Windows machines not to keep leases on shutdown:
+	dhcp-option=vendor:MSFT,2,1i
+	# Specific addresses for my EeePCs:
+	dhcp-host=00:1E:8C:XX:YY:ZZ,eeepc701a,192.168.42.128
+	dhcp-host=00:23:54:XX:YY:ZZ,ditto,192.168.42.129
+	dhcp-host=00:23:54:XX:YY:ZZ,diitto,192.168.42.130
+	
+	# TFTP/netboot (secure mode requiring file ownership by 'dnsmasq')
+	enable-tftp
+	tftp-root=/var/local/tftpd
+	tftp-secure 
+	dhcp-option-force=208,f1:00:74:7e
+	dhcp-boot=pxelinux.0 
+	dhcp-option-force=209,pxelinux.cfg
+
+| * other (hbOS?)_
+| - wpa_supplicant -B -i IFACE -Dwext -c /etc/wpa_supplicant.conf
+| - ensure association with network
+| 	iwconfig IFACE
+| - get IP address
+| 	dhclient IFACE
+| - ping test
+| 
+| * troubleshooting and beyond
+| - only need iw, wireless_tools, or wpa_supplicant
+| 	iw is nl80211 (netlink) only
+| 	wireless_tools is deprecated but widely supported
+| 	wpa_supplicant works with both wext and nl80211 standards
+| - preliminary troubleshooting: either
+| 	lspci -k
+| 	lsusb -v
+| - "SIOCSIFFLAGS: No such file or directory"
+| 	-> you need firmware. Consult `dmesg | grep 'firmware'`
+| - ** `rfkill list` **
+| 	-> "soft blocked: ..." shows need to run `rfkill unblock wifi`
+| 	-> "hard blocked: ..." shows state of hardware off switch
+| - from http://ubuntuforums.org/showthread.php?t=263136:
+| 	pre-up wpa_supplicant -Bw -Dwext -ieth0 -c/etc/wpa_supplicant.conf
+| 	post-down killall -q wpa_supplicant
+| 
+| * resources
+| - https://wiki.archlinux.org/index.php/Wireless_network_configuration
+| - http://www.tldp.org/HOWTO/Wireless-HOWTO.html
+| - /etc/network/interfaces -- http://linuxconfig.org/etcnetworkinterfacesto-connect-ubuntu-to-a-wireless-network
+
