@@ -34,10 +34,10 @@ include ${CFG_ROOT}/x11-r7.5/x11proto-damage/v1.2.0.mak
 include ${CFG_ROOT}/x11-r7.5/x11proto-fonts/v2.1.0.mak
 include ${CFG_ROOT}/x11-r7.5/x11proto-video/v2.3.0.mak
 include ${CFG_ROOT}/x11-r7.5/x11proto-resource/v1.1.0.mak
+include ${CFG_ROOT}/x11-r7.5/xkeyboard-config/v2.1.mak
 #include ${CFG_ROOT}/network/openssl/v1.0.1i.mak
 include ${CFG_ROOT}/network/openssl/v1.0.1u.mak
 include ${CFG_ROOT}/gui/pixman/v0.29.4.mak
-include ${CFG_ROOT}/gui/xkeyboard-config/v2.1.mak
 
 NTI_XORG_SERVER_TEMP=nti-xorg-server-${XORG_SERVER_VERSION}
 

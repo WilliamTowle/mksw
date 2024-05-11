@@ -22,9 +22,10 @@ endif
 X11PROTO_KB_SRC=${SOURCES}/k/kbproto-${X11PROTO_KB_VERSION}.tar.bz2
 #URLS+= http://www.x.org/releases/X11R7.5/src/proto/kbproto-1.0.4.tar.bz2
 #URLS+= http://www.x.org/releases/X11R7.6/src/proto/kbproto-1.0.5.tar.bz2
-URLS+= http://www.x.org/releases/X11R7.6/src/proto/kbproto-1.0.6.tar.bz2
+#URLS+= http://www.x.org/releases/X11R7.7/src/proto/kbproto-1.0.6.tar.bz2
+URLS+= https://www.x.org/releases/individual/proto/kbproto-1.0.6.tar.bz2
 
-include ${CFG_ROOT}/gui/util-macros/v1.17.1.mak
+include ${CFG_ROOT}/gui/util-macros/v1.16.2.mak
 
 NTI_X11PROTO_KB_TEMP=nti-x11proto-kb-${X11PROTO_KB_VERSION}
 
@@ -59,11 +60,10 @@ ${NTI_X11PROTO_KB_CONFIGURED}: ${NTI_X11PROTO_KB_EXTRACTED}
 			> Makefile.in ;\
 		CC=${NTI_GCC} \
 		  CFLAGS='-O2' \
-		  PKG_CONFIG=${NTI_TC_ROOT}/usr/bin/${HOSTSPEC}-pkg-config \
-		  PKG_CONFIG_PATH=${NTI_TC_ROOT}/usr/${HOSTSPEC}/lib/pkgconfig \
+		  PKG_CONFIG=${PKG_CONFIG_CONFIG_HOST_TOOL} \
+		  PKG_CONFIG_PATH=${PKG_CONFIG_CONFIG_HOST_PATH} \
 			./configure \
 			  --prefix=${NTI_TC_ROOT}/usr \
-			  --enable-shared --disable-static \
 				|| exit 1 \
 	)
 #			--build=${HOSTSPEC} \

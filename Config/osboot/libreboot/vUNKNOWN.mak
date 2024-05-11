@@ -35,6 +35,7 @@ NTI_LIBREBOOT_INSTALLED=${NTI_TC_ROOT}/usr/bin/libreboot
 
 ## See http://git.denx.de/?p=u-boot.git;a=blob;f=doc/README.x86
 ## can boot kernel as part of FIT image, or compressed zImage directly
+## FIXME: use 'shallow' clone to limit download size
 
 ${NTI_LIBREBOOT_EXTRACTED}:
 	echo "*** $@ (EXTRACTED) ***"

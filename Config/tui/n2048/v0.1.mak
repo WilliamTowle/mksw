@@ -1,5 +1,5 @@
 # n2048 v0.1			[ since v0.1, c.2014-06-23 ]
-# last mod WmT, 2015-08-25	[ (c) and GPLv2 1999-2015* ]
+# last mod WmT, 2018-04-05	[ (c) and GPLv2 1999-2018* ]
 
 ifneq (${HAVE_N2048_CONFIG},y)
 HAVE_N2048_CONFIG:=y
@@ -14,7 +14,8 @@ endif
 
 #include ${CFG_ROOT}/tui/ncurses/v5.6.mak
 #include ${CFG_ROOT}/tui/ncurses/v5.9.mak
-include ${CFG_ROOT}/tui/ncurses/v6.0.mak
+#include ${CFG_ROOT}/tui/ncurses/v6.0.mak
+include ${CFG_ROOT}/tui/ncurses/v6.1.mak
 
 N2048_SRC=${SOURCES}/n/n2048_v${N2048_VERSION}.tar.gz
 URLS+= http://www.dettus.net/n2048/n2048_v0.1.tar.gz

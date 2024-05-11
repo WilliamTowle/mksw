@@ -27,13 +27,13 @@ LIBX11_SRC=${SOURCES}/l/libX11-${LIBX11_VERSION}.tar.bz2
 URLS+= http://www.x.org/releases/individual/lib/libX11-1.6.2.tar.bz2
 
 # Always requires xproto, xextproto, xtrans, xcb
-include ${CFG_ROOT}/gui/libxcb/v1.9.1.mak
+include ${CFG_ROOT}/x11-misc/libxcb/v1.13.mak
 #include ${CFG_ROOT}/gui/libXau/v1.0.8.mak
-include ${CFG_ROOT}/gui/x11proto/v7.0.28.mak
-include ${CFG_ROOT}/gui/x11proto-input/v2.3.mak
-include ${CFG_ROOT}/gui/x11proto-kb/v1.0.6.mak
-include ${CFG_ROOT}/gui/x11proto-xext/v7.2.1.mak
-include ${CFG_ROOT}/gui/xtrans/v1.2.7.mak
+include ${CFG_ROOT}/x11-misc/x11proto/v7.0.23.mak
+include ${CFG_ROOT}/x11-misc/x11proto-input/v2.3.mak
+include ${CFG_ROOT}/x11-misc/x11proto-kb/v1.0.6.mak
+include ${CFG_ROOT}/x11-misc/x11proto-xext/v7.2.1.mak
+include ${CFG_ROOT}/x11-misc/xtrans/v1.2.7.mak
 
 
 NTI_LIBX11_TEMP=nti-libX11-${LIBX11_VERSION}

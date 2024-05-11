@@ -17,6 +17,8 @@ URLS+= http://downloads.sourceforge.net/project/rxvt/rxvt-dev/${RXVT_VERSION}/rx
 # X11R7.5 or R7.7?
 include ${CFG_ROOT}/x11-r7.5/libX11/v1.3.2.mak
 #include ${CFG_ROOT}/x11-r7.6/libX11/v1.5.0.mak
+include ${CFG_ROOT}/x11-r7.5/libXrender/v0.9.5.mak
+include ${CFG_ROOT}/x11-r7.5/libXfixes/v4.0.4.mak
 
 NTI_RXVT_TEMP=nti-rxvt-${RXVT_VERSION}
 NTI_RXVT_EXTRACTED=${EXTTEMP}/${NTI_RXVT_TEMP}/configure
@@ -76,7 +78,9 @@ ${NTI_RXVT_INSTALLED}: ${NTI_RXVT_BUILT}
 	)
 
 .PHONY: nti-rxvt
-nti-rxvt: nti-libX11 ${NTI_RXVT_INSTALLED}
+#nti-rxvt: nti-libX11 ${NTI_RXVT_INSTALLED}
+nti-rxvt: nti-libX11 nti-libXfixes nti-libXrender \
+	${NTI_RXVT_INSTALLED}
 
 ALL_NTI_TARGETS+= nti-rxvt
 

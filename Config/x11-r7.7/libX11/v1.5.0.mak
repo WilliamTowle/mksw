@@ -1,5 +1,5 @@
 # libX11 v1.5.0			[ since v1.1.4	2008-06-21 ]
-# last mod WmT, 2018-03-12	[ (c) and GPLv2 1999-2018* ]
+# last mod WmT, 2018-09-01	[ (c) and GPLv2 1999-2018* ]
 
 ifneq (${HAVE_LIBX11_CONFIG},y)
 HAVE_LIBX11_CONFIG:=y
@@ -9,6 +9,8 @@ HAVE_LIBX11_CONFIG:=y
 
 include ${CFG_ROOT}/ENV/buildtype.mak
 
+#include ${CFG_ROOT}/buildtools/libtool/v1.5.26.mak
+#libtool v2.x
 include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
 #include ${CFG_ROOT}/buildtools/pkg-config/v0.27.1.mak
 

@@ -38,6 +38,7 @@ NUI_RTL8192CU_FIXES_INSTALLED=${NUI_TC_ROOT}/usr/bin/rtl8192cu-fixes
 ## can boot kernel as part of FIT image, or compressed zImage directly
 
 ## dkms sometimes expects source in /usr/src/<module>-<module-version>/
+## FIXME: use 'shallow' clone to limit download size
 
 ${NUI_RTL8192CU_FIXES_EXTRACTED}:
 	echo "*** $@ (EXTRACTED) ***"

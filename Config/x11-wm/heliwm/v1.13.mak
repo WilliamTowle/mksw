@@ -1,15 +1,15 @@
 # heliwm v1.13			[ since v1.13, 2017-10-31 ]
-# last mod WmT, 2017-10-31	[ (c) and GPLv2 1999-2017* ]
+# last mod WmT, 2018-08-31	[ (c) and GPLv2 1999-2017* ]
 
 ifneq (${HAVE_HELIWM_CONFIG},y)
 HAVE_HELIWM_CONFIG:=y
 
-#DESCRLIST+= "'nti-heliwm' -- heliwm"
+DESCRLIST+= "'nti-heliwm' -- heliwm"
 
 include ${CFG_ROOT}/ENV/buildtype.mak
 
-#include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
-include ${CFG_ROOT}/buildtools/pkg-config/v0.27.1.mak
+include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
+#include ${CFG_ROOT}/buildtools/pkg-config/v0.27.1.mak
 
 
 ifeq (${HELIWM_VERSION},)
@@ -50,8 +50,8 @@ ${NTI_HELIWM_CONFIGURED}: ${NTI_HELIWM_EXTRACTED}
 	echo "*** $@ (CONFIGURED) ***"
 	( cd ${EXTTEMP}/${NTI_HELIWM_TEMP} || exit 1 ;\
 		gcc *.c -DFRAME -DREORDER \
-			`${NTI_TC_ROOT}/usr/bin/${HOSTSPEC}-pkg-config --cflags x11` \
-			`${NTI_TC_ROOT}/usr/bin/${HOSTSPEC}-pkg-config --libs x11` \
+			`${PKG_CONFIG_CONFIG_HOST_TOOL} --cflags x11` \
+			`${PKG_CONFIG_CONFIG_HOST_TOOL} --libs x11` \
 			-o heliwm-`date +%y%m%d-%H%M%S` || exit 1 ;\
 		echo '...' ; exit 1 ;\
 		./configure \

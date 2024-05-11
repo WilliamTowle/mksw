@@ -18,18 +18,18 @@ UWM_SRC=${SOURCES}/u/uwm-${UWM_VERSION}.tar.bz2
 #URLS+= http://downloads.sourceforge.net/project/udeproject/UWM/uwm-0.2.10a%20stable/uwm-0.2.10a.tar.gz
 URLS+= 'https://downloads.sourceforge.net/project/uwm/Source/uwm-0.30.tar.bz2?r=http%3A%2F%2Fuwm.sourceforge.net%2F&ts=1492083024&use_mirror=netcologne'
 
-## X11 R7.5 unsuitable due to no libxcb (xcb-util dependency)
+## X11 R7.5 unsuitable due xcb-util needing suitable libxcb
 include ${CFG_ROOT}/audvid/jpegsrc/v6b.mak
 #include ${CFG_ROOT}/audvid/libpng/v1.6.29.mak
 include ${CFG_ROOT}/audvid/libpng/v1.6.34.mak
-include ${CFG_ROOT}/gui/xcb-util/v0.3.8.mak
-include ${CFG_ROOT}/gui/xcb-util-image/v0.3.8.mak
-include ${CFG_ROOT}/gui/xcb-util-keysyms/v0.3.8.mak
-include ${CFG_ROOT}/gui/xcb-util-renderutil/v0.3.8.mak
-include ${CFG_ROOT}/gui/xcb-util-wm/v0.3.8.mak
+include ${CFG_ROOT}/x11-misc/xcb-util/v0.3.8.mak
+include ${CFG_ROOT}/x11-misc/xcb-util-image/v0.3.8.mak
+include ${CFG_ROOT}/x11-misc/xcb-util-keysyms/v0.3.8.mak
+include ${CFG_ROOT}/x11-misc/xcb-util-renderutil/v0.3.8.mak
+include ${CFG_ROOT}/x11-misc/xcb-util-wm/v0.3.8.mak
 
 NTI_UWM_TEMP=nti-uwm-${UWM_VERSION}
-NTI_UWM_EXTRACTED=${EXTTEMP}/${NTI_UWM_TEMP}/Makefile
+NTI_UWM_EXTRACTED=${EXTTEMP}/${NTI_UWM_TEMP}/uwm.1
 NTI_UWM_CONFIGURED=${EXTTEMP}/${NTI_UWM_TEMP}/Makefile.OLD
 NTI_UWM_BUILT=${EXTTEMP}/${NTI_UWM_TEMP}/uwm
 NTI_UWM_INSTALLED=${NTI_TC_ROOT}/usr/bin/uwm
@@ -62,7 +62,7 @@ ${NTI_UWM_CONFIGURED}: ${NTI_UWM_EXTRACTED}
 			| sed '/^CFLAGS=/		s%$$%\nCFLAGS+='"` ${PKG_CONFIG_CONFIG_HOST_TOOL} --cflags xcb-atom `"'%' \
 			| sed '/^LIBS/,/[^\\]$$/	s%`pkg-config%`'${PKG_CONFIG_CONFIG_HOST_TOOL}'%' \
 			| sed '/^DESTDIR/		s/DESTDIR/PREFIX/' \
-			| sed '/^PREFIX=/		s%/usr%'${NTI_TC_ROOT}'/usr%' \
+			| sed '/^PREFIX=/		s%/usr/*[^ ]*%'${NTI_TC_ROOT}'/usr%' \
 			| sed '/^	/		s%$$(DESTDIR)%$$(DESTDIR)/$$(PREFIX)%' \
 			| sed '/^	.* udm/		s%^	%	true #%' \
 			> Makefile \

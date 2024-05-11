@@ -41,8 +41,10 @@ BUSYBOX_VERSION?= 1.23.1
 # -----
 # prerequisites for build
 # NB: flex requires m4
-include ${CFG_ROOT}/buildtools/m4/v1.4.16.mak
-include ${CFG_ROOT}/buildtools/flex/v2.5.35.mak
+#include ${CFG_ROOT}/buildtools/m4/v1.4.16.mak
+include ${CFG_ROOT}/buildtools/m4/v1.4.17.mak
+#include ${CFG_ROOT}/buildtools/flex/v2.5.35.mak
+include ${CFG_ROOT}/buildtools/flex/v2.5.37.mak
 include ${CFG_ROOT}/misc/bc/v1.06.mak
 
 # -----

@@ -36,6 +36,7 @@ NTI_COREBOOT_INSTALLED=${NTI_TC_ROOT}/usr/bin/coreboot
 
 ## See http://git.denx.de/?p=u-boot.git;a=blob;f=doc/README.x86
 ## can boot kernel as part of FIT image, or compressed zImage directly
+## FIXME: use 'shallow' clone to limit download size
 
 ${NTI_COREBOOT_EXTRACTED}:
 	echo "*** $@ (EXTRACTED) ***"

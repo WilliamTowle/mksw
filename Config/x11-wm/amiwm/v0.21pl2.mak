@@ -4,9 +4,12 @@
 ifneq (${HAVE_AMIWM_CONFIG},y)
 HAVE_AMIWM_CONFIG:=y
 
+DESCRLIST+= "'nti-amiwm' -- amiwm"
+
 include ${CFG_ROOT}/ENV/buildtype.mak
 
-#DESCRLIST+= "'cui-amiwm' -- amiwm"
+include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
+#include ${CFG_ROOT}/buildtools/pkg-config/v0.27.1.mak
 
 ifeq (${AMIWM_VERSION},)
 AMIWM_VERSION=0.21pl2
@@ -15,7 +18,7 @@ endif
 AMIWM_SRC=${SOURCES}/a/amiwm${AMIWM_VERSION}.tar.gz
 URLS+= ftp://ftp.lysator.liu.se/pub/X11/wm/amiwm/amiwm0.21pl2.tar.gz
 
-#include ${CFG_ROOT}/gui/SDL/v1.2.15.mak
+include ${CFG_ROOT}/x11-r7.5/libX11/v1.3.2.mak
 
 NTI_AMIWM_TEMP=nti-amiwm-${AMIWM_VERSION}
 NTI_AMIWM_EXTRACTED=${EXTTEMP}/${NTI_AMIWM_TEMP}/configure
@@ -46,8 +49,15 @@ ${NTI_AMIWM_EXTRACTED}:
 ${NTI_AMIWM_CONFIGURED}: ${NTI_AMIWM_EXTRACTED}
 	echo "*** $@ (CONFIGURED) ***"
 	( cd ${EXTTEMP}/${NTI_AMIWM_TEMP} || exit 1 ;\
+		CC=${NTI_GCC} \
+		  CFLAGS='-O2' \
+		  PKGCONFIG=${PKG_CONFIG_CONFIG_HOST_TOOL} \
+		  PKG_CONFIG_PATH=${PKG_CONFIG_CONFIG_HOST_PATH} \
 		./configure \
 			--prefix=${NTI_TC_ROOT}/usr \
+			  --x-includes="` ${PKG_CONFIG_CONFIG_HOST_TOOL} --variable=prefix x11 `"'/include' \
+			  --x-libraries="` ${PKG_CONFIG_CONFIG_HOST_TOOL} --variable=prefix x11 `"'/lib' \
+				|| exit 1 \
 	)
 
 
@@ -77,6 +87,7 @@ ${NTI_AMIWM_INSTALLED}: ${NTI_AMIWM_BUILT}
 #nti-amiwm: nti-libX11 nti-libxcb \
 #	${NTI_AMIWM_INSTALLED}
 nti-amiwm: \
+	nti-libX11 \
 	${NTI_AMIWM_INSTALLED}
 
 ALL_NTI_TARGETS+= nti-amiwm

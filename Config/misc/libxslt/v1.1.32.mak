@@ -87,10 +87,10 @@ ${NTI_LIBXSLT_INSTALLED}: ${NTI_LIBXSLT_BUILT}
 	)
 
 .PHONY: nti-libxslt
-nti-libxslt: ${NTI_LIBXSLT_INSTALLED}
+nti-libxslt: nti-libxml2 \
+	${NTI_LIBXSLT_INSTALLED}
 
 ALL_NTI_TARGETS+= \
-	nti-libxml2 \
 	nti-libxslt
 
 endif	# HAVE_LIBXSLT_CONFIG

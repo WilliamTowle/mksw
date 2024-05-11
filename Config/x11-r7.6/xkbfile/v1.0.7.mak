@@ -61,7 +61,6 @@ ${NTI_LIBXKBFILE_CONFIGURED}: ${NTI_LIBXKBFILE_EXTRACTED}
 		  PKG_CONFIG_PATH=${NTI_TC_ROOT}/usr/${HOSTSPEC}/lib/pkgconfig \
 			./configure \
 			  --prefix=${NTI_TC_ROOT}/usr \
-			  --enable-shared --disable-static \
 				|| exit 1 \
 	)
 

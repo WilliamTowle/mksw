@@ -1,5 +1,5 @@
 # ncurses v6.0			[ since v5.2, c.2003-05-30 ]
-# last mod WmT, 2016-02-22	[ (c) and GPLv2 1999-2016* ]
+# last mod WmT, 2018-04-05	[ (c) and GPLv2 1999-2018 ]
 
 ifneq (${HAVE_NCURSES_CONFIG},y)
 HAVE_NCURSES_CONFIG:=y
@@ -34,7 +34,10 @@ NTI_NCURSES_BUILT=${EXTTEMP}/${NTI_NCURSES_TEMP}/include/curses.h
 NTI_NCURSES_INSTALLED=${NTI_TC_ROOT}/usr/${HOSTSPEC}/lib/pkgconfig/ncurses.pc
 #CTI_NCURSES_INSTALLED= ${CTI_TC_ROOT}/usr/${CTI_SPEC}/usr...
 
-# Helpers for external use (post-installation)
+
+# Helper for external use (post-installation)
+# NB. correct value depends on --with-abi-version=5 use
+#NCURSES_CONFIG_TOOL= ${NTI_TC_ROOT}/usr/bin/ncurses5-config
 NCURSES_CONFIG_TOOL= ${NTI_TC_ROOT}/usr/bin/ncurses6-config
 
 

@@ -7,8 +7,8 @@
 ifneq (${HAVE_ZLIB_CONFIG},y)
 HAVE_ZLIB_CONFIG:=y
 
-#DESCRLIST+= "'nti-zlib' -- zlib"
-#DESCRLIST+= "'cti-zlib' -- zlib"
+DESCRLIST+= "'nti-zlib' -- zlib"
+DESCRLIST+= "'cti-zlib' -- zlib"
 
 include ${CFG_ROOT}/ENV/buildtype.mak
 

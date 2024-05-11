@@ -21,7 +21,7 @@ LIBXKBFILE_SRC=${SOURCES}/l/libxkbfile-${LIBXKBFILE_VERSION}.tar.bz2
 URLS+= http://www.x.org/releases/individual/lib/libxkbfile-1.0.7.tar.bz2
 
 include ${CFG_ROOT}/x11-misc/libX11/v1.6.2.mak
-include ${CFG_ROOT}/gui/x11proto-kb/v1.0.6.mak
+include ${CFG_ROOT}/x11-misc/x11proto-kb/v1.0.6.mak
 
 
 NTI_LIBXKBFILE_TEMP=nti-libxkbfile-${LIBXKBFILE_VERSION}
@@ -57,11 +57,10 @@ ${NTI_LIBXKBFILE_CONFIGURED}: ${NTI_LIBXKBFILE_EXTRACTED}
 			> Makefile.in ;\
 		CC=${NTI_GCC} \
 		  CFLAGS='-O2' \
-		  PKG_CONFIG=${NTI_TC_ROOT}/usr/bin/${HOSTSPEC}-pkg-config \
-		  PKG_CONFIG_PATH=${NTI_TC_ROOT}/usr/${HOSTSPEC}/lib/pkgconfig \
+		  PKG_CONFIG=${PKG_CONFIG_CONFIG_HOST_TOOL} \
+		  PKG_CONFIG_PATH=${PKG_CONFIG_CONFIG_HOST_PATH} \
 			./configure \
 			  --prefix=${NTI_TC_ROOT}/usr \
-			  --enable-shared --disable-static \
 				|| exit 1 \
 	)
 

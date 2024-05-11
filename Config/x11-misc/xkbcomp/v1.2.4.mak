@@ -48,18 +48,18 @@ ${NTI_XKBCOMP_EXTRACTED}:
 ${NTI_XKBCOMP_CONFIGURED}: ${NTI_XKBCOMP_EXTRACTED}
 	echo "*** $@ (CONFIGURED) ***"
 	( cd ${EXTTEMP}/${NTI_XKBCOMP_TEMP} || exit 1 ;\
+		[ -r Makefile.in.OLD ] || mv Makefile.in Makefile.in.OLD || exit 1 ;\
+		cat Makefile.in.OLD \
+			| sed '/^pkgconfigdir/	s%$$.*%$$(libdir)/'${HOSTSPEC}'/lib/pkgconfig%' \
+			> Makefile.in ;\
 	  CFLAGS='-O2' \
-	  PKG_CONFIG=${NTI_TC_ROOT}/usr/bin/${HOSTSPEC}-pkg-config \
-		PKG_CONFIG_PATH=${NTI_TC_ROOT}/usr/${HOSTSPEC}/lib/pkgconfig \
+		  PKG_CONFIG=${PKG_CONFIG_CONFIG_HOST_TOOL} \
+		  PKG_CONFIG_PATH=${PKG_CONFIG_CONFIG_HOST_PATH} \
 		./configure \
 			--prefix=${NTI_TC_ROOT}/usr \
 			--bindir=${NTI_TC_ROOT}/usr/X11R7/bin \
 			|| exit 1 \
 	)
-#		[ -r Makefile.in.OLD ] || mv Makefile.in Makefile.in.OLD || exit 1 ;\
-#		cat Makefile.in.OLD \
-#			| sed '/^pkgconfigdir/	s%$$.*%$$(prefix)/'${HOSTSPEC}'/lib/pkgconfig%' \
-#			> Makefile.in ;\
 
 
 ## ,-----

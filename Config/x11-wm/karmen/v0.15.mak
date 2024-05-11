@@ -8,7 +8,7 @@ HAVE_KARMEN_CONFIG:=y
 
 include ${CFG_ROOT}/ENV/buildtype.mak
 
-# #include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
+include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
 # include ${CFG_ROOT}/buildtools/pkg-config/v0.27.1.mak
 
 
@@ -19,8 +19,10 @@ endif
 KARMEN_SRC=${SOURCES}/k/karmen-${KARMEN_VERSION}.tar.gz
 URLS+= http://downloads.sourceforge.net/karmen/karmen-0.15.tar.gz
 
-# #include ${CFG_ROOT}/x11-r7.5/libX11/v1.3.2.mak
+
+include ${CFG_ROOT}/x11-r7.5/libX11/v1.3.2.mak
 # include ${CFG_ROOT}/x11-r7.5/libXpm/v3.5.8.mak
+
 
 NTI_KARMEN_TEMP=nti-karmen-${KARMEN_VERSION}
 NTI_KARMEN_EXTRACTED=${EXTTEMP}/${NTI_KARMEN_TEMP}/configure
@@ -49,8 +51,13 @@ ${NTI_KARMEN_EXTRACTED}:
 ${NTI_KARMEN_CONFIGURED}: ${NTI_KARMEN_EXTRACTED}
 	echo "*** $@ (CONFIGURED) ***"
 	( cd ${EXTTEMP}/${NTI_KARMEN_TEMP} || exit 1 ;\
+		PKGCONFIG=${PKG_CONFIG_CONFIG_HOST_TOOL} \
+		PKG_CONFIG_PATH=${PKG_CONFIG_CONFIG_HOST_PATH} \
 		./configure \
 			--prefix=${NTI_TC_ROOT}/usr \
+			  --x-includes=${NTI_TC_ROOT}/usr/include \
+			  --x-libraries=${NTI_TC_ROOT}/usr/lib \
+			|| exit 1 \
  	)
 
 
@@ -83,6 +90,8 @@ ${NTI_KARMEN_INSTALLED}: ${NTI_KARMEN_BUILT}
 
 .PHONY: nti-karmen
 nti-karmen: \
+	nti-pkg-config \
+	nti-libX11 \
 	${NTI_KARMEN_INSTALLED}
 
 ALL_NTI_TARGETS+= nti-karmen

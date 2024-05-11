@@ -1,5 +1,5 @@
 # ctw v0.6.2			[ since v0.6.2, c.2014-03-17 ]
-# last mod WmT, 2014-03-19	[ (c) and GPLv2 1999-2014* ]
+# last mod WmT, 2018-04-05	[ (c) and GPLv2 1999-2018* ]
 
 ifneq (${HAVE_CTW_CONFIG},y)
 HAVE_CTW_CONFIG:=y
@@ -10,12 +10,15 @@ ifeq (${CTW_VERSION},)
 CTW_VERSION=0.6.2
 endif
 
-CTW_SRC=${SOURCES}/c/ctw-v${CTW_VERSION}.tar.gz
+#CTW_SRC=${SOURCES}/c/ctw-v${CTW_VERSION}.tar.gz
+CTW_SRC=${SOURCES}/v/v${CTW_VERSION}.tar.gz
 URLS+= https://github.com/tdy/ctw/archive/v0.6.2.tar.gz
 
-include ${CFG_ROOT}/tui/ncurses/v5.9.mak
-include ${CFG_ROOT}/python/python3/v3.3.4.mak
-#include ${CFG_ROOT}/python/python3/v3.4.0.mak
+include ${CFG_ROOT}/tui/ncurses/v6.0.mak
+#include ${CFG_ROOT}/tui/ncurses/v6.1.mak
+#include ${CFG_ROOT}/python/python3/v3.3.4.mak
+#include ${CFG_ROOT}/python/python3/v3.3.7.mak
+include ${CFG_ROOT}/python/python3/v3.4.8.mak
 
 NTI_CTW_TEMP=nti-ctw-${CTW_VERSION}
 
@@ -74,7 +77,8 @@ ${NTI_CTW_INSTALLED}: ${NTI_CTW_BUILT}
 ##
 
 .PHONY: nti-ctw
-nti-ctw: nti-ncurses nti-python3 ${NTI_CTW_INSTALLED}
+nti-ctw: nti-ncurses nti-python3 \
+	${NTI_CTW_INSTALLED}
 
 ALL_NTI_TARGETS+= nti-ctw
 

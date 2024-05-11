@@ -8,6 +8,7 @@ HAVE_OPENAL_SOFT_CONFIG:=y
 
 include ${CFG_ROOT}/ENV/buildtype.mak
 
+include ${CFG_ROOT}/buildtools/cmake/v3.10.2.mak
 #include ${CFG_ROOT}/buildtools/libtool/v1.5.26.mak
 ##include ${CFG_ROOT}/buildtools/libtool/v2.4.2.mak
 include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
@@ -24,7 +25,8 @@ URLS+= http://kcat.strangesoft.net/openal-releases/openal-soft-1.18.2.tar.bz2
 #URLS+= http://http.debian.net/debian/pool/main/o/openal-soft/openal-soft_${OPENAL_SOFT_VERSION}.orig.tar.gz
 
 
-include ${CFG_ROOT}/buildtools/cmake/v3.10.2.mak
+#deps?
+#include ${CFG_ROOT}/buildtools/cmake/v3.10.2.mak
 
 
 NTI_OPENAL_SOFT_TEMP=nti-openal-soft-${OPENAL_SOFT_VERSION}

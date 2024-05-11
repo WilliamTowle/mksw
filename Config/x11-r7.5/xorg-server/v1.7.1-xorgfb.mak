@@ -40,12 +40,11 @@ include ${CFG_ROOT}/x11-r7.5/x11proto-resource/v1.1.0.mak
 #include ${CFG_ROOT}/x11-r7.5/xf86-input-keyboard/v1.4.0.mak
 #include ${CFG_ROOT}/x11-r7.5/xf86-video-fbdev/v0.4.1.mak
 #include ${CFG_ROOT}/x11-r7.5/xf86-video-vesa/v2.2.1.mak
-
+include ${CFG_ROOT}/x11-r7.5/xkeyboard-config/v2.1.mak
 #include ${CFG_ROOT}/misc/openssl/v1.0.1g.mak
 #include ${CFG_ROOT}/network/openssl/v1.0.1p.mak
 include ${CFG_ROOT}/network/openssl/v1.0.1u.mak
 include ${CFG_ROOT}/gui/pixman/v0.29.4.mak
-include ${CFG_ROOT}/gui/xkeyboard-config/v2.1.mak
 
 NTI_XORG_SERVER_TEMP=nti-xorg-server-${XORG_SERVER_VERSION}
 

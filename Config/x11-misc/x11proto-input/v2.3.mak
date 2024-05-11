@@ -24,7 +24,7 @@ X11PROTO_INPUT_SRC=${SOURCES}/i/inputproto-${X11PROTO_INPUT_VERSION}.tar.bz2
 #URLS+= http://www.x.org/releases/X11R7.6/src/proto/inputproto-2.0.1.tar.bz2
 URLS+= http://www.x.org/releases/individual/proto/inputproto-${X11PROTO_INPUT_VERSION}.tar.bz2
 
-include ${CFG_ROOT}/gui/util-macros/v1.17.1.mak
+include ${CFG_ROOT}/gui/util-macros/v1.16.2.mak
 
 NTI_X11PROTO_INPUT_TEMP=nti-x11proto-input-${X11PROTO_INPUT_VERSION}
 
@@ -59,11 +59,10 @@ ${NTI_X11PROTO_INPUT_CONFIGURED}: ${NTI_X11PROTO_INPUT_EXTRACTED}
 			> Makefile.in ;\
 		CC=${NTI_GCC} \
 		  CFLAGS='-O2' \
-		  PKG_CONFIG=${NTI_TC_ROOT}/usr/bin/${HOSTSPEC}-pkg-config \
-		  PKG_CONFIG_PATH=${NTI_TC_ROOT}/usr/${HOSTSPEC}/lib/pkgconfig \
+		  PKG_CONFIG=${PKG_CONFIG_CONFIG_HOST_TOOL} \
+		  PKG_CONFIG_PATH=${PKG_CONFIG_CONFIG_HOST_PATH} \
 			./configure \
 			  --prefix=${NTI_TC_ROOT}/usr \
-			  --enable-shared --disable-static \
 				|| exit 1 \
 	)
 #			--build=${HOSTSPEC} \

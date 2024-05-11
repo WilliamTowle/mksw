@@ -67,10 +67,6 @@ ${NTI_LIBXRENDER_CONFIGURED}: ${NTI_LIBXRENDER_EXTRACTED}
 			--bindir=${NTI_TC_ROOT}/usr/X11R7/bin \
 			|| exit 1 \
 	)
-#		[ -r Makefile.in.OLD ] || mv Makefile.in Makefile.in.OLD || exit 1 ;\
-#		cat Makefile.in.OLD \
-#			| sed '/^pkgconfigdir/	s%$$.*%$$(prefix)/'${HOSTSPEC}'/lib/pkgconfig%' \
-#			> Makefile.in ;\
 
 
 ## ,-----

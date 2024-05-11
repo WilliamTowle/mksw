@@ -6,10 +6,8 @@ HAVE_BINUTILS_CONFIG:=y
 
 #DESCRLIST+= "'nti-binutils' -- binutils"
 
-# TODO: should reference 'ENV/buildtype.mak'
-#include ${CFG_ROOT}/ENV/ifbuild.env
-#include ${CFG_ROOT}/ENV/native.mak
-##include ${CFG_ROOT}/ENV/target.mak
+include ${CFG_ROOT}/ENV/buildtype.mak
+
 
 ifeq (${BINUTILS_VERSION},)
 BINUTILS_VERSION=2.22
@@ -44,10 +42,15 @@ ${NTI_BINUTILS_EXTRACTED}:
 ${NTI_BINUTILS_CONFIGURED}: ${NTI_BINUTILS_EXTRACTED}
 	echo "*** $@ (CONFIGURED) ***"
 	( cd ${EXTTEMP}/${NTI_BINUTILS_TEMP} || exit 1 ;\
-	  CFLAGS='-O2' \
-		./configure \
-			--prefix=${NTI_TC_ROOT}/usr \
-			|| exit 1 \
+	  	CC=${NTI_GCC} \
+		  CFLAGS='-O2' \
+		  MAKEINFO=/bin/false \
+			./configure -v \
+			  --prefix=${NTI_TC_ROOT}/usr \
+			  --host=${HOSTSPEC} \
+			  --build=${HOSTSPEC} \
+			  --target=${HOSTSPEC} \
+				|| exit 1 \
 	)
 
 

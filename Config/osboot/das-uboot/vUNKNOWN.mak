@@ -36,6 +36,7 @@ NTI_DAS_UBOOT_INSTALLED=${NTI_TC_ROOT}/usr/bin/das-uboot
 
 ## See http://git.denx.de/?p=u-boot.git;a=blob;f=doc/README.x86
 ## can boot kernel as part of FIT image, or compressed zImage directly
+## FIXME: use 'shallow' clone to limit download size
 
 ${NTI_DAS_UBOOT_EXTRACTED}:
 	echo "*** $@ (EXTRACTED) ***"

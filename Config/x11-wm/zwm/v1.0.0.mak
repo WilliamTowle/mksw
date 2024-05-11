@@ -4,12 +4,12 @@
 ifneq (${HAVE_ZWM_CONFIG},y)
 HAVE_ZWM_CONFIG:=y
 
-#DESCRLIST+= "'cui-zwm' -- zwm"
+DESCRLIST+= "'nti-zwm' -- zwm"
 
 include ${CFG_ROOT}/ENV/buildtype.mak
 
-#include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
-include ${CFG_ROOT}/buildtools/pkg-config/v0.27.1.mak
+include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
+#include ${CFG_ROOT}/buildtools/pkg-config/v0.27.1.mak
 
 
 ifeq (${ZWM_VERSION},)
@@ -21,7 +21,8 @@ URLS+= "https://downloads.sourceforge.net/project/zwm/ZWM%20and%20amp_%20Samples
 
 # SDL v1.x, because 'sdl-config' is expected
 include ${CFG_ROOT}/audvid/smpeg/v0.4.5.mak
-include ${CFG_ROOT}/gui/libgl-mesa/v12.0.6.mak
+#include ${CFG_ROOT}/gui/libgl-mesa/v12.0.6.mak
+include ${CFG_ROOT}/gui/libgl-mesa/v17.0.0.mak
 include ${CFG_ROOT}/gui/SDL/v1.2.15.mak
 #include ${CFG_ROOT}/gui/SDL/v2.0.5.mak
 include ${CFG_ROOT}/gui/SDL_image/v1.2.12.mak

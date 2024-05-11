@@ -11,12 +11,12 @@ include ${CFG_ROOT}/ENV/buildtype.mak
 
 include ${CFG_ROOT}/buildtools/automake/v1.14.1.mak
 include ${CFG_ROOT}/buildtools/autoconf/v2.69.mak
-#include ${CFG_ROOT}/buildtools/libtool/v1.5.26.mak
+include ${CFG_ROOT}/buildtools/libtool/v1.5.26.mak
 #include ${CFG_ROOT}/buildtools/libtool/v2.4.2.mak
-include ${CFG_ROOT}/buildtools/libtool/v2.4.6.mak
-#include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
+#include ${CFG_ROOT}/buildtools/libtool/v2.4.6.mak
+include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
 #include ${CFG_ROOT}/buildtools/pkg-config/v0.27.1.mak
-include ${CFG_ROOT}/buildtools/pkg-config/v0.29.mak
+#include ${CFG_ROOT}/buildtools/pkg-config/v0.29.mak
 
 
 ifeq (${LIBPTHREAD_STUBS_VERSION},)

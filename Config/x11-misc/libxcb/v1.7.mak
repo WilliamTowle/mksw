@@ -1,5 +1,5 @@
 # libxcb v1.7			[ since v1.9, c.2013-01-04 ]
-# last mod WmT, 2013-05-27	[ (c) and GPLv2 1999-2013 ]
+# last mod WmT, 2018-08-23	[ (c) and GPLv2 1999-2018* ]
 
 ifneq (${HAVE_LIBXCB_CONFIG},y)
 HAVE_LIBXCB_CONFIG:=y
@@ -18,9 +18,11 @@ URLS+= http://www.x.org/releases/X11R7.6/src/xcb/libxcb-1.7.tar.bz2
 include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
 #include ${CFG_ROOT}/buildtools/pkg-config/v0.27.1.mak
 
-include ${CFG_ROOT}/gui/x11proto/v7.0.20.mak
-include ${CFG_ROOT}/gui/x11proto-xcb/v1.6.mak
-include ${CFG_ROOT}/gui/libXau/v1.0.6.mak
+include ${CFG_ROOT}/x11-r7.6/x11proto/v7.0.20.mak
+include ${CFG_ROOT}/x11-r7.6/x11proto-xcb/v1.6.mak
+include ${CFG_ROOT}/x11-r7.6/libXau/v1.0.6.mak
+include ${CFG_ROOT}/x11-misc/libpthread-stubs/v0.3.mak
+include ${CFG_ROOT}/misc/libxslt/v1.1.32.mak
 
 NTI_LIBXCB_TEMP=nti-libxcb-${LIBXCB_VERSION}
 
@@ -49,6 +51,10 @@ ${NTI_LIBXCB_EXTRACTED}:
 ${NTI_LIBXCB_CONFIGURED}: ${NTI_LIBXCB_EXTRACTED}
 	echo "*** $@ (CONFIGURED) ***"
 	( cd ${EXTTEMP}/${NTI_LIBXCB_TEMP} || exit 1 ;\
+		[ -r Makefile.in.OLD ] || mv Makefile.in Makefile.in.OLD || exit 1 ;\
+		cat Makefile.in.OLD \
+			| sed '/^pkgconfigdir/	s%$$.*%$$(prefix)/'${HOSTSPEC}'/lib/pkgconfig%' \
+			> Makefile.in ;\
 	  CC=${NTI_GCC} \
 	  CFLAGS='-O2' \
 	  PKG_CONFIG=${NTI_TC_ROOT}/usr/bin/${HOSTSPEC}-pkg-config \
@@ -78,12 +84,16 @@ ${NTI_LIBXCB_BUILT}: ${NTI_LIBXCB_CONFIGURED}
 ${NTI_LIBXCB_INSTALLED}: ${NTI_LIBXCB_BUILT}
 	echo "*** $@ (INSTALLED) ***"
 	( cd ${EXTTEMP}/${NTI_LIBXCB_TEMP} || exit 1 ;\
-		make install ;\
-		cp ${NTI_TC_ROOT}/usr/lib/pkgconfig/xcb.pc ${NTI_TC_ROOT}/usr/lib/xcb-*.pc ${NTI_LIBXCB_INSTALLED} \
+		make install \
 	)
 
 .PHONY: nti-libxcb
-nti-libxcb: nti-pkg-config nti-x11proto nti-x11proto-xcb nti-libXau ${NTI_LIBXCB_INSTALLED}
+nti-libxcb: \
+	nti-pkg-config \
+	nti-x11proto nti-x11proto-xcb nti-libXau \
+	nti-libpthread-stubs \
+	nti-libxslt \
+	${NTI_LIBXCB_INSTALLED}
 
 ALL_NTI_TARGETS+= nti-libxcb
 

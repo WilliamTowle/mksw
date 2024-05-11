@@ -29,7 +29,7 @@ do_copy()
 			*.tar|*.bz2|*.gz|*.tgz|*.Z|*.xz|*.zip)
 				ARCHIVE=`basename ${URL}`
 			;;
-			*.bz2/download)
+			*.bz2/download|*.tgz/download)
 				ARCHIVE=`basename \`echo ${URL} | sed 's%/download$%%'\``
 			;;
 			*.tar?*|*.bz2?*|*.gz?*|*.xz?*|*.zip?*)
@@ -97,7 +97,7 @@ do_download()
 			*.tar|*.bz2|*.gz|*.tgz|*.Z|*.xz|*.zip)
 				ARCHIVE=`basename ${URL}`
 			;;
-			*.bz2/download)
+			*.bz2/download|*.tgz/download)
 				ARCHIVE=`basename \`echo ${URL} | sed 's%/download$%%'\``
 			;;
 			*.tar?*|*.bz2?*|*.gz?*|*.xz?*|*.zip?*)

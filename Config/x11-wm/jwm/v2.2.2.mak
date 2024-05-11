@@ -4,6 +4,7 @@
 ifneq (${HAVE_JWM_CONFIG},y)
 HAVE_JWM_CONFIG:=y
 
+DESCRLIST+= "'nti-jwm' -- jwm"
 #DESCRLIST+= "'cui-jwm' -- jwm"
 
 ifeq (${JWM_VERSION},)
@@ -188,7 +189,9 @@ ${NTI_JWM_INSTALLED}: ${NTI_JWM_BUILT}
 	)
 
 .PHONY: nti-jwm
-nti-jwm: nti-libX11 ${NTI_JWM_INSTALLED}
+nti-jwm: \
+	nti-libX11 \
+	${NTI_JWM_INSTALLED}
 
 ALL_NTI_TARGETS+= nti-jwm
 

@@ -174,7 +174,7 @@ ${NTI_XORG_SERVER_INSTALLED}: ${NTI_XORG_SERVER_BUILT}
 #	nti-mesalib nti-openssl \
 #	nti-pixman \
 #	${NTI_XORG_SERVER_INSTALLED}
-##nti-xorg-server: nti-pkg-config nti-libX11 nti-libXfont nti-libxkbfile nti-x11proto-randr nti-x11proto-render nti-x11proto-fixes nti-x11proto-damage nti-x11proto-fonts nti-x11proto-video nti-x11proto-resource nti-openssl nti-pixman nti-x11pciaccess nti-xkeyboard-config ${NTI_XORG_SERVER_INSTALLED}
+#...xkeyboard-config?
 #
 #ALL_NTI_TARGETS+= nti-xorg-server
 

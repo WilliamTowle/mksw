@@ -4,11 +4,11 @@
 ifneq (${HAVE_WINDWM_CONFIG},y)
 HAVE_WINDWM_CONFIG:=y
 
-#DESCRLIST+= "'nti-windwm' -- windwm"
+DESCRLIST+= "'nti-windwm' -- windwm"
 
 include ${CFG_ROOT}/ENV/buildtype.mak
 
-# #include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
+include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
 # include ${CFG_ROOT}/buildtools/pkg-config/v0.27.1.mak
 
 
@@ -19,9 +19,8 @@ endif
 WINDWM_SRC=${SOURCES}/w/wind-${WINDWM_VERSION}.tar.gz
 URLS+= https://downloads.sourceforge.net/project/windwm/wind-${WINDWM_VERSION}.tar.gz
 
+include ${CFG_ROOT}/x11-r7.5/libX11/v1.3.2.mak
 
-# #include ${CFG_ROOT}/x11-r7.5/libX11/v1.3.2.mak
-# include ${CFG_ROOT}/x11-r7.5/libXpm/v3.5.8.mak
 
 NTI_WINDWM_TEMP=nti-windwm-${WINDWM_VERSION}
 NTI_WINDWM_EXTRACTED=${EXTTEMP}/${NTI_WINDWM_TEMP}/configure
@@ -52,8 +51,13 @@ ${NTI_WINDWM_EXTRACTED}:
 ${NTI_WINDWM_CONFIGURED}: ${NTI_WINDWM_EXTRACTED}
 	echo "*** $@ (CONFIGURED) ***"
 	( cd ${EXTTEMP}/${NTI_WINDWM_TEMP} || exit 1 ;\
+		CC=${NTI_GCC} \
+		  CFLAGS='-O2' \
+		  PKGCONFIG=${PKG_CONFIG_CONFIG_HOST_TOOL} \
+		  PKG_CONFIG_PATH=${PKG_CONFIG_CONFIG_HOST_PATH} \
 		./configure \
 			--prefix=${NTI_TC_ROOT}/usr \
+				|| exit 1 \
  	)
 
 
@@ -80,6 +84,8 @@ ${NTI_WINDWM_INSTALLED}: ${NTI_WINDWM_BUILT}
 
 .PHONY: nti-windwm
 nti-windwm: \
+	nti-pkg-config \
+	nti-libX11 \
 	${NTI_WINDWM_INSTALLED}
 
 ALL_NTI_TARGETS+= nti-windwm

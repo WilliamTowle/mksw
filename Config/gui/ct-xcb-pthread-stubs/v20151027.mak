@@ -39,6 +39,8 @@ NUI_CT_XCB_PTHREAD_STUBS_INSTALLED=/usr/lib/pkgconfig/pthread-stubs.pc
 ## |	Extract
 ## +-----
 
+## FIXME: use 'shallow' clone to limit download size
+
 ${NUI_CT_XCB_PTHREAD_STUBS_EXTRACTED}:
 	echo "*** $@ (EXTRACTED) ***"
 	( mkdir -p ${EXTTEMP}/${NUI_CT_XCB_PTHREAD_STUBS_TEMP} ;\

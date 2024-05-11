@@ -4,7 +4,7 @@
 ifneq (${HAVE_MATCHBOX_PANEL_CONFIG},y)
 HAVE_MATCHBOX_PANEL_CONFIG:=y
 
-#DESCRLIST+= "'cui-matchbox-panel' -- matchbox-panel"
+DESCRLIST+= "'nti-matchbox-panel' -- matchbox-panel"
 
 include ${CFG_ROOT}/ENV/buildtype.mak
 
@@ -58,8 +58,6 @@ ${NTI_MATCHBOX_PANEL_EXTRACTED}:
 # |	Configure
 # +-----
 
-# TODO: current modifications applicable to v1.0.0
-
 ${NTI_MATCHBOX_PANEL_CONFIGURED}: ${NTI_MATCHBOX_PANEL_EXTRACTED}
 	echo "*** $@ (CONFIGURED) ***"
 	( cd ${EXTTEMP}/${NTI_MATCHBOX_PANEL_TEMP} || exit 1 ;\
@@ -92,12 +90,7 @@ ${NTI_MATCHBOX_PANEL_INSTALLED}: ${NTI_MATCHBOX_PANEL_BUILT}
 			|| exit 1 \
 	)
 
-#.PHONY: nti-matchbox-panel
-#nti-matchbox-panel: nti-SDL nti-SDL_image nti-SDL_mixer \
-#	nti-libgl-mesa \
-#	nti-libXfixes nti-libXxf86vm \
-#	nti-smpeg \
-#	${NTI_MATCHBOX_PANEL_INSTALLED}
+# TODO: presumbly also nti-libX11!
 .PHONY: nti-matchbox-panel
 nti-matchbox-panel: nti-pkg-config \
 	nti-glib \

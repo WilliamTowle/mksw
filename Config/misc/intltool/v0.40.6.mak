@@ -4,7 +4,7 @@
 ifneq (${HAVE_INTLTOOL_CONFIG},y)
 HAVE_INTLTOOL_CONFIG:=y
 
-#DESCRLIST+= "'nti-intltool' -- intltool"
+DESCRLIST+= "'nti-intltool' -- intltool"
 
 include ${CFG_ROOT}/ENV/buildtype.mak
 

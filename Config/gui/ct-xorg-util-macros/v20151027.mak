@@ -39,6 +39,8 @@ NUI_CT_XORG_UTIL_MACROS_INSTALLED=/usr/lib/pkgconfig/FOO.pc
 ## |	Extract
 ## +-----
 
+## FIXME: use 'shallow' clone to limit download size
+
 ${NUI_CT_XORG_UTIL_MACROS_EXTRACTED}:
 	echo "*** $@ (EXTRACTED) ***"
 	( mkdir -p ${EXTTEMP}/${NUI_CT_XORG_UTIL_MACROS_TEMP} ;\

@@ -1,4 +1,4 @@
-# qemu v1.5.2			[ since v0.8.2, c.200?-??-?? ]
+# qemu v2.0.0			[ since v0.8.2, c.200?-??-?? ]
 # last mod WmT, 2014-05-20	[ (c) and GPLv2 1999-2014* ]
 
 ifneq (${HAVE_QEMU_CONFIG},y)
@@ -28,7 +28,7 @@ QEMU_SRC=${SOURCES}/q/qemu-${QEMU_VERSION}.tar.bz2
 
 # http://www.qemu.org/
 #URLS+=http://download.savannah.gnu.org/releases/qemu/qemu-${QEMU_VERSION}.tar.gz
-URLS+= http://wiki.qemu-project.org/download/qemu-1.5.2.tar.bz2
+URLS+= http://wiki.qemu-project.org/download/qemu-${QEMU_VERSION}.tar.bz2
 
 ##
 

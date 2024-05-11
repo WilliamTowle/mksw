@@ -1,3 +1,370 @@
+2019-01-17
+==========
+
+* misc:
+-> DONE: busybox bump to v1.30.0
+
+
+2018-12-14
+==========
+
+* buildtools: z80asm
+-> TODO: bump to v2.4
+
+
+2018-12-04
+==========
+
+* misc:
+-> DONE: bump 'diffstat' to v1.61
+-> DONE: add 'b64'
+
+
+2018-10-19
+==========
+
+* audvid: gphoto2
+-> DONE: bump to v2.5.20
+
+
+2018-10-15
+==========
+
+* emulators:
+-> DONE: support basic zesarux build (native pkg-config),
+	...of v4.2 from tarball
+	...of some later version, from github
+
+
+2018-10-12
+==========
+
+* emulation
+-> DONE: QEmu Makefile for legacy versions with SDL
+-> DONE: z80-machine Makefile for "v01_01"
+
+
+2018-10-18
+==========
+
+* emul
+-> DONE: add nc100em
+
+
+2018-10-17
+==========
+
+* emul
+-> DONE: bump qemu to v3.0.0
+
+
+2018-10-16
+==========
+
+* buildtools
+-> DONE: port tftpdev 'fakeroot; bump to v1.18.4
+
+
+2018-09-20
+==========
+
+* misc:
+-> DONE: introduce heirloom/heirloom-{dev|doc}tools
+
+* tools:
+-> DONE: introduce librsync (includes 'rdiff')
+-> DONE: introduce xdelta (with debian patches)
+
+
+2018-09-19
+==========
+
+* gui:
+-> DONE: introduce 'fbterm' at v1.7
+
+* tools:
+-> DONE: annotate 'bzip2' with required steps for shared object build
+
+
+2018-09-15
+==========
+
+* x11-wm:
+-> DONE: introduce 'mcwm' (at v20130209-2)
+-> DONE: some miscellaneous tidying
+
+
+2018-09-10
+===========
+
+* gui: dmenu
+	...DONE: more tidy X11 dependency builds
+	...problem with Xineramam -> _X{GetRequest|EatDataWords}
+
+
+2018-09-10
+===========
+
+* gui:
+-> DONE: 'dmenu' new at v4.8
+
+* x11/x11-wm:
+-> DONE: 'goomwwm' new at v1.1.0
+...ALSO: more tidying of X11 dependency builds
+
+
+2018-09-06
+===========
+
+* x11-wm:
+- amiwm, jwm (v2.3.7), skatoswm, treewm, wind
+-> DONE: fix/tidy X11 dependency lists
+- tabletwm:
+-> DONE: fix linking with xkbcommon
+-> DONE: bump xkeyboard-config to v2.24; link
+
+* gui: tabletlauncher
+-> DONE: introduce basic Makefile
+	...needs cmake :(
+	...cmake needs to be pointed at appropriate pkg-config
+	...needs 'gee' and other libraries
+
+
+2018-09-06
+==========
+
+* gui: cairo
+-> DONE: fix bogus referencing of /usr/include/X11 files
+-> DONE: sanitise: add various "--disable-FOO" as per buildroot
+
+* gui: various x11-wm
+-> DONE: introduce 'ratpoison'
+-> DONE: tidy 'uwm' build
+-> DONE: introduce X11R7.5's lib{Xft|Xrandr} ('ratpoison' dependencies)
+
+
+2018-09-04
+==========
+
+* gui
+- libxkbcommon/xcb-util-* rework:
+	...ensure x11-r7.6 and x11-misc versions
+	...rewrite dependency lines under Config/x11-wm
+
+
+2018-09-03
+==========
+
+* various panel/wms:
+	...standardise build environment/pkg-config use
+
+
+2018-09-01
+==========
+
+* gui: various X11R7.7 tweaks:
+	...add composite/fixes/xinerama/render libraries
+	...tidy libX11 build
+
+* x11-wm tweaks:
+	...add bmpanel (X11R7.7-based)
+
+
+2018-08-30
+==========
+
+* introduce:
+	...imlib2 at v1.5.1
+	...{x11proto-|libX}composite, both v0.4.1 (and tweak *render)
+	...fontconfig at v2.12.6
+
+
+2018-08-24
+==========
+
+* gui: x11-wm
+-> DONE: add 'windowlab'
+
+
+2018-08-23
+==========
+
+* audvid
+-> DONE: update 'libgl-mesa' dependency for 'ftgl' v2.1.3-rc5
+-> TODO: 'ftgl' build failure - missing "glEnable" symbol
+
+* emul
+-> DONE: FBZX bump to v4.4.0
+	...including 'SDL2' dependency bump
+
+* gui:
+-> DONE: introduce 'cairo' at v1.14.12.mak
+-> DONE: bump cairo dependencies:
+	...libpng to v1.6.35
+	...pixman to v0.34.0
+-> DONE: introduce 'tabletwm'
+
+
+2018-08-21
+==========
+
+* gui: x11-wm
+-> DONE: bump 'jwm' to v2.3.7
+-> DONE: add 'failsafewm' (v0.0.2)
+-> DONE: add 'tinywm' (v1.3)
+
+* gui: fspanel/fsp-h
+-> DONE: introduce fsp-h
+	...installs as 'fsp-hacked'
+
+
+2018-08-01
+==========
+
+* audvid:
+-> DONE: bump 'jinamp' to v1.0.7
+
+* network:
+-> DONE: bump 'dropbear' to v2018.76
+
+* systools:
+-> DONE: add 'memtester' (at v4.3.0)
+
+* tui:
+-> DONE: bump 'screen' to v4.6.2
+-> TODO: test under hbOS (possible patching requirements?)
+
+
+2018-07-20
+==========
+
+* systools:
+-> DONE: add 'stress-ng' (at v0.09.34)
+
+
+2018-07-18
+==========
+
+* buildtools: nasm
+-> DONE: bump stable version to v2.13.03
+-> DONE: bump rc version to v2.14rc15
+
+* network
+-> DONE: bump 'wget' to v1.19.5
+-> DONE: bump dnsmasq to v2.79
+
+* tools: file
+-> DONE: bump to v5.33
+
+* tui: lynx
+-> DONE: bump stable version to v2.8.9
+	...with appropriate 'curses' dependency update
+
+
+2018-07-10
+==========
+
+* misc: which
+-> DONE: (re)introduce v2.21
+
+
+2018-07-09
+==========
+
+* tools: xz-utils
+-> DONE: bump to v5.2.4
+
+* hwtools: dmidecode
+-> DONE: bump to v3.1
+
+
+2018-05-15
+==========
+
+* systools:
+-> DONE: rt-tests requires linux-rt-users "negative durations" patch
+	...at https://www.spinics.net/lists/linux-rt-users/msg15372.html
+
+
+2018-04-26
+==========
+
+* systools:
+-> DONE: update rt-tests to v1.0
+
+
+2018-04-25
+==========
+
+* buildtools:
+-> DONE: tweak 'binutils' build
+-> DONE: add 'host-gcc' build for v4.7.4
+
+* systools:
+-> DONE: add 'stress' (at v1.0.4)
+-> DONE: add skeleton 'rt-tests' (at v0.89)
+-> DONE: add skeleton 'numactl' (at v2.0.11)
+-> DONE: link rt-tests/numactl (has dependency on library)
+
+
+2018-04-13
+==========
+
+* gui: rxvt
+-> DONE: fix dependency on lib{Xrender|Xfixes}
+
+* tui: lynx
+-> DONE: bump devel version to v2.8.9dev.17
+	...with appropriate 'curses' dependency update
+
+
+2018-04-12
+==========
+
+* python/ctw
+-> DONE: tidy python; use --without-ensurepip in v3.4.x
+-> TODO: build failures in 'ncurses' module:
+	...not appearing with python3 v3.3.4
+	...present with fail-fixed python 3.{3.7|4.8} and ncurses 6.{0|1}
+-> TODO: python3 '3.4.8-nossl' needs test build on hbOS
+
+
+2018-04-05
+==========
+
+* tui: ncurses/n2048
+-> DONE: bump ncurses to v6.1
+-> DONE: update n2048 to build against ncurses v6.1
+-> DONE: add notes for --with-abi-version=5 use
+
+
+2018-04-03
+==========
+
+* network: openssl
+-> DONE: update v1.0.x to v1.0.2o
+-> DONE: update v1.1.x to v1.1.0h
+
+
+2018-03-29
+==========
+
+* hbOS builds (libc is uClibc):
+- Python (v3.3.4) wants I_PUSH symbol
+	...usually in <sys/stropts.h> but no "STREAMS" support in uClibc
+	...have Python 3.4.0 config - is this similar?
+	...3.3.x series went to 3.3.7; latest at 3.7.0
+-> TODO: arrange/test for 3.3.4 -> 3.3.7 update, retest
+- Perl 5.22.0 builds:
+	...at "Checking for GNU C Library" -> "Maybe this is a Cray"
+	...was 5.20.3 similar? newer builds?
+	...latest 5.x at 5.27.9
+-> TODO: arrange/test for 5.20.3 download, retest
+- rxvt/mrxvt?
+	...rxvt also wanted I_PUSH symbol according to related notes
+-> TODO: arrange/test for v2.7.10 download, retest
+
+
 2018-03-15
 ==========
 
@@ -55,21 +422,12 @@
 -> DONE: add LIBTOOL_HOST_TOOL to v1.5.26 (matching v2.x files)
 -> DONE: tidy v2.4.2 configuration
 
-* misc: busybox
--> DONE: bump to v1.28.1
-
-* tools: xz-utils
--> DONE: fix liblzma.pc install location
-
 
 2018-03-06
 ==========
 
 * gui: SDL
 -> DONE: fix SDL[2] v2.0.x build rules
-
-* misc: busybox
--> DONE: bump to v1.28.1
 
 * various - glib and dependencies
 -> DONE: new gettext - v0.19.8.1
@@ -113,9 +471,6 @@
 | - tall black window on white background, odd cursor colour flicker
 | - start x11vnc remotely with `x11vnc -nopw -auth /var/lib/lightdm/root/:0 -display :0`
 | - problem with overwriting other virtual consoles?
- 
-* misc: busybox
--> DONE: introduce v1.28.0
 
 
 2018-02-06
@@ -133,9 +488,6 @@
 
 * audvid: jpegsrc
 -> DONE: fix v7/8/9 install phase
-
-* audvid: libpng
--> DONE: fix URLs
 
 * buildtools: nasm
 -> DONE: introduce v2.13
@@ -193,9 +545,6 @@
 	...missing explanation for dependencies (maybe window managers?)
 	...libvorbis version reverted (1.3.5 -> 1.3.3) due to missing sources
 
-* libpng: now v1.6.34
--> DONE: build test
-
 * x11-wm
 -> DONE: add 'matchbox-panel'
 	...dependencies include gtk+ -> make 'nui' version?
@@ -204,6 +553,12 @@
 
 2017-11-20
 ==========
+
+* audvid
+-> DONE: update 'libgl-mesa' dependency for 'ftgl' v2.1.3-rc5
+
+* gui: fspanel
+-> DONE: introduce fspanel v0.7
 
 * hwtools
 -> TODO: build, test usbutils v009
@@ -264,11 +619,9 @@
 
 * network
 -> DONE: bump/build dropbear - now v2017.75
--> DONE: bump/build dnsmasq - now v2.78
 
 * tools
 -> DONE: bump/build dos2unix - now v7.4.0
--> DONE: build/build file - now v5.32
 
 
 2017-09-22
@@ -461,9 +814,6 @@
 2017-04-21
 ==========
 
-* buildtools: nasm
--> DONE: bump to v2.13rc21
-
 * gui: skatoswm
 -> DONE: v1.0
 
@@ -499,9 +849,6 @@
 
 2017-04-12
 ==========
-
-* network: openssl
--> DONE: fix v1.1.0e 'install_engines' (pre)configuration
 
 * misc: qingy
 -> DONE: dependency on 'openssl'
@@ -792,7 +1139,7 @@
 | insttemp/bin/busybox: ELF 32-bit LSB executable, MIPS, MIPS32 version 1 (SYSV), dynamically linked, interpreter /lib/ld-uClibc.so.0, stripped
 -> TODO: re. qemu invoke:
 	'/usr/bin/qemu-system-mips -M mips' is "mips r4k platform"
-	...and to: -append "root=/dev/hda1 console=ttyS0" -nographic 
+	...and to: -append "root=/dev/hda1 console=ttyS0" -nographic
 
 
 2017-01-19
@@ -845,9 +1192,6 @@
 
 * base
 -> TODO: add mawk - now v1.3.4-20161120
-
-* tui
--> DONE: lynx update to v2.8.9dev.9
 
 
 2016-12-27
@@ -926,18 +1270,8 @@
 	...see hostapd.conf.rtl871xdrv?
 
 
-2016-06-28
-==========
-
-* busybox
--> DONE: latest v1.25.0
-
-
 2016-06-15
 ==========
-
-* network
--> DONE: bump 'wget' to v1.18
 
 * tools
 -> DONE: introduce {c|lun}zip v1.8
@@ -1038,13 +1372,6 @@
 
 * ms-sys
 -> DONE: bump to v2.5.3
-
-
-2015-03-07
-==========
-
-* buildtools: nasm
--> DONE: bump to v2.12
 
 
 2015-03-01
@@ -1417,9 +1744,6 @@
 2014-06-11
 ==========
 
-* diffstat
--> DONE: bump - now v1.59
-
 * findutils
 -> DONE: bump - now v4.4.2
 
@@ -1540,11 +1864,6 @@
 2014-02-20
 ==========
 
-* "hwtools"
--> DONE: 'hwtools' metafile
--> DONE: basic bios-cmos, cmospwd, dmidecode Makefiles
--> DONE: build-rebuild testing for cmospwd, dmidecode
-
 * tcc
 -> DONE: build-rebuild OK
 -> TODO: v0.9.26 test runs
@@ -1609,13 +1928,6 @@
 -> DONE: basic Makefile
 -> DONE: 'nui' Makefile
 -> TODO: investigate run-time failure
-
-
-2013-05-01
-==========
-
-* debootstrap
--> TODO: simply `make install` (...needs root permissions) (fakeroot?)
 
 
 2013-02-22

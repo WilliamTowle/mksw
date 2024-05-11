@@ -24,15 +24,15 @@ UWM_SRC=${SOURCES}/u/uwm-${UWM_VERSION}.tar.bz2
 #URLS+= http://downloads.sourceforge.net/project/udeproject/UWM/uwm-0.2.11a%20stable/uwm-0.2.11a.tar.gz
 URLS+= https://sourceforge.net/projects/uwm/files/Source/uwm-2010-11-10-21.tar.bz2/download
 
-## X11 R7.5 unsuitable due to no libxcb (xcb-util dependency)
+## X11 R7.5 unsuitable due xcb-util needing suitable libxcb
 include ${CFG_ROOT}/audvid/jpegsrc/v6b.mak
 #include ${CFG_ROOT}/audvid/libpng/v1.6.29.mak
 include ${CFG_ROOT}/audvid/libpng/v1.6.34.mak
-include ${CFG_ROOT}/gui/xcb-util/v0.3.8.mak
-include ${CFG_ROOT}/gui/xcb-util-image/v0.3.8.mak
-include ${CFG_ROOT}/gui/xcb-util-keysyms/v0.3.8.mak
-include ${CFG_ROOT}/gui/xcb-util-renderutil/v0.3.8.mak
-include ${CFG_ROOT}/gui/xcb-util-wm/v0.3.8.mak
+include ${CFG_ROOT}/x11-misc/xcb-util/v0.3.8.mak
+include ${CFG_ROOT}/x11-misc/xcb-util-image/v0.3.8.mak
+include ${CFG_ROOT}/x11-misc/xcb-util-keysyms/v0.3.8.mak
+include ${CFG_ROOT}/x11-misc/xcb-util-renderutil/v0.3.8.mak
+include ${CFG_ROOT}/x11-misc/xcb-util-wm/v0.3.8.mak
 
 
 NTI_UWM_TEMP=nti-uwm-${UWM_VERSION}

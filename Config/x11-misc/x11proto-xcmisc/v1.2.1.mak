@@ -1,5 +1,5 @@
 # x11proto-xcmisc v1.2.1	[ since v1.1.2, c.2008-06-08 ]
-# last mod WmT, 2013-05-27	[ (c) and GPLv2 1999-2013 ]
+# last mod WmT, 2018-09-05	[ (c) and GPLv2 1999-2018* ]
 
 ifneq (${HAVE_X11PROTO_XCMISC_CONFIG},y)
 HAVE_X11PROTO_XCMISC_CONFIG:=y
@@ -7,18 +7,6 @@ HAVE_X11PROTO_XCMISC_CONFIG:=y
 #DESCRLIST+= "'nti-x11proto-xcmisc' -- x11proto-xcmisc"
 
 include ${CFG_ROOT}/ENV/buildtype.mak
-
-#include ${CFG_ROOT}/ENV/ifbuild.env
-#ifeq (${ACTION},buildn)
-#include ${CFG_ROOT}/ENV/native.mak
-#else
-#include ${CFG_ROOT}/ENV/target.mak
-#endif
-#
-#ifneq (${HAVE_CROSS_GCC_VERSION},)
-#include ${CFG_ROOT}/distrotools-ng/cross-gcc/v${HAVE_CROSS_GCC_VERSION}.mak
-#include ${CFG_ROOT}/distrotools-ng/uClibc-rt/v${HAVE_TARGET_UCLIBC_VERSION}.mak
-#endif
 
 #include ${CFG_ROOT}/buildtools/pkg-config/v0.23.mak
 include ${CFG_ROOT}/buildtools/pkg-config/v0.27.1.mak
@@ -67,11 +55,10 @@ ${NTI_X11PROTO_XCMISC_CONFIGURED}: ${NTI_X11PROTO_XCMISC_EXTRACTED}
 			> Makefile.in ;\
 		CC=${NTI_GCC} \
 		  CFLAGS='-O2' \
-		  PKG_CONFIG=${NTI_TC_ROOT}/usr/bin/${HOSTSPEC}-pkg-config \
-		  PKG_CONFIG_PATH=${NTI_TC_ROOT}/usr/${HOSTSPEC}/lib/pkgconfig \
+		  PKG_CONFIG=${PKG_CONFIG_CONFIG_HOST_TOOL} \
+		  PKG_CONFIG_PATH=${PKG_CONFIG_CONFIG_HOST_PATH} \
 			./configure \
 			  --prefix=${NTI_TC_ROOT}/usr \
-			  --enable-shared --disable-static \
 				|| exit 1 \
 	)
 
@@ -96,7 +83,6 @@ ${NTI_X11PROTO_XCMISC_INSTALLED}: ${NTI_X11PROTO_XCMISC_BUILT}
 	( cd ${EXTTEMP}/${NTI_X11PROTO_XCMISC_TEMP} || exit 1 ;\
 		make install \
 	)
-#		cp ${NTI_TC_ROOT}/usr/lib/pkgconfig/xcmiscproto.pc ${NTI_TC_ROOT}/usr/${HOSTSPEC}/lib/pkgconfig/ \
 
 .PHONY: nti-x11proto-xcmisc
 nti-x11proto-xcmisc: nti-pkg-config ${NTI_X11PROTO_XCMISC_INSTALLED}

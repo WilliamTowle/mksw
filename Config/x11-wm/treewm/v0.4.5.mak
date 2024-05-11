@@ -1,10 +1,10 @@
 # treewm v0.21pl2		[ since v0.21pl2, 2017-04-19 ]
-# last mod WmT, 2017-04-19	[ (c) and GPLv2 1999-2017* ]
+# last mod WmT, 2018-09-07	[ (c) and GPLv2 1999-2018* ]
 
 ifneq (${HAVE_TREEWM_CONFIG},y)
 HAVE_TREEWM_CONFIG:=y
 
-#DESCRLIST+= "'cui-treewm' -- treewm"
+DESCRLIST+= "'nti-treewm' -- treewm"
 
 include ${CFG_ROOT}/ENV/buildtype.mak
 
@@ -20,14 +20,14 @@ TREEWM_SRC=${SOURCES}/t/treewm-${TREEWM_VERSION}.tar.gz
 URLS+= "https://downloads.sourceforge.net/project/treewm/treewm/0.4.5/treewm-0.4.5.tar.gz?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Ftreewm%2F&ts=1492771683&use_mirror=netcologne"
 
 
-#include ${CFG_ROOT}/gui/SDL/v1.2.15.mak
+include ${CFG_ROOT}/x11-r7.5/libX11/v1.3.2.mak
 include ${CFG_ROOT}/x11-r7.5/libXpm/v3.5.8.mak
 include ${CFG_ROOT}/x11-r7.5/libXxf86vm/v1.1.0.mak
 
 NTI_TREEWM_TEMP=nti-treewm-${TREEWM_VERSION}
 NTI_TREEWM_EXTRACTED=${EXTTEMP}/${NTI_TREEWM_TEMP}/COPYING
 NTI_TREEWM_CONFIGURED=${EXTTEMP}/${NTI_TREEWM_TEMP}/Makefile.OLD
-NTI_TREEWM_BUILT=${EXTTEMP}/${NTI_TREEWM_TEMP}/treewm
+NTI_TREEWM_BUILT=${EXTTEMP}/${NTI_TREEWM_TEMP}/src/treewm
 NTI_TREEWM_INSTALLED=${NTI_TC_ROOT}/usr/bin/treewm
 
 
@@ -93,6 +93,7 @@ ${NTI_TREEWM_INSTALLED}: ${NTI_TREEWM_BUILT}
 
 .PHONY: nti-treewm
 nti-treewm: nti-pkg-config \
+	nti-libX11 \
 	nti-libXpm \
 	nti-libXxf86vm \
 	${NTI_TREEWM_INSTALLED}
