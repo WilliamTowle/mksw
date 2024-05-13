@@ -1,0 +1,48 @@
+mksw
+====
+
+
+Overview
+--------
+
+  'mksw' is a Makefile-based build system intended to aid building one
+or more related packages, eg. to create a toolchain suitable for
+generating further packages. Configuration files for a number of
+packages (plus dependencies) are provided as a starting point, with
+files they include forming a framework for adding more.
+
+  In order to work in a consistent manner regardless of the choice of
+software to be built, a top level Makefile is provided which contains
+a 'help' rule (to report status) and which acquires additional build
+rules through an 'include' directive. Once an initial configuration
+file has been specified [from among files in the Config tree, through
+the CONFIG environment variable], all necessary build rules and
+associated help text become available through the main Makefile.
+
+
+Build Stages/Mechanism
+----------------------
+
+  While configuration files for 'mksw' can be written to work wholly
+independently, it is anticipated that typical include files will fall
+broadly into one of two types:
+	1) those containing general build rules, and
+	2) those containing package configuration.
+  Files provided for the first of these include rules for downloading
+and extracting source code, and can be found under the Config/INCLUDE
+tree. Files for the second can be found in the other assorted
+directory trees under Config/.
+
+  The framework of build rules in these files aims to allow more
+complicated builds to progress through some or all of the following
+stages:
+	1) adding any necessary packages to the host system;
+	2) creating a native toolchain for building packages;
+	3) adding a natively-hosted toolchain for cross compilation;
+	4) building and preparing packages for some target system,
+where related build rules can be found in:
+	Config/INCLUDE/build-native-userland.mk
+	Config/INCLUDE/build-cross-userland.mk
+	Config/INCLUDE/build-native-toolchain.mk
+	Config/INCLUDE/build-common.mk
+	Config/INCLUDE/build-cross-toolchain.mk
